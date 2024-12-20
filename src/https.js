@@ -1,5 +1,23 @@
 const baseURL = 'https://easydev.club/api/v1/';
 
+export const updateTask = async (isDone, id, title) => {
+  const response = await fetch(baseURL + `todos/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ isDone, title }),
+  });
+
+  const resData = await response.json();
+
+  if (!response.ok) {
+    throw new Error(response.message || 'Failed to update task. Please try again later.');
+  }
+
+  return resData.message;
+};
+
 export const deleteTask = async (taskId) => {
   const response = await fetch(baseURL + `todos/${taskId}`, {
     method: 'DELETE',

@@ -11,10 +11,10 @@ export const AddTaskBlock = styled.section`
 
   input {
     width: 100%;
-    padding: 12px 0;
+    padding: 10px 0;
     border: none;
     outline: none;
-    border-bottom: 1px solid #dcdfe6;
+    border-bottom: 2px solid #dcdfe6;
     color: #000;
     background-color: #f1f4f9;
   }

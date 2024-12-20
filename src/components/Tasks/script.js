@@ -17,12 +17,44 @@ export const TaskItem = styled.li`
   background-color: #fff;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  gap: 15px;
 
-  label {
+  .change-task {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
     cursor: pointer;
+
+    label {
+      cursor: pointer;
+    }
+
+    .checked.control {
+      background-color: #5393ff;
+      border-color: #5393ff;
+    }
+
+    .checked.control::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 20px;
+      height: 20px;
+      background-image: url('data:image/svg+xml,<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 30px; height: 30px;"><path d="M13 5L7.00004 11L4.5 8.50002" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 15px 15px;
+    }
+
+    input[type='text'] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
   }
 
   .btn-container {
@@ -47,15 +79,17 @@ export const TaskItem = styled.li`
     bottom: 0;
     left: 0;
     transition: 0.2s ease;
+    background-color: #5393ff;
 
     svg {
       width: 20px;
       height: 20px;
     }
-  }
 
-  button:first-child {
-    background-color: #5393ff;
+    img {
+      width: 20px;
+      height: 20px;
+    }
   }
 
   button:last-child {
@@ -73,5 +107,40 @@ export const TaskItem = styled.li`
     bottom: 0;
     left: 0;
     box-shadow: none;
+  }
+
+  .control {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .completed {
+    position: relative;
+  }
+
+  .completed::before {
+    content: '';
+    position: absolute;
+    top: 55%;
+    left: 0;
+    transform: translateY(-50%);
+    height: 2px;
+    width: 100%;
+    background-color: #213547;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip: rect(0 0 0 0);
+    overflow: hidden;
   }
 `;
