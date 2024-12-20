@@ -1,11 +1,14 @@
-import { useState, useEffect } from 'react';
+import { List } from './script';
+import { Task } from './Task';
 
-export const TasksList = ({ tasks }) => {
+export const TasksList = ({ tasks, deleteTask }) => {
   return (
-    <ul>
+    <List>
       {tasks.map((task) => (
-        <li key={task.id}>{task.title}</li>
+        <Task key={task.id} id={task.id} deleteTask={deleteTask}>
+          {task.title}
+        </Task>
       ))}
-    </ul>
+    </List>
   );
 };
