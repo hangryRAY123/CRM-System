@@ -23,10 +23,9 @@ export const TaskItem = styled.li`
     display: flex;
     align-items: center;
     gap: 10px;
-    cursor: pointer;
 
-    label {
-      cursor: pointer;
+    p {
+      margin: 0;
     }
 
     .checked.control {
@@ -116,6 +115,7 @@ export const TaskItem = styled.li`
     border: 1px solid #ccc;
     border-radius: 50%;
     flex-shrink: 0;
+    cursor: pointer;
   }
 
   .completed {
@@ -131,16 +131,5 @@ export const TaskItem = styled.li`
     height: 2px;
     width: 100%;
     background-color: #213547;
-  }
-
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    border: 0;
-    clip: rect(0 0 0 0);
-    overflow: hidden;
   }
 `;

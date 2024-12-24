@@ -11,7 +11,6 @@ function App() {
   const [allTask, setAllTask] = useState({});
   const [currentTab, setCurrentTab] = useState('all');
   const [changeTask, setChangeTask] = useState({});
-  const [vaidate, setVaidate] = useState(false);
 
   useEffect(() => {
     const fetchTasksList = async () => {
@@ -42,10 +41,21 @@ function App() {
     if (task.length >= 2 && task.length <= 64) {
       try {
         await addingTask(task);
+        
         setTask('');
 
         const tasks = await fetchTasks(currentTab);
+
         await setAllTask(tasks);
+
+        tasks.data.forEach((element) => {
+          setChangeTask((prev) => {
+            return {
+              ...prev,
+              [element.id]: element.title,
+            };
+          });
+        });
       } catch (error) {
         setError({ message: error.message || 'Failed to add task. Please try again later.' });
       }
@@ -65,6 +75,7 @@ function App() {
       await deleteTask(taskId);
 
       const tasks = await fetchTasks(currentTab);
+
       await setAllTask(tasks);
     } catch (error) {
       setError({ message: error || 'Failed to delete task. Please try again later.' });
@@ -74,6 +85,7 @@ function App() {
   const handleTabChange = async (tab) => {
     try {
       const tasks = await fetchTasks(tab);
+
       await setAllTask(tasks);
       await setCurrentTab(tab);
     } catch (error) {
@@ -85,6 +97,7 @@ function App() {
     if (title.length >= 2 && title.length <= 64) {
       try {
         await updateTask(isDone, id, title);
+
         const tasks = await fetchTasks(currentTab);
 
         await setAllTask(tasks);

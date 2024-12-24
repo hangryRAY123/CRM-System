@@ -1,5 +1,5 @@
 import { TaskItem } from './script';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import closeIcn from '../../assets/close.svg';
 import deleteIcn from '../../assets/delete.svg';
 import editIcn from '../../assets/edit.svg';
@@ -18,7 +18,7 @@ export const Task = ({
   const [checked, setChecked] = useState(isDone);
 
   const handleChecked = () => {
-    setChecked(!checked);
+    setChecked((editing) => !editing);
   };
 
   const handleEdit = (status) => {
@@ -27,17 +27,24 @@ export const Task = ({
   const handleNoEdit = () => {
     changeTask[id] = children;
   };
-  console.log(checked);
+
+  useEffect(() => {
+    handleUpdateTask(checked, id, changeTask[id]);
+  }, [checked]);
 
   return (
-    <TaskItem $save={saveIcn}>
+    <TaskItem>
       <div className='change-task'>
-        <input className='visually-hidden' id={id} type='checkbox' required />
-        <span className={`control ${checked ? 'checked' : ''}`} onClick={handleChecked}></span>
+        <span
+          className={`control ${checked ? 'checked' : ''}`}
+          onClick={() => {
+            handleChecked();
+          }}
+        ></span>
         {!edit ? (
-          <label htmlFor={id} className={checked && 'completed'} onClick={handleChecked}>
+          <p htmlFor={id} className={checked ? 'completed' : ''}>
             {children}
-          </label>
+          </p>
         ) : (
           <input
             type='text'
