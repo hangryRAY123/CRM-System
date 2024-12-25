@@ -4,8 +4,6 @@ import { Task } from './Task';
 export const TasksList = ({
   tasks,
   deleteTask,
-  handleChangeTask,
-  changeTask,
   handleUpdateTask,
 }) => {
   return (
@@ -16,8 +14,6 @@ export const TasksList = ({
           id={task.id}
           isDone={task.isDone}
           deleteTask={deleteTask}
-          handleChangeTask={handleChangeTask}
-          changeTask={changeTask}
           handleUpdateTask={handleUpdateTask}
         >
           {task.title}

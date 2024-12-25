@@ -1,16 +1,16 @@
 import './App.css';
 import { useState, useEffect } from 'react';
 import { AddTask } from './components/AddTask/AddTask';
-import { Tasks } from './components/Tasks/Tasks';
+import { TabsList } from './components/Tabs/TabsList';
+import { TasksList } from './components/Tasks/TasksList';
 import { addingTask, fetchTasks, deleteTask, updateTask } from './https';
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [task, setTask] = useState('');
-  const [allTask, setAllTask] = useState({});
+  const [allTask, setAllTask] = useState([]);
+  const [info, setInfo] = useState({});
   const [currentTab, setCurrentTab] = useState('all');
-  const [changeTask, setChangeTask] = useState({});
 
   useEffect(() => {
     const fetchTasksList = async () => {
@@ -18,18 +18,10 @@ function App() {
 
       try {
         const tasks = await fetchTasks();
-        setAllTask(tasks);
-
-        tasks.data.forEach((element) => {
-          setChangeTask((prev) => {
-            return {
-              ...prev,
-              [element.id]: element.title,
-            };
-          });
-        });
-      } catch (error) {
-        setError({ mesage: error.message || 'Failed to fetch tasks.' });
+        setAllTask(tasks.data);
+        setInfo(tasks.info);
+      } catch (e) {
+        setError(e.message || 'Failed to fetch tasks.');
       }
 
       setIsLoading(false);
@@ -37,36 +29,27 @@ function App() {
     fetchTasksList();
   }, []);
 
-  const handleToggleDone = async () => {
-    if (task.length >= 2 && task.length <= 64) {
+  const handleAddTask = async (form) => {
+    form.preventDefault();
+    const newTask = form.target[0].value;
+
+    if (newTask.length >= 2 && newTask.length <= 64) {
       try {
-        await addingTask(task);
-        
-        setTask('');
+        await addingTask(newTask);
+        form.target.reset();
 
         const tasks = await fetchTasks(currentTab);
 
-        await setAllTask(tasks);
-
-        tasks.data.forEach((element) => {
-          setChangeTask((prev) => {
-            return {
-              ...prev,
-              [element.id]: element.title,
-            };
-          });
-        });
-      } catch (error) {
-        setError({ message: error.message || 'Failed to add task. Please try again later.' });
+        setAllTask(tasks.data);
+        setInfo(tasks.info);
+      } catch (e) {
+        setError(e.message || 'Failed to add task. Please try again later.');
+        return;
       }
 
-      setError({
-        message: '',
-      });
+      setError('');
     } else {
-      setError({
-        message: 'Task title should be between 2 and 64 characters long.',
-      });
+      setError('Task title should be between 2 and 64 characters long.');
     }
   };
 
@@ -76,9 +59,10 @@ function App() {
 
       const tasks = await fetchTasks(currentTab);
 
-      await setAllTask(tasks);
-    } catch (error) {
-      setError({ message: error || 'Failed to delete task. Please try again later.' });
+      setAllTask(tasks.data);
+      setInfo(tasks.info);
+    } catch (e) {
+      setError(e.message || 'Failed to delete task. Please try again later.');
     }
   };
 
@@ -86,10 +70,11 @@ function App() {
     try {
       const tasks = await fetchTasks(tab);
 
-      await setAllTask(tasks);
-      await setCurrentTab(tab);
-    } catch (error) {
-      setError({ message: error || 'Failed change task.' });
+      setAllTask(tasks.data);
+      setInfo(tasks.info);
+      setCurrentTab(tab);
+    } catch (e) {
+      setError(error.message || 'Failed change task.');
     }
   };
 
@@ -100,32 +85,17 @@ function App() {
 
         const tasks = await fetchTasks(currentTab);
 
-        await setAllTask(tasks);
-      } catch (error) {
-        setError({ message: error || 'Failed update task.' });
+        setAllTask(tasks.data);
+        setInfo(tasks.info);
+      } catch (e) {
+        setError(e.message || 'Failed update task.');
+        return;
       }
 
-      setError({
-        message: '',
-      });
+      setError('');
     } else {
-      setError({
-        message: 'Task title should be between 2 and 64 characters long.',
-      });
+      setError('Task title should be between 2 and 64 characters long.');
     }
-  };
-
-  const handleAddTask = (event) => {
-    setTask(event.target.value);
-  };
-
-  const handleChangeTask = (id, title) => {
-    setChangeTask((prevUserInput) => {
-      return {
-        ...prevUserInput,
-        [id]: title,
-      };
-    });
   };
 
   return (
@@ -134,16 +104,12 @@ function App() {
         <div>Loading...</div>
       ) : (
         <>
-          {error && <div style={{ color: 'red' }}>{error.message}</div>}
-          <AddTask task={task} handleAddTask={handleAddTask} handleToggleDone={handleToggleDone} />
-          <Tasks
-            info={allTask.info}
-            tasks={allTask.data}
+          {error && <div style={{ color: 'red' }}>{error}</div>}
+          <AddTask handleAddTask={handleAddTask} />
+          <TabsList info={info} handleTabChange={handleTabChange} currentTab={currentTab} />
+          <TasksList
+            tasks={allTask}
             deleteTask={handleDeleteTask}
-            handleTabChange={handleTabChange}
-            currentTab={currentTab}
-            handleChangeTask={handleChangeTask}
-            changeTask={changeTask}
             handleUpdateTask={handleUpdateTask}
           />
         </>

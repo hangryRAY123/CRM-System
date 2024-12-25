@@ -1,19 +1,20 @@
 import { AddTaskBlock } from './style';
 
-export const AddTask = ({ task, handleAddTask, handleToggleDone }) => {
+export const AddTask = ({ handleAddTask }) => {
   return (
     <AddTaskBlock>
-      <input
-        type='text'
-        value={task}
-        onChange={handleAddTask}
-        placeholder='Task To Be Done... '
-        required
-      />
+      <form onSubmit={handleAddTask}>
+        <input
+          type='text'
+          name='task'
+          placeholder='Task To Be Done... '
+          minLength='2'
+          maxLength='64'
+          required
+        />
 
-      <button type='button' onClick={handleToggleDone}>
-        Add
-      </button>
+        <button type='submit'>Add</button>
+      </form>
     </AddTaskBlock>
   );
 };

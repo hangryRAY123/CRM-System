@@ -1,13 +1,15 @@
 import styled from 'styled-components';
 
-export const AddTaskBlock = styled.section`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  gap: 20px;
+export const AddTaskBlock = styled.div`
+  form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    gap: 20px;
+  }
 
   input {
     width: 100%;
