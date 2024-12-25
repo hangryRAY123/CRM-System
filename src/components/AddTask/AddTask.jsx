@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { AddTaskBlock } from './style';
 
 export const AddTask = ({ task, handleAddTask, handleToggleDone }) => {
