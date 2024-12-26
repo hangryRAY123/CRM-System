@@ -1,20 +1,31 @@
 import { TaskItem } from './script';
 import { UpdateTask } from '../UpdateTask/UpdateTask';
+import { deleteTask, updateTask } from '../../https';
 import { useState, useEffect } from 'react';
 import closeIcn from '../../assets/close.svg';
 import deleteIcn from '../../assets/delete.svg';
 import editIcn from '../../assets/edit.svg';
 
-export const Task = ({ children, id, isDone, deleteTask, handleUpdateTask }) => {
+export const Task = ({ children, id, isDone, handleDeleteTask, handleUpdateTask }) => {
   const [edit, setEdit] = useState(false);
   const [checked, setChecked] = useState(isDone);
   const [task, setTask] = useState(children);
+  const [error, setError] = useState('');
+
+  const handleDeleteTaskLocal = async () => {
+    try {
+      await deleteTask(id);
+      handleDeleteTask();
+    } catch (error) {
+      setError(error.message || 'Failed to fetch tasks.');
+    }
+  };
 
   const handleChangeTask = (event) => {
     setTask(event.target.value);
   };
 
-  const handleChecked = () => {
+  const handleChecked = async () => {
     setChecked((editing) => !editing);
   };
 
@@ -23,63 +34,81 @@ export const Task = ({ children, id, isDone, deleteTask, handleUpdateTask }) => 
   };
 
   useEffect(() => {
-    handleUpdateTask(checked, id, task);
+    const update = async () => {
+      if (task.length >= 2 && task.length <= 64) {
+        try {
+          await updateTask(checked, id, task);
+          handleUpdateTask(task);
+        } catch (error) {
+          setError(error.message || 'Failed to fetch tasks.');
+          return;
+        }
+
+        setError('');
+      } else {
+        setError('Task title should be between 2 and 64 characters long.');
+      }
+    };
+    update();
   }, [checked]);
 
   return (
-    <TaskItem>
-      <div className='change-task'>
-        <div style={{ display: 'flex' }}>
-          <input
-            className='visually-hidden'
-            type='checkbox'
-            checked={checked}
-            onChange={handleChecked}
-          />
-          <span className={`control ${checked ? 'checked' : ''}`} onClick={handleChecked}></span>
+    <>
+      {error && <div style={{ color: 'red' }}>{error}</div>}
+      <TaskItem>
+        <div className='change-task'>
+          <div style={{ display: 'flex' }}>
+            <input
+              className='visually-hidden'
+              type='checkbox'
+              checked={checked}
+              onChange={handleChecked}
+            />
+            <span className={`control ${checked ? 'checked' : ''}`} onClick={handleChecked}></span>
+          </div>
+          {!edit ? (
+            <p className={checked ? 'completed' : ''}>{children}</p>
+          ) : (
+            <UpdateTask
+              task={task}
+              handleChangeTask={handleChangeTask}
+              handleUpdateTask={handleUpdateTask}
+              isDone={isDone}
+              id={id}
+              handleEdit={handleEdit}
+            />
+          )}
         </div>
-        {!edit ? (
-          <p className={checked ? 'completed' : ''}>{children}</p>
-        ) : (
-          <UpdateTask
-            task={task}
-            handleChangeTask={handleChangeTask}
-            handleUpdateTask={handleUpdateTask}
-            isDone={isDone}
-            id={id}
-            handleEdit={handleEdit}
-          />
-        )}
-      </div>
 
-      <div className='btn-container'>
-        {!edit ? (
-          <button
-            className='btn'
-            type='button'
-            onClick={() => {
-              handleEdit(true);
-            }}
-          >
-            <img src={editIcn} alt='Edit.' />
-          </button>
-        ) : (
-          <button
-            className='btn'
-            type='button'
-            onClick={() => {
-              handleEdit(false);
-              setTask(children);
-            }}
-          >
-            <img src={closeIcn} alt='Close.' />
-          </button>
-        )}
+        <div className='btn-container'>
+          {!edit ? (
+            <button
+              className='btn'
+              type='button'
+              onClick={() => {
+                handleEdit(true);
+              }}
+            >
+              <img src={editIcn} alt='Edit.' />
+            </button>
+          ) : (
+            <button
+              className='btn'
+              type='button'
+              onClick={() => {
+                handleEdit(false);
+                setTask(children);
+              }}
+            >
+              <img src={closeIcn} alt='Close.' />
+            </button>
+          )}
 
-        <button className='btn btn--delete' type='button' onClick={() => deleteTask(id)}>
-          <img src={deleteIcn} alt='Delete.' />
-        </button>
-      </div>
-    </TaskItem>
+          <button className='btn btn--delete' type='button' onClick={handleDeleteTaskLocal}>
+            <img src={deleteIcn} alt='Delete.' />
+          </button>
+        </div>
+      </TaskItem>
+    </>
   );
 };

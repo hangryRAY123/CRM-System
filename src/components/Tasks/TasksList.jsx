@@ -3,7 +3,7 @@ import { Task } from './Task';
 
 export const TasksList = ({
   tasks,
-  deleteTask,
+  handleDeleteTask,
   handleUpdateTask,
 }) => {
   return (
@@ -13,7 +13,7 @@ export const TasksList = ({
           key={task.id}
           id={task.id}
           isDone={task.isDone}
-          deleteTask={deleteTask}
+          handleDeleteTask={handleDeleteTask}
           handleUpdateTask={handleUpdateTask}
         >
           {task.title}

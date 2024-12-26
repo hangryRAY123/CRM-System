@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { AddTask } from './components/AddTask/AddTask';
 import { TabsList } from './components/Tabs/TabsList';
 import { TasksList } from './components/Tasks/TasksList';
-import { addingTask, fetchTasks, deleteTask, updateTask } from './https';
+import { fetchTasks } from './https';
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,34 +29,20 @@ function App() {
     fetchTasksList();
   }, []);
 
-  const handleAddTask = async (form) => {
-    form.preventDefault();
-    const newTask = form.target[0].value;
+  const handleAddTask = async () => {
+    try {
+      const tasks = await fetchTasks(currentTab);
 
-    if (newTask.length >= 2 && newTask.length <= 64) {
-      try {
-        await addingTask(newTask);
-        form.target.reset();
-
-        const tasks = await fetchTasks(currentTab);
-
-        setAllTask(tasks.data);
-        setInfo(tasks.info);
-      } catch (e) {
-        setError(e.message || 'Failed to add task. Please try again later.');
-        return;
-      }
-
-      setError('');
-    } else {
-      setError('Task title should be between 2 and 64 characters long.');
+      setAllTask(tasks.data);
+      setInfo(tasks.info);
+    } catch (e) {
+      setError(e.message || 'Failed to add task. Please try again later.');
+      return;
     }
   };
 
-  const handleDeleteTask = async (taskId) => {
+  const handleDeleteTask = async () => {
     try {
-      await deleteTask(taskId);
-
       const tasks = await fetchTasks(currentTab);
 
       setAllTask(tasks.data);
@@ -78,23 +64,15 @@ function App() {
     }
   };
 
-  const handleUpdateTask = async (isDone, id, title) => {
-    if (title.length >= 2 && title.length <= 64) {
-      try {
-        await updateTask(isDone, id, title);
+  const handleUpdateTask = async () => {
+    try {
+      const tasks = await fetchTasks(currentTab);
 
-        const tasks = await fetchTasks(currentTab);
-
-        setAllTask(tasks.data);
-        setInfo(tasks.info);
-      } catch (e) {
-        setError(e.message || 'Failed update task.');
-        return;
-      }
-
-      setError('');
-    } else {
-      setError('Task title should be between 2 and 64 characters long.');
+      setAllTask(tasks.data);
+      setInfo(tasks.info);
+    } catch (e) {
+      setError(e.message || 'Failed update task.');
+      return;
     }
   };
 
@@ -109,7 +87,7 @@ function App() {
           <TabsList info={info} handleTabChange={handleTabChange} currentTab={currentTab} />
           <TasksList
             tasks={allTask}
-            deleteTask={handleDeleteTask}
+            handleDeleteTask={handleDeleteTask}
             handleUpdateTask={handleUpdateTask}
           />
         </>
