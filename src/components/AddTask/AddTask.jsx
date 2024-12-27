@@ -12,7 +12,7 @@ export const AddTask = ({ handleAddTask }) => {
     if (newTask.length >= 2 && newTask.length <= 64) {
       try {
         await addingTask(newTask);
-        handleAddTask(newTask);
+        await handleAddTask(newTask);
         form.target.reset();
       } catch (e) {
         setError(e.message || 'Failed to add task. Please try again later.');

@@ -6,51 +6,50 @@ import closeIcn from '../../assets/close.svg';
 import deleteIcn from '../../assets/delete.svg';
 import editIcn from '../../assets/edit.svg';
 
-export const Task = ({ children, id, isDone, handleDeleteTask, handleUpdateTask }) => {
+export const Task = ({ children, id, isDone, handleChangeTask, title }) => {
   const [edit, setEdit] = useState(false);
   const [checked, setChecked] = useState(isDone);
-  const [task, setTask] = useState(children);
+  const [task, setTask] = useState(title);
   const [error, setError] = useState('');
 
   const handleDeleteTaskLocal = async () => {
     try {
       await deleteTask(id);
-      handleDeleteTask();
+      await handleChangeTask();
     } catch (error) {
       setError(error.message || 'Failed to fetch tasks.');
     }
   };
 
-  const handleChangeTask = (event) => {
+  const handleCansel = () => {
+    handleEdit(false);
+    setTask(title);
+  };
+
+  const handleChangeTaskLocal = (event) => {
     setTask(event.target.value);
   };
 
   const handleChecked = async () => {
-    setChecked((editing) => !editing);
+    setChecked((prev) => !prev);
+    if (task.length >= 2 && task.length <= 64) {
+      try {
+        await updateTask(!checked, id, task);
+        await handleChangeTask(task);
+      } catch (error) {
+        setError(error.message || 'Failed to fetch tasks.');
+        return;
+      }
+
+      setError('');
+    } else {
+      setError('Task title should be between 2 and 64 characters long.');
+    }
   };
 
   const handleEdit = (status) => {
     setEdit(status);
   };
-
-  useEffect(() => {
-    const update = async () => {
-      if (task.length >= 2 && task.length <= 64) {
-        try {
-          await updateTask(checked, id, task);
-          handleUpdateTask(task);
-        } catch (error) {
-          setError(error.message || 'Failed to fetch tasks.');
-          return;
-        }
-
-        setError('');
-      } else {
-        setError('Task title should be between 2 and 64 characters long.');
-      }
-    };
-    update();
-  }, [checked]);
 
   return (
     <>
@@ -71,8 +70,8 @@ export const Task = ({ children, id, isDone, handleDeleteTask, handleUpdateTask 
           ) : (
             <UpdateTask
               task={task}
+              handleChangeTaskLocal={handleChangeTaskLocal}
               handleChangeTask={handleChangeTask}
-              handleUpdateTask={handleUpdateTask}
               isDone={isDone}
               id={id}
               handleEdit={handleEdit}
@@ -92,14 +91,7 @@ export const Task = ({ children, id, isDone, handleDeleteTask, handleUpdateTask 
               <img src={editIcn} alt='Edit.' />
             </button>
           ) : (
-            <button
-              className='btn'
-              type='button'
-              onClick={() => {
-                handleEdit(false);
-                setTask(children);
-              }}
-            >
+            <button className='btn' type='button' onClick={handleCansel}>
               <img src={closeIcn} alt='Close.' />
             </button>
           )}

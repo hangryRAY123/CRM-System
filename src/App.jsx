@@ -29,26 +29,15 @@ function App() {
     fetchTasksList();
   }, []);
 
-  const handleAddTask = async () => {
+  const handleChangeTask = async () => {
     try {
       const tasks = await fetchTasks(currentTab);
 
       setAllTask(tasks.data);
       setInfo(tasks.info);
     } catch (e) {
-      setError(e.message || 'Failed to add task. Please try again later.');
+      setError(e.message || 'Failed to change task. Please try again later.');
       return;
-    }
-  };
-
-  const handleDeleteTask = async () => {
-    try {
-      const tasks = await fetchTasks(currentTab);
-
-      setAllTask(tasks.data);
-      setInfo(tasks.info);
-    } catch (e) {
-      setError(e.message || 'Failed to delete task. Please try again later.');
     }
   };
 
@@ -64,18 +53,6 @@ function App() {
     }
   };
 
-  const handleUpdateTask = async () => {
-    try {
-      const tasks = await fetchTasks(currentTab);
-
-      setAllTask(tasks.data);
-      setInfo(tasks.info);
-    } catch (e) {
-      setError(e.message || 'Failed update task.');
-      return;
-    }
-  };
-
   return (
     <>
       {isLoading ? (
@@ -83,13 +60,9 @@ function App() {
       ) : (
         <>
           {error && <div style={{ color: 'red' }}>{error}</div>}
-          <AddTask handleAddTask={handleAddTask} />
+          <AddTask handleAddTask={handleChangeTask} />
           <TabsList info={info} handleTabChange={handleTabChange} currentTab={currentTab} />
-          <TasksList
-            tasks={allTask}
-            handleDeleteTask={handleDeleteTask}
-            handleUpdateTask={handleUpdateTask}
-          />
+          <TasksList tasks={allTask} handleChangeTask={handleChangeTask} />
         </>
       )}
     </>

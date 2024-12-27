@@ -5,7 +5,7 @@ import { useState } from 'react';
 export const UpdateTask = ({
   task,
   handleChangeTask,
-  handleUpdateTask,
+  handleChangeTaskLocal,
   isDone,
   id,
   handleEdit,
@@ -19,8 +19,8 @@ export const UpdateTask = ({
     if (newTask.length >= 2 && newTask.length <= 64) {
       try {
         await updateTask(isDone, id, newTask);
-        handleUpdateTask();
-        handleEdit(false);
+        await handleChangeTask();
+        await handleEdit(false);
       } catch (e) {
         setError(e.message || 'Failed update task.');
         return;
@@ -38,7 +38,7 @@ export const UpdateTask = ({
         <input
           type='text'
           value={task}
-          onChange={handleChangeTask}
+          onChange={handleChangeTaskLocal}
           minLength='2'
           maxLength='64'
           required
