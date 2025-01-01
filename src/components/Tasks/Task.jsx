@@ -1,7 +1,7 @@
 import { TaskItem } from './script';
-import { UpdateTask } from '../UpdateTask/UpdateTask';
+import saveIcn from '../../assets/save.svg';
 import { deleteTask, updateTask } from '../../https';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import closeIcn from '../../assets/close.svg';
 import deleteIcn from '../../assets/delete.svg';
 import editIcn from '../../assets/edit.svg';
@@ -12,15 +12,6 @@ export const Task = ({ children, id, isDone, handleChangeTask, title }) => {
   const [task, setTask] = useState(title);
   const [error, setError] = useState('');
 
-  const handleDeleteTaskLocal = async () => {
-    try {
-      await deleteTask(id);
-      await handleChangeTask();
-    } catch (error) {
-      setError(error.message || 'Failed to fetch tasks.');
-    }
-  };
-
   const handleCansel = () => {
     handleEdit(false);
     setTask(title);
@@ -28,6 +19,39 @@ export const Task = ({ children, id, isDone, handleChangeTask, title }) => {
 
   const handleChangeTaskLocal = (event) => {
     setTask(event.target.value);
+  };
+
+  const handleEdit = (status) => {
+    setEdit(status);
+  };
+
+  const updateTaskLocal = async (form) => {
+    form.preventDefault();
+    const newTask = form.target[0].value;
+
+    if (newTask.length >= 2 && newTask.length <= 64) {
+      try {
+        await updateTask(isDone, id, newTask);
+        await handleChangeTask();
+        await handleEdit(false);
+      } catch (e) {
+        setError(e.message || 'Failed update task.');
+        return;
+      }
+
+      setError('');
+    } else {
+      setError('Task title should be between 2 and 64 characters long.');
+    }
+  };
+
+  const handleDeleteTaskLocal = async () => {
+    try {
+      await deleteTask(id);
+      await handleChangeTask();
+    } catch (error) {
+      setError(error.message || 'Failed to fetch tasks.');
+    }
   };
 
   const handleChecked = async () => {
@@ -47,10 +71,6 @@ export const Task = ({ children, id, isDone, handleChangeTask, title }) => {
     }
   };
 
-  const handleEdit = (status) => {
-    setEdit(status);
-  };
-
   return (
     <>
       {error && <div style={{ color: 'red' }}>{error}</div>}
@@ -68,14 +88,21 @@ export const Task = ({ children, id, isDone, handleChangeTask, title }) => {
           {!edit ? (
             <p className={checked ? 'completed' : ''}>{children}</p>
           ) : (
-            <UpdateTask
-              task={task}
-              handleChangeTaskLocal={handleChangeTaskLocal}
-              handleChangeTask={handleChangeTask}
-              isDone={isDone}
-              id={id}
-              handleEdit={handleEdit}
-            />
+            <form onSubmit={updateTaskLocal}>
+              <input
+                type='text'
+                value={task}
+                onChange={handleChangeTaskLocal}
+                minLength='2'
+                maxLength='64'
+                required
+              />
+              <div className='btn-container'>
+                <button className='btn' type='submit'>
+                  <img style={{ width: '30px', height: '30px' }} src={saveIcn} alt='Save.' />
+                </button>
+              </div>
+            </form>
           )}
         </div>
 
