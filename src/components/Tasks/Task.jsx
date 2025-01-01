@@ -1,97 +1,133 @@
 import { TaskItem } from './script';
-import { useState, useEffect } from 'react';
+import saveIcn from '../../assets/save.svg';
+import { deleteTask, updateTask } from '../../https';
+import { useState } from 'react';
 import closeIcn from '../../assets/close.svg';
 import deleteIcn from '../../assets/delete.svg';
 import editIcn from '../../assets/edit.svg';
-import saveIcn from '../../assets/save.svg';
 
-export const Task = ({
-  children,
-  id,
-  isDone,
-  deleteTask,
-  handleChangeTask,
-  changeTask,
-  handleUpdateTask,
-}) => {
+export const Task = ({ children, id, isDone, handleChangeTask, title }) => {
   const [edit, setEdit] = useState(false);
   const [checked, setChecked] = useState(isDone);
+  const [task, setTask] = useState(title);
+  const [error, setError] = useState('');
 
-  const handleChecked = () => {
-    setChecked((editing) => !editing);
+  const handleCansel = () => {
+    handleEdit(false);
+    setTask(title);
+  };
+
+  const handleChangeTaskLocal = (event) => {
+    setTask(event.target.value);
   };
 
   const handleEdit = (status) => {
     setEdit(status);
   };
-  const handleNoEdit = () => {
-    changeTask[id] = children;
+
+  const updateTaskLocal = async (form) => {
+    form.preventDefault();
+    const newTask = form.target[0].value;
+
+    if (newTask.length >= 2 && newTask.length <= 64) {
+      try {
+        await updateTask(isDone, id, newTask);
+        await handleChangeTask();
+        await handleEdit(false);
+      } catch (e) {
+        setError(e.message || 'Failed update task.');
+        return;
+      }
+
+      setError('');
+    } else {
+      setError('Task title should be between 2 and 64 characters long.');
+    }
   };
 
-  useEffect(() => {
-    handleUpdateTask(checked, id, changeTask[id]);
-  }, [checked]);
+  const handleDeleteTaskLocal = async () => {
+    try {
+      await deleteTask(id);
+      await handleChangeTask();
+    } catch (error) {
+      setError(error.message || 'Failed to fetch tasks.');
+    }
+  };
+
+  const handleChecked = async () => {
+    setChecked((prev) => !prev);
+    if (task.length >= 2 && task.length <= 64) {
+      try {
+        await updateTask(!checked, id, task);
+        await handleChangeTask(task);
+      } catch (error) {
+        setError(error.message || 'Failed to fetch tasks.');
+        return;
+      }
+
+      setError('');
+    } else {
+      setError('Task title should be between 2 and 64 characters long.');
+    }
+  };
 
   return (
-    <TaskItem>
-      <div className='change-task'>
-        <span
-          className={`control ${checked ? 'checked' : ''}`}
-          onClick={() => {
-            handleChecked();
-          }}
-        ></span>
-        {!edit ? (
-          <p htmlFor={id} className={checked ? 'completed' : ''}>
-            {children}
-          </p>
-        ) : (
-          <input
-            type='text'
-            value={changeTask[id]}
-            onChange={(event) => handleChangeTask(id, event.target.value)}
-          />
-        )}
-      </div>
-      <div className='btn-container'>
-        {edit ? (
-          <>
+    <>
+      {error && <div style={{ color: 'red' }}>{error}</div>}
+      <TaskItem>
+        <div className='change-task'>
+          <div style={{ display: 'flex' }}>
+            <input
+              className='visually-hidden'
+              type='checkbox'
+              checked={checked}
+              onChange={handleChecked}
+            />
+            <span className={`control ${checked ? 'checked' : ''}`} onClick={handleChecked}></span>
+          </div>
+          {!edit ? (
+            <p className={checked ? 'completed' : ''}>{children}</p>
+          ) : (
+            <form onSubmit={updateTaskLocal}>
+              <input
+                type='text'
+                value={task}
+                onChange={handleChangeTaskLocal}
+                minLength='2'
+                maxLength='64'
+                required
+              />
+              <div className='btn-container'>
+                <button className='btn' type='submit'>
+                  <img style={{ width: '30px', height: '30px' }} src={saveIcn} alt='Save.' />
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+
+        <div className='btn-container'>
+          {!edit ? (
             <button
+              className='btn'
               type='button'
               onClick={() => {
-                handleUpdateTask(isDone, id, changeTask[id]);
-                if (changeTask[id].length >= 2 && changeTask[id].length <= 64) {
-                  handleEdit(false);
-                }
+                handleEdit(true);
               }}
             >
-              <img style={{ width: '30px', height: '30px' }} src={saveIcn} alt='Save.' />
+              <img src={editIcn} alt='Edit.' />
             </button>
-            <button
-              type='button'
-              onClick={() => {
-                handleEdit(false);
-                handleNoEdit();
-              }}
-            >
+          ) : (
+            <button className='btn' type='button' onClick={handleCansel}>
               <img src={closeIcn} alt='Close.' />
             </button>
-          </>
-        ) : (
-          <button
-            type='button'
-            onClick={() => {
-              handleEdit(true);
-            }}
-          >
-            <img src={editIcn} alt='Edit.' />
-          </button>
-        )}
+          )}
 
-        <button type='button' onClick={() => deleteTask(id)}>
-          <img src={deleteIcn} alt='Delete.' />
-        </button>
-      </div>
-    </TaskItem>
+          <button className='btn btn--delete' type='button' onClick={handleDeleteTaskLocal}>
+            <img src={deleteIcn} alt='Delete.' />
+          </button>
+        </div>
+      </TaskItem>
+    </>
   );
 };

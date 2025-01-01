@@ -17,12 +17,20 @@ export const TaskItem = styled.li`
   background-color: #fff;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  gap: 15px;
+  gap: 10px;
 
   .change-task {
     display: flex;
     align-items: center;
     gap: 10px;
+    width: 100%;
+
+    form {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      width: 100%;
+    }
 
     p {
       margin: 0;
@@ -61,7 +69,7 @@ export const TaskItem = styled.li`
     gap: 10px;
   }
 
-  button {
+  .btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -91,7 +99,7 @@ export const TaskItem = styled.li`
     }
   }
 
-  button:last-child {
+  .btn--delete {
     background-color: #ff665c;
   }
 
@@ -131,5 +139,16 @@ export const TaskItem = styled.li`
     height: 2px;
     width: 100%;
     background-color: #213547;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip: rect(0 0 0 0);
+    overflow: hidden;
   }
 `;

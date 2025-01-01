@@ -3,10 +3,7 @@ import { Task } from './Task';
 
 export const TasksList = ({
   tasks,
-  deleteTask,
-  handleChangeTask,
-  changeTask,
-  handleUpdateTask,
+  handleChangeTask
 }) => {
   return (
     <List>
@@ -15,10 +12,8 @@ export const TasksList = ({
           key={task.id}
           id={task.id}
           isDone={task.isDone}
-          deleteTask={deleteTask}
           handleChangeTask={handleChangeTask}
-          changeTask={changeTask}
-          handleUpdateTask={handleUpdateTask}
+          title={task.title}
         >
           {task.title}
         </Task>
