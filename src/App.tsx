@@ -20,7 +20,7 @@ function App() {
         const tasks = await fetchTasks();
         setAllTask(tasks.data);
         setInfo(tasks.info);
-      } catch (e) {
+      } catch (e: any) {
         setError(e.message || 'Failed to fetch tasks.');
       }
 
@@ -35,21 +35,21 @@ function App() {
 
       setAllTask(tasks.data);
       setInfo(tasks.info);
-    } catch (e) {
+    } catch (e: any) {
       setError(e.message || 'Failed to change task. Please try again later.');
       return;
     }
   };
 
-  const handleTabChange = async (tab) => {
+  const handleTabChange = async (tab: string) => {
     try {
       const tasks = await fetchTasks(tab);
 
       setAllTask(tasks.data);
       setInfo(tasks.info);
       setCurrentTab(tab);
-    } catch (e) {
-      setError(error.message || 'Failed change task.');
+    } catch (e: any) {
+      setError(e.message || 'Failed change task.');
     }
   };
 
