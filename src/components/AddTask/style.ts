@@ -18,7 +18,7 @@ export const AddTaskBlock = styled.div`
     outline: none;
     border-bottom: 2px solid #dcdfe6;
     color: #000;
-    background-color: #f1f4f9;
+    background-color: transparent;
   }
 
   input::placeholder {
