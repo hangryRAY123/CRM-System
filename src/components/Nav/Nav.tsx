@@ -1,21 +1,3 @@
-// import { NavLink } from 'react-router-dom';
-// import { NavList } from './style';
-
-// export const Nav = () => {
-//   return (
-//     <NavList>
-//       <ul>
-//         <li>
-//           <NavLink to='/profile'>Профиль</NavLink>
-//         </li>
-//         <li>
-//           <NavLink to='/'>Список задач</NavLink>
-//         </li>
-//       </ul>
-//     </NavList>
-//   );
-// };
-
 import { NavLink } from 'react-router-dom';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';

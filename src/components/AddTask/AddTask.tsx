@@ -1,53 +1,64 @@
-import { AddTaskBlock } from './style';
 import { addingTask } from '../../https';
 import { useState } from 'react';
 import React from 'react';
+import type { FormProps } from 'antd';
+import { Button, Form, Input } from 'antd';
 
 export const AddTask: React.FC<{
   handleAddTask: (newTask: string) => void;
 }> = (props) => {
   const [error, setError] = useState('');
+  const [formNewTask] = Form.useForm();
 
-  const handleAddTaskLocal = async (event: React.FormEvent) => {
-    event.preventDefault();
+  type FieldType = {
+    newTask: string;
+  };
 
-    const target = event.target as typeof event.target & {
-      userTaskInput: { value: string };
-    };
-    const newTask = target.userTaskInput.value;
-
-    if (newTask.length >= 2 && newTask.length <= 64) {
-      try {
-        await addingTask(newTask);
-        await props.handleAddTask(newTask);
-        target.userTaskInput.value = '';
-      } catch (e: any) {
-        setError(e.message || 'Failed to add task. Please try again later.');
-        return;
-      }
-
-      setError('');
-    } else {
-      setError('Task title should be between 2 and 64 characters long.');
+  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+    try {
+      await addingTask(values.newTask);
+      await props.handleAddTask(values.newTask);
+      formNewTask.resetFields();
+    } catch (e: any) {
+      setError(e.message || 'Failed to add task. Please try again later.');
+      return;
     }
+    setError('');
   };
 
   return (
-    <AddTaskBlock>
+    <>
       {error && <div style={{ color: 'red' }}>{error}</div>}
-      <form onSubmit={handleAddTaskLocal}>
-        <input
-          id='userTaskInput'
-          type='text'
-          name='task'
-          placeholder='Task To Be Done... '
-          minLength={2}
-          maxLength={64}
-          required
-        />
+      <Form
+        layout='inline'
+        name='newTask'
+        form={formNewTask}
+        style={{ flexWrap: 'nowrap', width: '100%', marginBottom: 20 }}
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        autoComplete='off'
+      >
+        <Form.Item<FieldType>
+          style={{ flexGrow: 1 }}
+          name='newTask'
+          rules={[
+            {
+              required: true,
+              min: 2,
+              max: 64,
+              message: 'Task title should be between 2 and 64 characters long.',
+            },
+          ]}
+        >
+          <Input placeholder='Task To Be Done...' />
+        </Form.Item>
 
-        <button type='submit'>Add</button>
-      </form>
-    </AddTaskBlock>
+        <Form.Item style={{ marginRight: 0 }} label={null}>
+          <Button type='primary' htmlType='submit'>
+            Add
+          </Button>
+        </Form.Item>
+      </Form>
+    </>
   );
 };

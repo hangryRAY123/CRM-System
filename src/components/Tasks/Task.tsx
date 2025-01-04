@@ -1,11 +1,15 @@
 import { TaskItem } from './script';
-import saveIcn from '../../assets/save.svg';
 import React from 'react';
 import { deleteTask, updateTask } from '../../https';
 import { useState } from 'react';
-import closeIcn from '../../assets/close.svg';
-import deleteIcn from '../../assets/delete.svg';
-import editIcn from '../../assets/edit.svg';
+import type { FormProps, CheckboxProps } from 'antd';
+import { Button, Form, Input, Checkbox } from 'antd';
+import {
+  CheckCircleOutlined,
+  EditOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons';
 
 export const Task: React.FC<{
   children: React.ReactNode;
@@ -21,41 +25,30 @@ export const Task: React.FC<{
   const [task, setTask] = useState(title);
   const [error, setError] = useState('');
 
+  type FieldType = {
+    newTask: string;
+  };
+
   const handleCansel = () => {
     handleEdit(false);
     setTask(title);
-  };
-
-  const handleChangeTaskLocal = (event: React.FormEvent<HTMLInputElement>) => {
-    setTask(event.currentTarget.value);
   };
 
   const handleEdit = (status: boolean) => {
     setEdit(status);
   };
 
-  const updateTaskLocal = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    const target = event.target as typeof event.target & {
-      userTaskUpdate: { value: string };
-    };
-    const newTask = target.userTaskUpdate.value;
-
-    if (newTask.length >= 2 && newTask.length <= 64) {
-      try {
-        await updateTask(isDone, id, newTask);
-        await handleChangeTask();
-        await handleEdit(false);
-      } catch (e: any) {
-        setError(e.message || 'Failed update task.');
-        return;
-      }
-
-      setError('');
-    } else {
-      setError('Task title should be between 2 and 64 characters long.');
+  const updateTaskLocal: FormProps<FieldType>['onFinish'] = async (values) => {
+    try {
+      await updateTask(isDone, id, values.newTask);
+      await handleChangeTask();
+      await handleEdit(false);
+    } catch (e: any) {
+      setError(e.message || 'Failed update task.');
+      return;
     }
+
+    setError('');
   };
 
   const handleDeleteTaskLocal = async () => {
@@ -67,21 +60,18 @@ export const Task: React.FC<{
     }
   };
 
-  const handleChecked = async () => {
-    setChecked((prev) => !prev);
-    if (task.length >= 2 && task.length <= 64) {
-      try {
-        await updateTask(!checked, id, task);
-        await handleChangeTask(task);
-      } catch (error: any) {
-        setError(error.message || 'Failed to fetch tasks.');
-        return;
-      }
+  const handleChecked: CheckboxProps['onChange'] = async (e) => {
+    setChecked(e.target.checked);
 
-      setError('');
-    } else {
-      setError('Task title should be between 2 and 64 characters long.');
+    try {
+      await updateTask(e.target.checked, id, task);
+      await handleChangeTask(task);
+    } catch (error: any) {
+      setError(error.message || 'Failed to fetch tasks.');
+      return;
     }
+
+    setError('');
   };
 
   return (
@@ -89,57 +79,68 @@ export const Task: React.FC<{
       {error && <div style={{ color: 'red' }}>{error}</div>}
       <TaskItem>
         <div className='change-task'>
-          <div style={{ display: 'flex' }}>
-            <input
-              className='visually-hidden'
-              type='checkbox'
-              checked={checked}
-              onChange={handleChecked}
-            />
-            <span className={`control ${checked ? 'checked' : ''}`} onClick={handleChecked}></span>
-          </div>
+          <Checkbox onChange={handleChecked} checked={checked} />
           {!edit ? (
             <p className={checked ? 'completed' : ''}>{children}</p>
           ) : (
-            <form onSubmit={updateTaskLocal}>
-              <input
-                type='text'
-                id='userTaskUpdate'
-                value={task}
-                onChange={handleChangeTaskLocal}
-                minLength={2}
-                maxLength={64}
-                required
-              />
-              <div className='btn-container'>
-                <button className='btn' type='submit'>
-                  <img style={{ width: '30px', height: '30px' }} src={saveIcn} alt='Save.' />
-                </button>
-              </div>
-            </form>
+            <Form
+              layout='inline'
+              name={String(id)}
+              style={{ flexWrap: 'nowrap', width: '100%' }}
+              initialValues={{ newTask: task }}
+              onFinish={updateTaskLocal}
+              autoComplete='off'
+            >
+              <Form.Item<FieldType>
+                style={{ flexGrow: 1 }}
+                name='newTask'
+                rules={[
+                  {
+                    required: true,
+                    min: 2,
+                    max: 64,
+                    message: 'Task title should be between 2 and 64 characters long.',
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item style={{ marginRight: 0 }} label={null}>
+                <Button type='primary' htmlType='submit'>
+                  <CheckCircleOutlined />
+                </Button>
+              </Form.Item>
+            </Form>
           )}
         </div>
 
         <div className='btn-container'>
           {!edit ? (
-            <button
-              className='btn'
-              type='button'
+            <Button
+              type='primary'
+              htmlType='button'
               onClick={() => {
                 handleEdit(true);
               }}
             >
-              <img src={editIcn} alt='Edit.' />
-            </button>
+              <EditOutlined />
+            </Button>
           ) : (
-            <button className='btn' type='button' onClick={handleCansel}>
-              <img src={closeIcn} alt='Close.' />
-            </button>
+            <Button type='primary' htmlType='button' onClick={handleCansel}>
+              <CloseOutlined />
+            </Button>
           )}
 
-          <button className='btn btn--delete' type='button' onClick={handleDeleteTaskLocal}>
-            <img src={deleteIcn} alt='Delete.' />
-          </button>
+          <Button
+            type='primary'
+            htmlType='button'
+            color='danger'
+            variant='solid'
+            onClick={handleDeleteTaskLocal}
+          >
+            <DeleteOutlined />
+          </Button>
         </div>
       </TaskItem>
     </>

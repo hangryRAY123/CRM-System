@@ -30,7 +30,7 @@ export const deleteTask = (taskId: number) => {
     });
 };
 
-export const fetchTasks = (tab = 'all') => {
+export const fetchTasks = (tab: string) => {
   return instance
     .get(`/todos?filter=${tab}`)
     .then((response) => {

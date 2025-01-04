@@ -1,6 +1,5 @@
 import React from 'react';
-import { List } from './style';
-import { Tab } from './Tab';
+import { Tabs } from 'antd';
 
 export const TabsList: React.FC<{
   handleTabChange: (tab: string) => void;
@@ -19,18 +18,22 @@ export const TabsList: React.FC<{
     inWork: 'Активные',
   };
 
+  const onChange = (key: string) => {
+    props.handleTabChange(key);
+  };
+
   return (
-    <List>
-      {Object.entries(props.info).map(([key, value]) => (
-        <Tab
-          id={key}
-          key={key}
-          currentTab={props.currentTab}
-          handleTabChange={props.handleTabChange}
-        >
-          {transletedTabs[key]}({value})
-        </Tab>
-      ))}
-    </List>
+    <Tabs
+      activeKey={props.currentTab}
+      animated={false}
+      centered
+      onChange={onChange}
+      items={Object.entries(props.info).map(([key, value]) => {
+        return {
+          label: `${transletedTabs[key]}(${value})`,
+          key: key,
+        };
+      })}
+    />
   );
 };
