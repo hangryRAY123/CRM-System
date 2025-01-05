@@ -26,7 +26,9 @@ export const TodoList = () => {
       setIsLoading(false);
     };
     fetchTasksList();
+  }, []);
 
+  useEffect(() => {
     const interval = setInterval(() => {
       handleChangeTask();
     }, 5000);
@@ -48,7 +50,15 @@ export const TodoList = () => {
   };
 
   const handleTabChange = async (tab: string) => {
-    setCurrentTab(tab);
+    try {
+      const tasks = await fetchTasks(tab);
+
+      setAllTask(tasks.data);
+      setInfo(tasks.info);
+      setCurrentTab(tab);
+    } catch (error: any) {
+      setError(error.message || 'Failed change task.');
+    }
   };
 
   return (
@@ -59,7 +69,7 @@ export const TodoList = () => {
         <>
           {error && <div style={{ color: 'red' }}>{error}</div>}
           <AddTask handleAddTask={handleChangeTask} />
-          <TabsList info={info} handleTabChange={handleTabChange} currentTab={currentTab} />
+          <TabsList info={info} handleTabChange={handleTabChange} />
           <TasksList tasks={allTask} handleChangeTask={handleChangeTask} />
         </>
       )}
