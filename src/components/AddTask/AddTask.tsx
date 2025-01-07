@@ -3,11 +3,12 @@ import { useState } from 'react';
 import React from 'react';
 import type { FormProps } from 'antd';
 import { Button, Form, Input } from 'antd';
+import { VALIDATE_TASK } from '../../helpers/constants';
 
 export const AddTask: React.FC<{
-  handleAddTask: (newTask: string) => void;
+  changeTask: (newTask: string) => void;
 }> = (props) => {
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string>('');
   const [formNewTask] = Form.useForm();
 
   type FieldType = {
@@ -17,7 +18,7 @@ export const AddTask: React.FC<{
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
     try {
       await addingTask(values.newTask);
-      await props.handleAddTask(values.newTask);
+      await props.changeTask(values.newTask);
       formNewTask.resetFields();
     } catch (e: any) {
       setError(e.message || 'Failed to add task. Please try again later.');
@@ -44,9 +45,9 @@ export const AddTask: React.FC<{
           rules={[
             {
               required: true,
-              min: 2,
-              max: 64,
-              message: 'Task title should be between 2 and 64 characters long.',
+              min: VALIDATE_TASK.MIN_TITLE_LENGHT,
+              max: VALIDATE_TASK.MAX_TITLE_LENGHT,
+              message: `Task title should be between ${VALIDATE_TASK.MIN_TITLE_LENGHT} and ${VALIDATE_TASK.MAX_TITLE_LENGHT} characters long.`,
             },
           ]}
         >

@@ -1,10 +1,11 @@
 import React from 'react';
-import { List } from './script';
+import { List } from './style';
 import { Task } from './Task';
+import { AllTask } from '../../helpers/types';
 
 export const TasksList: React.FC<{
-  tasks: { id: number; title: string; created: 'string'; isDone: boolean }[];
-  handleChangeTask: Function;
+  tasks: AllTask[];
+  changeTask: () => void;
 }> = (props) => {
   return (
     <List>
@@ -13,7 +14,7 @@ export const TasksList: React.FC<{
           key={task.id}
           id={task.id}
           isDone={task.isDone}
-          handleChangeTask={props.handleChangeTask}
+          changeTask={props.changeTask}
           title={task.title}
         >
           {task.title}

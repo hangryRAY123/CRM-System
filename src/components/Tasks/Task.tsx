@@ -1,7 +1,8 @@
-import { TaskItem } from './script';
+import { TaskItem } from './style';
 import React from 'react';
 import { deleteTask, updateTask } from '../../https';
 import { useState } from 'react';
+import { VALIDATE_TASK } from '../../helpers/constants';
 import type { FormProps, CheckboxProps } from 'antd';
 import { Button, Form, Input, Checkbox } from 'antd';
 import {
@@ -11,19 +12,21 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons';
 
-export const Task: React.FC<{
+type TaskProps = {
   children: React.ReactNode;
   id: number;
   isDone: boolean;
-  handleChangeTask: Function;
+  changeTask: () => void;
   title: string;
-}> = (props) => {
-  let { children, id, isDone, handleChangeTask, title } = props;
+};
 
-  const [edit, setEdit] = useState(false);
-  const [checked, setChecked] = useState(isDone);
-  const [task, setTask] = useState(title);
-  const [error, setError] = useState('');
+export const Task: React.FC<TaskProps> = (props) => {
+  let { children, id, isDone, changeTask, title } = props;
+
+  const [isEdit, setEdit] = useState<boolean>(false);
+  const [isChecked, setChecked] = useState<boolean>(isDone);
+  const [task, setTask] = useState<string>(title);
+  const [error, setError] = useState<string>('');
 
   type FieldType = {
     newTask: string;
@@ -38,10 +41,10 @@ export const Task: React.FC<{
     setEdit(status);
   };
 
-  const updateTaskLocal: FormProps<FieldType>['onFinish'] = async (values) => {
+  const handleUpdateTask: FormProps<FieldType>['onFinish'] = async (values) => {
     try {
       await updateTask(isDone, id, values.newTask);
-      await handleChangeTask();
+      await changeTask();
       await handleEdit(false);
     } catch (e: any) {
       setError(e.message || 'Failed update task.');
@@ -51,10 +54,10 @@ export const Task: React.FC<{
     setError('');
   };
 
-  const handleDeleteTaskLocal = async () => {
+  const handleDeleteTask = async () => {
     try {
       await deleteTask(id);
-      await handleChangeTask();
+      await changeTask();
     } catch (error: any) {
       setError(error.message || 'Failed to fetch tasks.');
     }
@@ -65,7 +68,7 @@ export const Task: React.FC<{
 
     try {
       await updateTask(e.target.checked, id, task);
-      await handleChangeTask(task);
+      await changeTask();
     } catch (error: any) {
       setError(error.message || 'Failed to fetch tasks.');
       return;
@@ -79,16 +82,15 @@ export const Task: React.FC<{
       {error && <div style={{ color: 'red' }}>{error}</div>}
       <TaskItem>
         <div className='change-task'>
-          <Checkbox onChange={handleChecked} checked={checked} />
-          {!edit ? (
-            <p className={checked ? 'completed' : ''}>{children}</p>
+          <Checkbox onChange={handleChecked} checked={isChecked} />
+          {!isEdit ? (
+            <p className={isChecked ? 'completed' : ''}>{children}</p>
           ) : (
             <Form
               layout='inline'
-              name={String(id)}
               style={{ flexWrap: 'nowrap', width: '100%' }}
               initialValues={{ newTask: task }}
-              onFinish={updateTaskLocal}
+              onFinish={handleUpdateTask}
               autoComplete='off'
             >
               <Form.Item<FieldType>
@@ -97,9 +99,9 @@ export const Task: React.FC<{
                 rules={[
                   {
                     required: true,
-                    min: 2,
-                    max: 64,
-                    message: 'Task title should be between 2 and 64 characters long.',
+                    min: VALIDATE_TASK.MIN_TITLE_LENGHT,
+                    max: VALIDATE_TASK.MAX_TITLE_LENGHT,
+                    message: `Task title should be between ${VALIDATE_TASK.MIN_TITLE_LENGHT} and ${VALIDATE_TASK.MAX_TITLE_LENGHT} characters long.`,
                   },
                 ]}
               >
@@ -116,7 +118,7 @@ export const Task: React.FC<{
         </div>
 
         <div className='btn-container'>
-          {!edit ? (
+          {!isEdit ? (
             <Button
               type='primary'
               htmlType='button'
@@ -137,7 +139,7 @@ export const Task: React.FC<{
             htmlType='button'
             color='danger'
             variant='solid'
-            onClick={handleDeleteTaskLocal}
+            onClick={handleDeleteTask}
           >
             <DeleteOutlined />
           </Button>

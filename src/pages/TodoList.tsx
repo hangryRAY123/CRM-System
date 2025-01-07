@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
-import { AddTask } from '../AddTask/AddTask';
-import { TabsList } from '../Tabs/TabsList';
-import { TasksList } from '../Tasks/TasksList';
-import { fetchTasks } from '../../https';
+import { AddTask } from '../components/AddTask/AddTask';
+import { TabsList } from '../components/Tabs/TabsList';
+import { TasksList } from '../components/Tasks/TasksList';
+import { fetchTasks } from '../https';
+import { TabKeys, AllTask, TasksInfo } from '../helpers/types';
 
 export const TodoList = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [allTask, setAllTask] = useState([]);
-  const [info, setInfo] = useState({});
-  const [currentTab, setCurrentTab] = useState('all');
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [allTask, setAllTask] = useState<AllTask[]>([]);
+  const [info, setInfo] = useState<TasksInfo>({ all: 0, completed: 0, inWork: 0 });
+  const [currentTab, setCurrentTab] = useState<TabKeys>(TabKeys.tab1);
 
   useEffect(() => {
     const fetchTasksList = async () => {
-      setIsLoading(true);
+      setLoading(true);
 
       try {
         const tasks = await fetchTasks(currentTab);
@@ -23,21 +24,21 @@ export const TodoList = () => {
         setError(e.message || 'Failed to fetch tasks.');
       }
 
-      setIsLoading(false);
+      setLoading(false);
     };
     fetchTasksList();
   }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      handleChangeTask();
+      changeTask();
     }, 5000);
     return () => {
       clearInterval(interval);
     };
   }, [currentTab]);
 
-  const handleChangeTask = async () => {
+  const changeTask = async () => {
     try {
       const tasks = await fetchTasks(currentTab);
 
@@ -49,7 +50,7 @@ export const TodoList = () => {
     }
   };
 
-  const handleTabChange = async (tab: string) => {
+  const changeTab = async (tab: TabKeys) => {
     try {
       const tasks = await fetchTasks(tab);
 
@@ -68,9 +69,9 @@ export const TodoList = () => {
       ) : (
         <>
           {error && <div style={{ color: 'red' }}>{error}</div>}
-          <AddTask handleAddTask={handleChangeTask} />
-          <TabsList info={info} handleTabChange={handleTabChange} />
-          <TasksList tasks={allTask} handleChangeTask={handleChangeTask} />
+          <AddTask changeTask={changeTask} />
+          <TabsList info={info} changeTab={changeTab} />
+          <TasksList tasks={allTask} changeTask={changeTask} />
         </>
       )}
     </section>

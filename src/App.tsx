@@ -2,15 +2,15 @@ import './App.css';
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Nav } from './components/Nav/Nav';
-import { TodoList } from './components/Pages/TodoList';
-import { Profile } from './components/Pages/Profile';
+import { TodoList } from './pages/TodoList';
+import { Profile } from './pages/Profile';
 import { Button, Layout } from 'antd';
 import { MenuFoldOutlined, MenuUnfoldOutlined, WechatOutlined } from '@ant-design/icons';
 
 const { Header, Content, Footer, Sider } = Layout;
 
 function App() {
-  const [collapsed, setCollapsed] = useState(false);
+  const [isCollapsed, setCollapsed] = useState<boolean>(false);
 
   return (
     <Layout
@@ -20,7 +20,7 @@ function App() {
       }}
     >
       <BrowserRouter>
-        <Sider trigger={null} collapsible collapsed={collapsed}>
+        <Sider trigger={null} collapsible collapsed={isCollapsed}>
           <div className='demo-logo-vertical'>
             <WechatOutlined />
           </div>
@@ -30,8 +30,8 @@ function App() {
           <Header style={{ padding: 0, background: '#f1f4f9', textAlign: 'left' }}>
             <Button
               type='text'
-              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              onClick={() => setCollapsed(!collapsed)}
+              icon={isCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setCollapsed(!isCollapsed)}
               style={{
                 fontSize: '16px',
                 width: 64,

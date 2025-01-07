@@ -1,12 +1,13 @@
 import React from 'react';
 import { useState } from 'react';
 import { Tabs } from 'antd';
+import { TabKeys } from '../../helpers/types';
 
 export const TabsList: React.FC<{
-  handleTabChange: (tab: string) => void;
+  changeTab: (tab: TabKeys) => void;
   info: object;
 }> = (props) => {
-  const [currentTab, setCurrentTab] = useState('all');
+  const [currentTab, setCurrentTab] = useState<TabKeys>(TabKeys.tab1);
 
   type transletedTabsType = {
     all: string;
@@ -14,24 +15,22 @@ export const TabsList: React.FC<{
     inWork: string;
     [key: string]: string;
   };
+
   const transletedTabs: transletedTabsType = {
     all: 'Все',
     completed: 'Завершенные',
     inWork: 'Активные',
   };
 
-  const onChange = (key: string) => {
-    setCurrentTab(key);
-    props.handleTabChange(key);
-    // console.log(key);
+  const handleChangeTab = (key: string) => {
+    setCurrentTab(key as TabKeys);
+    props.changeTab(key as TabKeys);
   };
-
   return (
     <Tabs
       activeKey={currentTab}
-      // animated={false}
       centered
-      onChange={onChange}
+      onChange={handleChangeTab}
       items={Object.entries(props.info).map(([key, value]) => {
         return {
           label: `${transletedTabs[key]}(${value})`,

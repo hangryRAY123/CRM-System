@@ -1,0 +1,4 @@
+export const VALIDATE_TASK = {
+  MIN_TITLE_LENGHT: 2,
+  MAX_TITLE_LENGHT: 64,
+};

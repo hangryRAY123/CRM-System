@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { TabKeys } from './helpers/types';
 
 const instance = axios.create({
   withCredentials: true,
@@ -8,46 +9,40 @@ const instance = axios.create({
   },
 });
 
-export const updateTask = (isDone: boolean, id: number, title: string) => {
-  return instance
-    .put(`/todos/${id}`, { isDone, title })
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      throw new Error(error.message || 'Failed to update task. Please try again later.');
-    });
+export const updateTask = async (isDone: boolean, id: number, title: string) => {
+  try {
+    await instance.put(`/todos/${id}`, { isDone, title });
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to update task. Please try again later.');
+  }
 };
 
-export const deleteTask = (taskId: number) => {
-  return instance
-    .delete(`/todos/${taskId}`)
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      throw new Error(error.message || 'Failed to delete task. Please try again later.');
-    });
+export const deleteTask = async (taskId: number) => {
+  try {
+    await instance.delete(`/todos/${taskId}`);
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to delete task. Please try again later.');
+  }
 };
 
-export const fetchTasks = (tab: string) => {
-  return instance
-    .get(`/todos?filter=${tab}`)
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      throw new Error(error.message || 'Failed to fetch tasks. Please try again later.');
+export const fetchTasks = async (tab: TabKeys) => {
+  try {
+    const response = await instance.get('/todos', {
+      params: {
+        filter: tab,
+      },
     });
+
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to fetch tasks. Please try again later.');
+  }
 };
 
-export const addingTask = (title: string) => {
-  return instance
-    .post('/todos', { isDone: false, title })
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      throw new Error(error.message || 'Failed to add task. Please try again later.');
-    });
+export const addingTask = async (title: string) => {
+  try {
+    await instance.post('/todos', { isDone: false, title });
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to add task. Please try again later.');
+  }
 };
