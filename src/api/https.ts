@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { TabKeys } from './helpers/types';
+import { TabKeys, UserRegistration } from '../helpers/types';
 
 const instance = axios.create({
   withCredentials: true,
@@ -8,6 +8,14 @@ const instance = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+export const regUser = async (user: UserRegistration) => {
+  try {
+    await instance.post('/auth/signup', user);
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to register user. Please try again later.');
+  }
+};
 
 export const updateTask = async (isDone: boolean, id: number, title: string) => {
   try {

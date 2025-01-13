@@ -7,7 +7,7 @@ type MenuItem = Required<MenuProps>['items'][number];
 
 const items: MenuItem[] = [
   { key: '/profile', icon: <UserOutlined />, label: <NavLink to='/profile'>Профиль</NavLink> },
-  { key: '/', icon: <BarsOutlined />, label: <NavLink to='/'>Список задач</NavLink> },
+  { key: '/todolist', icon: <BarsOutlined />, label: <NavLink to='/todolist'>Список задач</NavLink> },
 ];
 
 export const Nav: React.FC = () => {

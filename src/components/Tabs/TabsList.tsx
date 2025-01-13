@@ -7,7 +7,7 @@ export const TabsList: React.FC<{
   changeTab: (tab: TabKeys) => void;
   info: object;
 }> = (props) => {
-  const [currentTab, setCurrentTab] = useState<TabKeys>(TabKeys.tab1);
+  const [currentTab, setCurrentTab] = useState<TabKeys>(TabKeys.all);
 
   type transletedTabsType = {
     all: string;

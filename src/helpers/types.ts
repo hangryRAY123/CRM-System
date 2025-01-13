@@ -1,7 +1,7 @@
 export enum TabKeys {
-  tab1 = 'all',
-  tab2 = 'completed',
-  tab3 = 'inWork',
+  all = 'all',
+  completed = 'completed',
+  inWork = 'inWork',
 }
 
 export type AllTask = {
@@ -15,4 +15,12 @@ export type TasksInfo = {
   all: number;
   completed: number;
   inWork: number;
+};
+
+export type UserRegistration = {
+  email: string;
+  login: string;
+  password: string;
+  phoneNumber: string;
+  username: string;
 };

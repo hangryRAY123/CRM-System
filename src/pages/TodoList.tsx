@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { AddTask } from '../components/AddTask/AddTask';
 import { TabsList } from '../components/Tabs/TabsList';
 import { TasksList } from '../components/Tasks/TasksList';
-import { fetchTasks } from '../https';
+import { fetchTasks } from '../api/https';
 import { TabKeys, AllTask, TasksInfo } from '../helpers/types';
 
 export const TodoList = () => {
@@ -10,7 +10,7 @@ export const TodoList = () => {
   const [error, setError] = useState<string>('');
   const [allTask, setAllTask] = useState<AllTask[]>([]);
   const [info, setInfo] = useState<TasksInfo>({ all: 0, completed: 0, inWork: 0 });
-  const [currentTab, setCurrentTab] = useState<TabKeys>(TabKeys.tab1);
+  const [currentTab, setCurrentTab] = useState<TabKeys>(TabKeys.all);
 
   useEffect(() => {
     const fetchTasksList = async () => {
