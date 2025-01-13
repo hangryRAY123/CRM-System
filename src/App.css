@@ -1,11 +1,35 @@
 #root {
   width: 100%;
-  max-width: 500px;
-  margin: 100px auto;
-  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
   text-align: center;
+  color: #fff;
+}
+
+.demo-logo-vertical {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  margin: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+
+  svg {
+    width: 32px;
+    height: 32px;
+    fill: currentColor;
+  }
+}
+
+section {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
   border-radius: 10px;
-  background-color: #f1f4f9;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
