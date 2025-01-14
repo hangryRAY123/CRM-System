@@ -12,23 +12,24 @@ import {
   MenuUnfoldOutlined,
   WechatOutlined,
   LockOutlined,
+  UnlockOutlined,
 } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
 
 const { Header, Content, Footer, Sider } = Layout;
 
 function App() {
   const [isCollapsed, setCollapsed] = useState<boolean>(false);
-  const isAuth = false;
+  const isAuth = useSelector((state: any) => state.auth.isAuth);
+  const userRegistered = useSelector((state: any) => state.reg.login);
 
   return (
     <BrowserRouter>
       {!isAuth && (
         <section className='auth'>
-          <div className='lock'>
-            <LockOutlined />
-          </div>
+          <div className='lock'>{userRegistered ? <UnlockOutlined /> : <LockOutlined />}</div>
           <Routes>
-            <Route path='/auth' element={<Authorization />} />
+            <Route path='/' element={<Authorization />} />
             <Route path='/reg' element={<Registration />} />
           </Routes>
         </section>

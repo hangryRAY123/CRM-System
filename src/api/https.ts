@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { TabKeys, UserRegistration } from '../helpers/types';
+import { TabKeys, UserRegistration, AuthData } from '../helpers/types';
 
 const instance = axios.create({
   withCredentials: true,
@@ -9,11 +9,20 @@ const instance = axios.create({
   },
 });
 
+export const authUser = async (user: AuthData) => {
+  try {
+    await instance.post('/auth/signin', user);
+  } catch (error: any) {
+    console.log('http');
+    throw new Error(error.response.data || 'Failed to authenticate user. Please try again later.');
+  }
+};
+
 export const regUser = async (user: UserRegistration) => {
   try {
     await instance.post('/auth/signup', user);
   } catch (error: any) {
-    throw new Error(error.message || 'Failed to register user. Please try again later.');
+    throw new Error(error.response.data || 'Failed to register user. Please try again later.');
   }
 };
 

@@ -4,6 +4,7 @@ import { TabsList } from '../components/Tabs/TabsList';
 import { TasksList } from '../components/Tasks/TasksList';
 import { fetchTasks } from '../api/https';
 import { TabKeys, AllTask, TasksInfo } from '../helpers/types';
+import { LoadingOutlined } from '@ant-design/icons';
 
 export const TodoList = () => {
   const [isLoading, setLoading] = useState<boolean>(false);
@@ -65,7 +66,7 @@ export const TodoList = () => {
   return (
     <section>
       {isLoading ? (
-        <div>Loading...</div>
+        <LoadingOutlined />
       ) : (
         <>
           {error && <div style={{ color: 'red' }}>{error}</div>}

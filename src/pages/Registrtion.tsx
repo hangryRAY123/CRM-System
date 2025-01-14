@@ -1,7 +1,9 @@
 import { NavLink } from 'react-router-dom';
 import { Button, Form, Input } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { regUserData } from '../store/reg-actions';
+import { regUserData } from '../store/registration/reg-action';
+import { useEffect } from 'react';
+import { VALIDATE_AUTH } from '../helpers/constants';
 
 const formItemLayout = {
   labelCol: {
@@ -29,10 +31,12 @@ const tailFormItemLayout = {
 
 export const Registration: React.FC = () => {
   const [form] = Form.useForm();
-  const dispatch = useDispatch();
-  const error = useSelector((state: any) => state.error.error);
+  const dispatch: any = useDispatch();
+  const error = useSelector((state: any) => state.notifications.error);
+  const success = useSelector((state: any) => state.notifications.success);
+  const user = useSelector((state: any) => state.reg.login);
 
-  const onFinish = (values: any) => {
+  const onFinish = async (values: any) => {
     const user = {
       email: values.email,
       login: values.login,
@@ -40,13 +44,23 @@ export const Registration: React.FC = () => {
       phoneNumber: values.phone,
       username: values.nickname,
     };
+
     dispatch(regUserData(user));
-    console.log('Received values of form: ', values);
   };
+
+  useEffect(() => {
+    form.resetFields();
+  }, [success]);
 
   return (
     <div className='form-wrapper'>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      {success && (
+        <p style={{ color: 'green' }}>
+          <span style={{ fontSize: 25, color: '#646cff' }}>{user}</span>&nbsp;
+          {success}. <NavLink to='/'>Login now!</NavLink>{' '}
+        </p>
+      )}
       <Form
         {...formItemLayout}
         form={form}
@@ -59,7 +73,17 @@ export const Registration: React.FC = () => {
           name='nickname'
           label='Nickname'
           tooltip='What do you want others to call you?'
-          rules={[{ required: true, message: 'Please input your nickname!', whitespace: true }]}
+          rules={[
+            {
+              required: true,
+              message: 'Please input your nickname!',
+            },
+            {
+              min: VALIDATE_AUTH.NAME.MIN,
+              max: VALIDATE_AUTH.NAME.MAX,
+              message: `Name must be between ${VALIDATE_AUTH.PASSWORD.MIN} and ${VALIDATE_AUTH.PASSWORD.MAX} characters`,
+            },
+          ]}
         >
           <Input />
         </Form.Item>
@@ -68,7 +92,21 @@ export const Registration: React.FC = () => {
           name='login'
           label='Login'
           tooltip='Login name for the application'
-          rules={[{ required: true, message: 'Please input your username!', whitespace: true }]}
+          rules={[
+            {
+              required: true,
+              message: 'Please input your username!',
+            },
+            {
+              pattern: /^[a-zA-Z]+$/,
+              message: `Login must contain only Latin characters!`,
+            },
+            {
+              min: VALIDATE_AUTH.LOGIN.MIN,
+              max: VALIDATE_AUTH.LOGIN.MAX,
+              message: `Login must be between ${VALIDATE_AUTH.LOGIN.MIN} and ${VALIDATE_AUTH.LOGIN.MAX} characters`,
+            },
+          ]}
         >
           <Input />
         </Form.Item>
@@ -80,6 +118,11 @@ export const Registration: React.FC = () => {
             {
               required: true,
               message: 'Please input your password!',
+            },
+            {
+              min: VALIDATE_AUTH.PASSWORD.MIN,
+              max: VALIDATE_AUTH.PASSWORD.MAX,
+              message: `Password must be between ${VALIDATE_AUTH.PASSWORD.MIN} and ${VALIDATE_AUTH.PASSWORD.MAX} characters`,
             },
           ]}
           hasFeedback
@@ -116,7 +159,7 @@ export const Registration: React.FC = () => {
           rules={[
             {
               type: 'email',
-              message: 'The input is not valid E-mail!',
+              message: 'The input is not valid E-mail! (email@mail.com)',
             },
             {
               required: true,
@@ -130,7 +173,13 @@ export const Registration: React.FC = () => {
         <Form.Item
           name='phone'
           label='Phone Number'
-          rules={[{ required: true, message: 'Please input your phone number!' }]}
+          rules={[
+            { required: true, message: 'Please input your Phone!' },
+            {
+              pattern: /^(\+\d{1,3}[- ]?)?\d{10}$/,
+              message: 'Please enter a valid phone number! (+1111111111)',
+            },
+          ]}
         >
           <Input style={{ width: '100%' }} />
         </Form.Item>
@@ -140,7 +189,7 @@ export const Registration: React.FC = () => {
             Register
           </Button>
           <br />
-          or <NavLink to='/auth'>Login now!</NavLink>
+          or <NavLink to='/'>Login now!</NavLink>
         </Form.Item>
       </Form>
     </div>

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { UserRegistration } from '../helpers/types';
+import { UserRegistration } from '../../helpers/types';
 
 const initialState: UserRegistration = {
   email: '',

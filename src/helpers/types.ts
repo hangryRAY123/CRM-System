@@ -24,3 +24,8 @@ export type UserRegistration = {
   phoneNumber: string;
   username: string;
 };
+
+export type AuthData = {
+  login: string;
+  password: string;
+};

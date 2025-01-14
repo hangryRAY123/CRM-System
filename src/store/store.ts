@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { regSlice } from './reg-slice';
-import { errorSlice } from './error';
+import { regSlice } from './registration/reg-slice';
+import { notificationsSlice } from './notification/notifications';
+import { authSlice } from './authorization/auth-slice';
 
 const store = configureStore({
   reducer: {
     reg: regSlice.reducer,
-    error: errorSlice.reducer,
+    notifications: notificationsSlice.reducer,
+    auth: authSlice.reducer,
   },
 });
 
