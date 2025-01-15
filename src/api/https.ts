@@ -9,11 +9,31 @@ const instance = axios.create({
   },
 });
 
+export const logOut = async () => {
+  try {
+    const res = await instance.get('/user/profile');
+    console.log(res);
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to log out. Please try again later.');
+  }
+};
+
+export const updateToken = async (refreshToken: string) => {
+  try {
+    const response = await instance.post('/auth/refresh', { refreshToken });
+
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to refresh token. Please try again later.');
+  }
+};
+
 export const authUser = async (user: AuthData) => {
   try {
-    await instance.post('/auth/signin', user);
+    const response = await instance.post('/auth/signin', user);
+
+    return response.data;
   } catch (error: any) {
-    console.log('http');
     throw new Error(error.response.data || 'Failed to authenticate user. Please try again later.');
   }
 };

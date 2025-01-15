@@ -12,7 +12,7 @@ export const regUserData = (user: UserRegistration) => {
   ) => {
     try {
       await regUser(user);
-      
+
       dispatch(regAction.setRegistrationData(user));
       dispatch(notificationsAction.setError(''));
       dispatch(notificationsAction.setSuccess('successfully registered'));

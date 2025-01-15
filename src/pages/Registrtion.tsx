@@ -1,9 +1,10 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Button, Form, Input } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { regUserData } from '../store/registration/reg-action';
 import { useEffect } from 'react';
 import { VALIDATE_AUTH } from '../helpers/constants';
+import { LockOutlined } from '@ant-design/icons';
 
 const formItemLayout = {
   labelCol: {
@@ -34,7 +35,9 @@ export const Registration: React.FC = () => {
   const dispatch: any = useDispatch();
   const error = useSelector((state: any) => state.notifications.error);
   const success = useSelector((state: any) => state.notifications.success);
-  const user = useSelector((state: any) => state.reg.login);
+  const userLogin = useSelector((state: any) => state.reg.login);
+  const isAuth = useSelector((state: any) => state.auth.isAuth);
+  const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
     const user = {
@@ -52,146 +55,159 @@ export const Registration: React.FC = () => {
     form.resetFields();
   }, [success]);
 
+  useEffect(() => {
+    if (isAuth) {
+      navigate('/todolist');
+    }
+  }, [isAuth]);
+
   return (
-    <div className='form-wrapper'>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && (
-        <p style={{ color: 'green' }}>
-          <span style={{ fontSize: 25, color: '#646cff' }}>{user}</span>&nbsp;
-          {success}. <NavLink to='/'>Login now!</NavLink>{' '}
-        </p>
-      )}
-      <Form
-        {...formItemLayout}
-        form={form}
-        name='register'
-        onFinish={onFinish}
-        initialValues={{ residence: ['zhejiang', 'hangzhou', 'xihu'], prefix: '86' }}
-        scrollToFirstError
-      >
-        <Form.Item
-          name='nickname'
-          label='Nickname'
-          tooltip='What do you want others to call you?'
-          rules={[
-            {
-              required: true,
-              message: 'Please input your nickname!',
-            },
-            {
-              min: VALIDATE_AUTH.NAME.MIN,
-              max: VALIDATE_AUTH.NAME.MAX,
-              message: `Name must be between ${VALIDATE_AUTH.PASSWORD.MIN} and ${VALIDATE_AUTH.PASSWORD.MAX} characters`,
-            },
-          ]}
+    <section className='auth'>
+      <div className='lock'>
+        <LockOutlined />
+      </div>
+      <div className='form-wrapper'>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {success && (
+          <p style={{ color: 'green' }}>
+            <span style={{ fontSize: 25, color: '#646cff' }}>{userLogin}</span>&nbsp;
+            {success}. <NavLink to='/'>Login now!</NavLink>{' '}
+          </p>
+        )}
+        <Form
+          {...formItemLayout}
+          form={form}
+          name='register'
+          onFinish={onFinish}
+          initialValues={{ residence: ['zhejiang', 'hangzhou', 'xihu'], prefix: '86' }}
+          scrollToFirstError
         >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          name='login'
-          label='Login'
-          tooltip='Login name for the application'
-          rules={[
-            {
-              required: true,
-              message: 'Please input your username!',
-            },
-            {
-              pattern: /^[a-zA-Z]+$/,
-              message: `Login must contain only Latin characters!`,
-            },
-            {
-              min: VALIDATE_AUTH.LOGIN.MIN,
-              max: VALIDATE_AUTH.LOGIN.MAX,
-              message: `Login must be between ${VALIDATE_AUTH.LOGIN.MIN} and ${VALIDATE_AUTH.LOGIN.MAX} characters`,
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          name='password'
-          label='Password'
-          rules={[
-            {
-              required: true,
-              message: 'Please input your password!',
-            },
-            {
-              min: VALIDATE_AUTH.PASSWORD.MIN,
-              max: VALIDATE_AUTH.PASSWORD.MAX,
-              message: `Password must be between ${VALIDATE_AUTH.PASSWORD.MIN} and ${VALIDATE_AUTH.PASSWORD.MAX} characters`,
-            },
-          ]}
-          hasFeedback
-        >
-          <Input.Password autoComplete='off' />
-        </Form.Item>
-
-        <Form.Item
-          name='confirm'
-          label='Confirm Password'
-          dependencies={['password']}
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: 'Please confirm your password!',
-            },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error('The new password that you entered do not match!'));
+          <Form.Item
+            name='nickname'
+            label='Nickname'
+            tooltip='What do you want others to call you?'
+            rules={[
+              {
+                required: true,
+                message: 'Please input your nickname!',
               },
-            }),
-          ]}
-        >
-          <Input.Password autoComplete='off' />
-        </Form.Item>
+              {
+                min: VALIDATE_AUTH.NAME.MIN,
+                max: VALIDATE_AUTH.NAME.MAX,
+                message: `Name must be between ${VALIDATE_AUTH.PASSWORD.MIN} and ${VALIDATE_AUTH.PASSWORD.MAX} characters`,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
 
-        <Form.Item
-          name='email'
-          label='E-mail'
-          rules={[
-            {
-              type: 'email',
-              message: 'The input is not valid E-mail! (email@mail.com)',
-            },
-            {
-              required: true,
-              message: 'Please input your E-mail!',
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
+          <Form.Item
+            name='login'
+            label='Login'
+            tooltip='Login name for the application'
+            rules={[
+              {
+                required: true,
+                message: 'Please input your username!',
+              },
+              {
+                pattern: /^[a-zA-Z]+$/,
+                message: `Login must contain only Latin characters!`,
+              },
+              {
+                min: VALIDATE_AUTH.LOGIN.MIN,
+                max: VALIDATE_AUTH.LOGIN.MAX,
+                message: `Login must be between ${VALIDATE_AUTH.LOGIN.MIN} and ${VALIDATE_AUTH.LOGIN.MAX} characters`,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
 
-        <Form.Item
-          name='phone'
-          label='Phone Number'
-          rules={[
-            { required: true, message: 'Please input your Phone!' },
-            {
-              pattern: /^(\+\d{1,3}[- ]?)?\d{10}$/,
-              message: 'Please enter a valid phone number! (+1111111111)',
-            },
-          ]}
-        >
-          <Input style={{ width: '100%' }} />
-        </Form.Item>
+          <Form.Item
+            name='password'
+            label='Password'
+            rules={[
+              {
+                required: true,
+                message: 'Please input your password!',
+              },
+              {
+                min: VALIDATE_AUTH.PASSWORD.MIN,
+                max: VALIDATE_AUTH.PASSWORD.MAX,
+                message: `Password must be between ${VALIDATE_AUTH.PASSWORD.MIN} and ${VALIDATE_AUTH.PASSWORD.MAX} characters`,
+              },
+            ]}
+            hasFeedback
+          >
+            <Input.Password autoComplete='off' />
+          </Form.Item>
 
-        <Form.Item {...tailFormItemLayout}>
-          <Button type='primary' htmlType='submit' style={{ width: '100%' }}>
-            Register
-          </Button>
-          <br />
-          or <NavLink to='/'>Login now!</NavLink>
-        </Form.Item>
-      </Form>
-    </div>
+          <Form.Item
+            name='confirm'
+            label='Confirm Password'
+            dependencies={['password']}
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: 'Please confirm your password!',
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('password') === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error('The new password that you entered do not match!')
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input.Password autoComplete='off' />
+          </Form.Item>
+
+          <Form.Item
+            name='email'
+            label='E-mail'
+            rules={[
+              {
+                type: 'email',
+                message: 'The input is not valid E-mail! (email@mail.com)',
+              },
+              {
+                required: true,
+                message: 'Please input your E-mail!',
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name='phone'
+            label='Phone Number'
+            rules={[
+              { required: true, message: 'Please input your Phone!' },
+              {
+                pattern: /^(\+\d{1,3}[- ]?)?\d{10}$/,
+                message: 'Please enter a valid phone number! (+1111111111)',
+              },
+            ]}
+          >
+            <Input style={{ width: '100%' }} />
+          </Form.Item>
+
+          <Form.Item {...tailFormItemLayout}>
+            <Button type='primary' htmlType='submit' style={{ width: '100%' }}>
+              Register
+            </Button>
+            <br />
+            or <NavLink to='/'>Login now!</NavLink>
+          </Form.Item>
+        </Form>
+      </div>
+    </section>
   );
 };

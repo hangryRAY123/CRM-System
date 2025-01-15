@@ -1,5 +1,5 @@
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Nav } from './components/Nav/Nav';
 import { TodoList } from './pages/TodoList';
@@ -11,29 +11,38 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   WechatOutlined,
-  LockOutlined,
-  UnlockOutlined,
+  LogoutOutlined,
 } from '@ant-design/icons';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { authAction } from './store/authorization/auth-slice';
+import { logOut } from './api/https';
 
 const { Header, Content, Footer, Sider } = Layout;
 
 function App() {
   const [isCollapsed, setCollapsed] = useState<boolean>(false);
   const isAuth = useSelector((state: any) => state.auth.isAuth);
-  const userRegistered = useSelector((state: any) => state.reg.login);
+  const dispatch: any = useDispatch();
+
+  const logOutUser = () => {
+    logOut();
+    // localStorage.setItem('refreshToken', '');
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('refreshToken');
+    if (token) {
+      dispatch(authAction.setIsAuth(true));
+    }
+  }, []);
 
   return (
     <BrowserRouter>
-      {!isAuth && (
-        <section className='auth'>
-          <div className='lock'>{userRegistered ? <UnlockOutlined /> : <LockOutlined />}</div>
-          <Routes>
-            <Route path='/' element={<Authorization />} />
-            <Route path='/reg' element={<Registration />} />
-          </Routes>
-        </section>
-      )}
+      <Routes>
+        <Route path='/' element={<Authorization />} />
+        <Route path='/reg' element={<Registration />} />
+      </Routes>
+
       {isAuth && (
         <Layout
           style={{
@@ -48,7 +57,15 @@ function App() {
             <Nav />
           </Sider>
           <Layout>
-            <Header style={{ padding: 0, background: '#f1f4f9', textAlign: 'left' }}>
+            <Header
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '0 16px 0 0',
+                backgroundColor: '#f1f4f9',
+              }}
+            >
               <Button
                 type='text'
                 icon={isCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -59,6 +76,16 @@ function App() {
                   height: 64,
                 }}
               />
+              <Button
+                type='primary'
+                icon={<LogoutOutlined />}
+                onClick={logOutUser}
+                style={{
+                  fontSize: '16px',
+                }}
+              >
+                Logout
+              </Button>
             </Header>
             <Content style={{ margin: '24px 16px 0' }}>
               <Routes>

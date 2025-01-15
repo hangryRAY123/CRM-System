@@ -17,10 +17,6 @@ export const authSlice = createSlice({
       state.data.login = action.payload.login;
       state.data.password = action.payload.password;
     },
-    resetAuthData: (state) => {
-      state.data.login = '';
-      state.data.password = '';
-    },
     setIsAuth: (state, action) => {
       state.isAuth = action.payload;
     },
