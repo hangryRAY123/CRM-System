@@ -7,6 +7,7 @@ const initialState = {
     password: '',
   },
   isAuth: <boolean>false,
+  isCollapsed: <boolean>false,
 };
 
 export const authSlice = createSlice({
@@ -19,6 +20,9 @@ export const authSlice = createSlice({
     },
     setIsAuth: (state, action) => {
       state.isAuth = action.payload;
+    },
+    toggle: (state) => {
+      state.isCollapsed = !state.isCollapsed;
     },
   },
 });

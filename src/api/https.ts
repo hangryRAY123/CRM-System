@@ -9,10 +9,10 @@ const instance = axios.create({
   },
 });
 
-export const logOut = async () => {
+export const logOut = async (accessToken: string) => {
   try {
-    const res = await instance.get('/user/profile');
-    console.log(res);
+    instance.defaults.headers.Authorization = accessToken;
+    await instance.post('/user/logout');
   } catch (error: any) {
     throw new Error(error.message || 'Failed to log out. Please try again later.');
   }

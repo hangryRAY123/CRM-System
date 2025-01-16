@@ -29,3 +29,7 @@ export type AuthData = {
   login: string;
   password: string;
 };
+
+export type RefreshToken = {
+  refreshToken: string;
+};

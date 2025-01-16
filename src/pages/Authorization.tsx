@@ -60,6 +60,10 @@ export const Authorization: React.FC = () => {
             rules={[
               { required: true, message: 'Please input your Login!' },
               {
+                pattern: /^[a-zA-Z]+$/,
+                message: `Login must contain only Latin characters!`,
+              },
+              {
                 min: VALIDATE_AUTH.LOGIN.MIN,
                 max: VALIDATE_AUTH.LOGIN.MAX,
                 message: `Login must be between ${VALIDATE_AUTH.LOGIN.MIN} and ${VALIDATE_AUTH.LOGIN.MAX} characters`,

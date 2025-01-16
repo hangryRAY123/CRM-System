@@ -1,5 +1,5 @@
 import { notificationsAction } from '../notification/notifications';
-import { authUser, updateToken } from '../../api/https';
+import { authUser, updateToken, logOut } from '../../api/https';
 import { authAction } from './auth-slice';
 import { AuthData } from '../../helpers/types';
 
@@ -25,11 +25,32 @@ export const authUserData = (user: AuthData) => {
 };
 
 export const updateRefrashToken = (token: string) => {
-  return async () => {
+  return async (dispatch: (arg0: { payload: any; type: 'auth/setIsAuth' }) => void) => {
     try {
-      await updateToken(token);
+      const res = await updateToken(token);
+
+      localStorage.setItem('accessToken', res.accessToken);
+      localStorage.setItem('refreshToken', res.refreshToken);
+      dispatch(authAction.setIsAuth(true));
     } catch (error: any) {
+      dispatch(authAction.setIsAuth(false));
       throw new Error(error.message || 'Failed to refresh token. Please try again later.');
+    }
+  };
+};
+
+export const logOutUser = (token: string) => {
+  return async (
+    dispatch: (arg0: { payload: any; type: 'auth/setIsAuth' | 'auth/setAuthData' }) => void
+  ) => {
+    try {
+      await logOut(token);
+      dispatch(authAction.setAuthData({ login: '', password: '' }));
+      dispatch(authAction.setIsAuth(false));
+      localStorage.setItem('accessToken', '');
+      localStorage.setItem('refreshToken', '');
+    } catch {
+      throw new Error('Failed to log out. Please try again later.');
     }
   };
 };
