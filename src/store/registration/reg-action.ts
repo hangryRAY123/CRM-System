@@ -1,4 +1,4 @@
-import { notificationsAction } from '../notification/notifications';
+import { notificationsAction } from '../notification/notifications-slice';
 import { regUser } from '../../api/https';
 import { regAction } from './reg-slice';
 import { UserRegistration } from '../../helpers/types';

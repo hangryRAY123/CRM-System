@@ -1,7 +1,10 @@
-import { notificationsAction } from '../notification/notifications';
+import { notificationsAction } from '../notification/notifications-slice';
 import { authUser, updateToken, logOut } from '../../api/https';
 import { authAction } from './auth-slice';
+import { userAction } from '../user/user-slice';
 import { AuthData } from '../../helpers/types';
+import { userState } from '../user/user-slice';
+import { authState } from './auth-slice';
 
 export const authUserData = (user: AuthData) => {
   return async (
@@ -41,11 +44,15 @@ export const updateRefrashToken = (token: string) => {
 
 export const logOutUser = (token: string) => {
   return async (
-    dispatch: (arg0: { payload: any; type: 'auth/setIsAuth' | 'auth/setAuthData' }) => void
+    dispatch: (arg0: {
+      payload: any;
+      type: 'auth/setIsAuth' | 'user/setUser' | 'auth/setAuthData';
+    }) => void
   ) => {
     try {
       await logOut(token);
-      dispatch(authAction.setAuthData({ login: '', password: '' }));
+      dispatch(authAction.setAuthData(authState.data));
+      dispatch(userAction.setUser(userState.data));
       dispatch(authAction.setIsAuth(false));
       localStorage.setItem('accessToken', '');
       localStorage.setItem('refreshToken', '');

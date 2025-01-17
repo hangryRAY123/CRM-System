@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { TabKeys, UserRegistration, AuthData } from '../helpers/types';
+import { TabKeys, UserRegistration, AuthData, ProfileRequest } from '../helpers/types';
 
 const instance = axios.create({
   withCredentials: true,
@@ -9,30 +9,52 @@ const instance = axios.create({
   },
 });
 
+export const updateUser = async (user: ProfileRequest, accessToken: string) => {
+  try {
+    instance.defaults.headers.Authorization = accessToken;
+    const res = await instance.put('/user/profile', user);
+
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error.response.data || 'Failed to fetch user data. Please try again later.');
+  }
+};
+
+export const getUser = async (accessToken: string) => {
+  try {
+    instance.defaults.headers.Authorization = accessToken;
+    const res = await instance.get('/user/profile');
+
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error.response.data || 'Failed to fetch user data. Please try again later.');
+  }
+};
+
 export const logOut = async (accessToken: string) => {
   try {
     instance.defaults.headers.Authorization = accessToken;
     await instance.post('/user/logout');
   } catch (error: any) {
-    throw new Error(error.message || 'Failed to log out. Please try again later.');
+    throw new Error(error.response.data || 'Failed to log out. Please try again later.');
   }
 };
 
 export const updateToken = async (refreshToken: string) => {
   try {
-    const response = await instance.post('/auth/refresh', { refreshToken });
+    const res = await instance.post('/auth/refresh', { refreshToken });
 
-    return response.data;
+    return res.data;
   } catch (error: any) {
-    throw new Error(error.message || 'Failed to refresh token. Please try again later.');
+    throw new Error(error.response.data || 'Failed to refresh token. Please try again later.');
   }
 };
 
 export const authUser = async (user: AuthData) => {
   try {
-    const response = await instance.post('/auth/signin', user);
+    const res = await instance.post('/auth/signin', user);
 
-    return response.data;
+    return res.data;
   } catch (error: any) {
     throw new Error(error.response.data || 'Failed to authenticate user. Please try again later.');
   }
@@ -42,7 +64,7 @@ export const regUser = async (user: UserRegistration) => {
   try {
     await instance.post('/auth/signup', user);
   } catch (error: any) {
-    throw new Error(error.response.data || 'Failed to register user. Please try again later.');
+    throw new Error(error.res.data || 'Failed to register user. Please try again later.');
   }
 };
 
@@ -64,13 +86,13 @@ export const deleteTask = async (taskId: number) => {
 
 export const fetchTasks = async (tab: TabKeys) => {
   try {
-    const response = await instance.get('/todos', {
+    const res = await instance.get('/todos', {
       params: {
         filter: tab,
       },
     });
 
-    return response.data;
+    return res.data;
   } catch (error: any) {
     throw new Error(error.message || 'Failed to fetch tasks. Please try again later.');
   }

@@ -33,3 +33,19 @@ export type AuthData = {
 export type RefreshToken = {
   refreshToken: string;
 };
+
+export type User = {
+  date: string;
+  email: string;
+  id: number;
+  isAdmin: boolean;
+  isBlocked: boolean;
+  phoneNumber: string;
+  username: string;
+};
+
+export type ProfileRequest = {
+  username: string;
+  email: string;
+  phoneNumber: string;
+};

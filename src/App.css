@@ -49,6 +49,17 @@ section.auth .form-wrapper {
   flex-grow: 1;
   width: 60%;
 }
+.btn-wrapper {
+  display: flex;
+}
+.btn-wrapper .ant-form-item {
+  width: 100%;
+}
+.btn-wrapper .ant-form-item-control-input-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
 
 .lock span,
 .lock svg {

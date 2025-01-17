@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { AuthData } from '../../helpers/types';
 
-const initialState = {
+export const authState = {
   data: <AuthData>{
     login: '',
     password: '',
@@ -12,7 +12,7 @@ const initialState = {
 
 export const authSlice = createSlice({
   name: 'auth',
-  initialState,
+  initialState: authState,
   reducers: {
     setAuthData: (state, action) => {
       state.data.login = action.payload.login;
