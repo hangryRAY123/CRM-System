@@ -9,6 +9,17 @@ const instance = axios.create({
   },
 });
 
+export const updatePaswword = async (password: string, accessToken: string) => {
+  try {
+    instance.defaults.headers.Authorization = accessToken;
+    const res = await instance.put('/user/profile/reset-password', password);
+
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error.response.data || 'Failed to update password. Please try again later.');
+  }
+};
+
 export const updateUser = async (user: ProfileRequest, accessToken: string) => {
   try {
     instance.defaults.headers.Authorization = accessToken;

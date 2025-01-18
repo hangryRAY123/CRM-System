@@ -2,7 +2,7 @@ import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Authorization } from './pages/Authorization';
 import { Registration } from './pages/Registrtion';
-import { Main } from './components/Main/Main';
+import { Main } from './pages/Main';
 
 function App() {
   return (

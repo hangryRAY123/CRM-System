@@ -1,15 +1,15 @@
-import { Nav } from '../Nav/Nav';
-import { TodoList } from '../../pages/TodoList';
-import { Profile } from '../../pages/Profile';
-import { MainFooter } from '../MainFooter/MainFooter';
-import { MainHeader } from '../MainHeader/MainHeader';
+import { Nav } from '../components/Nav/Nav';
+import { TodoList } from './TodoList';
+import { Profile } from './Profile';
+import { MainFooter } from '../components/MainFooter/MainFooter';
+import { MainHeader } from '../components/MainHeader/MainHeader';
 import { WechatOutlined } from '@ant-design/icons';
 import { Layout } from 'antd';
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { updateRefrashToken } from '../../store/authorization/auth-action';
+import { updateRefrashToken } from '../store/authorization/auth-action';
 
 const { Content, Sider } = Layout;
 
@@ -29,7 +29,7 @@ export const Main = () => {
       if (!isAuth) {
         navigate('/');
       }
-    }, 500);
+    }, 1000);
     return () => {
       clearTimeout(timeout);
     };
