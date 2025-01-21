@@ -1,19 +1,22 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Button, Layout } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { logOutUser } from '../../store/authorization/auth-action';
+import { logOutUser, updateRefrashToken } from '../../store/authorization/auth-action';
 import { authAction } from '../../store/authorization/auth-slice';
+import TokenManager from '../../helpers/token-manager';
 const { Header } = Layout;
 
 export const MainHeader = () => {
   const isCollapsed = useSelector((state: any) => state.auth.isCollapsed);
   const dispatch: any = useDispatch();
-  const token = localStorage.getItem('accessToken');
+  const token = TokenManager.getToken();
 
   const handleLogOut = () => {
     if (token) {
       dispatch(logOutUser(token));
     }
+
+    // dispatch(updateRefrashToken());
   };
 
   const handleMenuClick = () => {

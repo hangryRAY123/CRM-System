@@ -1,6 +1,6 @@
 import React from 'react';
 import { LockOutlined } from '@ant-design/icons';
-import { AuthForm } from '../components/form/AuthForm';
+import { AuthForm } from '../components/Form/AuthForm';
 
 export const Authorization: React.FC = () => {
   return (

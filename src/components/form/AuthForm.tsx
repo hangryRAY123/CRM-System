@@ -90,10 +90,6 @@ export const AuthForm: React.FC = () => {
         </Form.Item>
 
         <Form.Item>
-          <NavLink to='/'>Forgot password</NavLink>
-        </Form.Item>
-
-        <Form.Item>
           <Button block type='primary' htmlType='submit'>
             Log in
           </Button>

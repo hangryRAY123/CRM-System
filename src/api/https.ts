@@ -3,7 +3,7 @@ import { TabKeys, UserRegistration, AuthData, ProfileRequest } from '../helpers/
 
 const instance = axios.create({
   withCredentials: true,
-  baseURL: 'https://easydev.club/api/v1/',
+  baseURL: 'https://easydev.club/api/v2/',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -51,9 +51,9 @@ export const logOut = async (accessToken: string) => {
   }
 };
 
-export const updateToken = async (refreshToken: string) => {
+export const updateToken = async () => {
   try {
-    const res = await instance.post('/auth/refresh', { refreshToken });
+    const res = await instance.post('/auth/refresh');
 
     return res.data;
   } catch (error: any) {

@@ -7,13 +7,14 @@ import { ProfileRequest } from '../../helpers/types';
 import { userAction } from '../../store/user/user-slice';
 import { updateUserData } from '../../store/user/user-action';
 import { getUserData } from '../../store/user/user-action';
+import TokenManager from '../../helpers/token-manager';
 
 export const ProfileForm = () => {
   const user = useSelector((state: any) => state.user);
   const isEdit = useSelector((state: any) => state.user.isEdit);
   const error = useSelector((state: any) => state.notifications.error);
   const dispatch: any = useDispatch();
-  const token = localStorage.getItem('accessToken');
+  const token = TokenManager.getToken();
   const [form] = Form.useForm();
 
   const handleEdit = () => {

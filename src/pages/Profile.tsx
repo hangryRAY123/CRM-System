@@ -1,5 +1,5 @@
-import { ProfileForm } from '../components/form/profileForm';
-import { PasswordForm } from '../components/form/PasswordForm';
+import { ProfileForm } from '../components/Form/ProfileForm';
+import { PasswordForm } from '../components/Form/PasswordForm';
 
 export const Profile = () => {
   return (

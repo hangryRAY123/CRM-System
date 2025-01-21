@@ -5,6 +5,7 @@ import { userAction } from '../user/user-slice';
 import { AuthData } from '../../helpers/types';
 import { userState } from '../user/user-slice';
 import { authState } from './auth-slice';
+import TokenManager from '../../helpers/token-manager';
 
 export const authUserData = (user: AuthData) => {
   return async (
@@ -15,9 +16,8 @@ export const authUserData = (user: AuthData) => {
   ) => {
     try {
       const res = await authUser(user);
+      TokenManager.setToken(res.accessToken);
       dispatch(authAction.setIsAuth(true));
-      localStorage.setItem('accessToken', res.accessToken);
-      localStorage.setItem('refreshToken', res.refreshToken);
       dispatch(notificationsAction.setError(''));
       dispatch(notificationsAction.setSuccess('successfully registered'));
     } catch (error: any) {
@@ -27,13 +27,11 @@ export const authUserData = (user: AuthData) => {
   };
 };
 
-export const updateRefrashToken = (token: string) => {
+export const updateRefrashToken = () => {
   return async (dispatch: (arg0: { payload: any; type: 'auth/setIsAuth' }) => void) => {
     try {
-      const res = await updateToken(token);
-
-      localStorage.setItem('accessToken', res.accessToken);
-      localStorage.setItem('refreshToken', res.refreshToken);
+      const res = await updateToken();
+      TokenManager.setToken(res.accessToken);
       dispatch(authAction.setIsAuth(true));
     } catch (error: any) {
       dispatch(authAction.setIsAuth(false));
@@ -51,11 +49,10 @@ export const logOutUser = (token: string) => {
   ) => {
     try {
       await logOut(token);
+      TokenManager.clearToken();
       dispatch(authAction.setAuthData(authState.data));
       dispatch(userAction.setUser(userState.data));
       dispatch(authAction.setIsAuth(false));
-      localStorage.setItem('accessToken', '');
-      localStorage.setItem('refreshToken', '');
     } catch {
       throw new Error('Failed to log out. Please try again later.');
     }

@@ -1,5 +1,5 @@
 import { LockOutlined } from '@ant-design/icons';
-import { RegForm } from '../components/form/RegForm';
+import { RegForm } from '../components/Form/RegForm';
 
 export const Registration: React.FC = () => {
   return (

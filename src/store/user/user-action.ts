@@ -35,7 +35,7 @@ export const updateUserData = (user: ProfileRequest, token: string) => {
   };
 };
 
-export const updatePaswwordData = (password: string, token: string) => {
+export const updatePasswordData = (password: string, token: string) => {
   return async (
     dispatch: (arg0: {
       payload: any;

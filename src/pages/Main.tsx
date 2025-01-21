@@ -18,12 +18,9 @@ export const Main = () => {
   const isAuth = useSelector((state: any) => state.auth.isAuth);
   const navigate = useNavigate();
   const dispatch: any = useDispatch();
-  const token = localStorage.getItem('refreshToken');
 
   useEffect(() => {
-    if (token) {
-      dispatch(updateRefrashToken(token));
-    }
+    // dispatch(updateRefrashToken());
 
     const timeout = setTimeout(() => {
       if (!isAuth) {
