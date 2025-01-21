@@ -3,7 +3,7 @@ import { EditOutlined } from '@ant-design/icons';
 import { VALIDATE_AUTH } from '../../helpers/constants';
 import { Button, Modal, Form, Input, Alert } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { updatePasswordData } from '../../store/user/user-action';
+import { updatePasswordData } from '../../store/profile/profile-action';
 import TokenManager from '../../helpers/token-manager';
 
 export const PasswordForm = () => {

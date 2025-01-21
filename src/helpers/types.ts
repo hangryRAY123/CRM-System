@@ -34,7 +34,7 @@ export type RefreshToken = {
   refreshToken: string;
 };
 
-export type User = {
+export type Profile = {
   date: string;
   email: string;
   id: number;
@@ -47,5 +47,15 @@ export type User = {
 export type ProfileRequest = {
   username: string;
   email: string;
+  phoneNumber: string;
+};
+
+export type User = {
+  id: number;
+  username: string;
+  email: string;
+  date: string;
+  isBlocked: boolean;
+  roles: string[];
   phoneNumber: string;
 };

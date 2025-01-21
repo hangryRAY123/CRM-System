@@ -1,9 +1,9 @@
 import { notificationsAction } from '../notification/notifications-slice';
 import { authUser, updateToken, logOut } from '../../api/https';
 import { authAction } from './auth-slice';
-import { userAction } from '../user/user-slice';
+import { profileAction } from '../profile/profile-slice';
 import { AuthData } from '../../helpers/types';
-import { userState } from '../user/user-slice';
+import { profileState } from '../profile/profile-slice';
 import { authState } from './auth-slice';
 import TokenManager from '../../helpers/token-manager';
 
@@ -44,14 +44,14 @@ export const logOutUser = (token: string) => {
   return async (
     dispatch: (arg0: {
       payload: any;
-      type: 'auth/setIsAuth' | 'user/setUser' | 'auth/setAuthData';
+      type: 'auth/setIsAuth' | 'profile/setProfile' | 'auth/setAuthData';
     }) => void
   ) => {
     try {
       await logOut(token);
       TokenManager.clearToken();
       dispatch(authAction.setAuthData(authState.data));
-      dispatch(userAction.setUser(userState.data));
+      dispatch(profileAction.setProfile(profileState.data));
       dispatch(authAction.setIsAuth(false));
     } catch {
       throw new Error('Failed to log out. Please try again later.');

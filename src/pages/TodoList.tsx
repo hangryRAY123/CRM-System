@@ -5,6 +5,7 @@ import { TasksList } from '../components/Tasks/TasksList';
 import { fetchTasks } from '../api/https';
 import { TabKeys, AllTask, TasksInfo } from '../helpers/types';
 import { LoadingOutlined } from '@ant-design/icons';
+import { Divider, Alert } from 'antd';
 
 export const TodoList = () => {
   const [isLoading, setLoading] = useState<boolean>(false);
@@ -64,17 +65,28 @@ export const TodoList = () => {
   };
 
   return (
-    <section>
-      {isLoading ? (
-        <LoadingOutlined />
-      ) : (
-        <>
-          {error && <div style={{ color: 'red' }}>{error}</div>}
-          <AddTask changeTask={changeTask} />
-          <TabsList info={info} changeTab={changeTab} />
-          <TasksList tasks={allTask} changeTask={changeTask} />
-        </>
-      )}
-    </section>
+    <>
+      <Divider orientation='left'>TodoList</Divider>
+      <section>
+        {isLoading ? (
+          <LoadingOutlined />
+        ) : (
+          <>
+            {error && (
+              <Alert
+                style={{ width: 'fit-content', marginBottom: 15 }}
+                message={error}
+                type='error'
+                showIcon
+                closable
+              />
+            )}
+            <AddTask changeTask={changeTask} />
+            <TabsList info={info} changeTab={changeTab} />
+            <TasksList tasks={allTask} changeTask={changeTask} />
+          </>
+        )}
+      </section>
+    </>
   );
 };

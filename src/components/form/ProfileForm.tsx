@@ -1,49 +1,48 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Form, Input, Divider, Alert } from 'antd';
+import { Button, Form, Input, Alert } from 'antd';
 import { VALIDATE_AUTH } from '../../helpers/constants';
 import { CheckCircleOutlined, EditOutlined, CloseOutlined } from '@ant-design/icons';
 import { ProfileRequest } from '../../helpers/types';
-import { userAction } from '../../store/user/user-slice';
-import { updateUserData } from '../../store/user/user-action';
-import { getUserData } from '../../store/user/user-action';
+import { profileAction } from '../../store/profile/profile-slice';
+import { updateProfileData } from '../../store/profile/profile-action';
+import { getProfileData } from '../../store/profile/profile-action';
 import TokenManager from '../../helpers/token-manager';
 
 export const ProfileForm = () => {
-  const user = useSelector((state: any) => state.user);
-  const isEdit = useSelector((state: any) => state.user.isEdit);
+  const profile = useSelector((state: any) => state.profile);
+  const isEdit = useSelector((state: any) => state.profile.isEdit);
   const error = useSelector((state: any) => state.notifications.error);
   const dispatch: any = useDispatch();
   const token = TokenManager.getToken();
   const [form] = Form.useForm();
 
   const handleEdit = () => {
-    dispatch(userAction.setIsEdit());
+    dispatch(profileAction.setIsEdit());
   };
 
   const onFinish = async (values: ProfileRequest) => {
     if (token) {
-      dispatch(updateUserData(values, token));
+      dispatch(updateProfileData(values, token));
     }
   };
 
   useEffect(() => {
     if (token) {
-      dispatch(getUserData(token));
+      dispatch(getProfileData(token));
     }
     form.setFieldsValue({
-      username: user.data.username,
-      email: user.data.email,
-      phoneNumber: user.data.phoneNumber,
+      username: profile.data.username,
+      email: profile.data.email,
+      phoneNumber: profile.data.phoneNumber,
     });
-  }, [user, dispatch, form]);
+  }, [profile, dispatch, form]);
 
   return (
     <>
       {error && (
         <Alert style={{ width: 'fit-content' }} message={error} type='error' showIcon closable />
       )}
-      <Divider orientation='left'>Profile</Divider>
       <Form
         style={{ width: 'fit-content', display: 'flex', flexDirection: 'column', gap: 20 }}
         name='profile'
@@ -70,7 +69,7 @@ export const ProfileForm = () => {
           >
             {isEdit && <Input />}
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{user.data.username}</h3>}
+          {!isEdit && <h3 style={{ margin: 0 }}>{profile.data.username}</h3>}
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Form.Item
@@ -90,7 +89,7 @@ export const ProfileForm = () => {
           >
             {isEdit && <Input />}
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{user.data.email}</h3>}
+          {!isEdit && <h3 style={{ margin: 0 }}>{profile.data.email}</h3>}
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Form.Item
@@ -106,7 +105,7 @@ export const ProfileForm = () => {
           >
             {isEdit && <Input />}
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{user.data.phoneNumber}</h3>}
+          {!isEdit && <h3 style={{ margin: 0 }}>{profile.data.phoneNumber}</h3>}
         </div>
         <div className='btn-wrapper'>
           {isEdit && (

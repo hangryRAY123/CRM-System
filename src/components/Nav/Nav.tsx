@@ -1,12 +1,17 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
-import { UserOutlined, BarsOutlined } from '@ant-design/icons';
+import { UserOutlined, BarsOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
 const items: MenuItem[] = [
   { key: '/profile', icon: <UserOutlined />, label: <NavLink to='/profile'>Профиль</NavLink> },
+  {
+    key: '/users',
+    icon: <UsergroupAddOutlined />,
+    label: <NavLink to='/users'>Пользватели</NavLink>,
+  },
   {
     key: '/todolist',
     icon: <BarsOutlined />,

@@ -9,6 +9,17 @@ const instance = axios.create({
   },
 });
 
+export const getUsers = async (accessToken: string) => {
+  try {
+    instance.defaults.headers.Authorization = accessToken;
+    const res = await instance.get('/admin/users');
+
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error.response.data || 'Failed to fetch users. Please try again later.');
+  }
+};
+
 export const updatePaswword = async (password: string, accessToken: string) => {
   try {
     instance.defaults.headers.Authorization = accessToken;
@@ -20,7 +31,7 @@ export const updatePaswword = async (password: string, accessToken: string) => {
   }
 };
 
-export const updateUser = async (user: ProfileRequest, accessToken: string) => {
+export const updateProfile = async (user: ProfileRequest, accessToken: string) => {
   try {
     instance.defaults.headers.Authorization = accessToken;
     const res = await instance.put('/user/profile', user);
@@ -31,7 +42,7 @@ export const updateUser = async (user: ProfileRequest, accessToken: string) => {
   }
 };
 
-export const getUser = async (accessToken: string) => {
+export const getProfile = async (accessToken: string) => {
   try {
     instance.defaults.headers.Authorization = accessToken;
     const res = await instance.get('/user/profile');
