@@ -3,7 +3,7 @@ import { List } from './style';
 import { Task } from './Task';
 import { AllTask } from '../../helpers/types';
 
-export const TasksList: React.FC<{
+export const TaskList: React.FC<{
   tasks: AllTask[];
   changeTask: () => void;
 }> = (props) => {

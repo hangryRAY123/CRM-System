@@ -1,5 +1,12 @@
 import axios from 'axios';
-import { TabKeys, UserRegistration, AuthData, ProfileRequest } from '../helpers/types';
+import {
+  TabKeys,
+  UserRegistration,
+  AuthData,
+  ProfileRequest,
+  PasswordRequest,
+  AccessToken,
+} from '../helpers/types';
 
 const instance = axios.create({
   withCredentials: true,
@@ -9,10 +16,19 @@ const instance = axios.create({
   },
 });
 
-export const getUsers = async (accessToken: string) => {
+export const deleteUser = async (id: number, accessToken: AccessToken) => {
   try {
     instance.defaults.headers.Authorization = accessToken;
-    const res = await instance.get('/admin/users');
+    await instance.delete(`/admin/users/${id}`);
+  } catch (error: any) {
+    throw new Error(error.response.data || 'Failed to delete user. Please try again later.');
+  }
+};
+
+export const getUsers = async (accessToken: AccessToken) => {
+  try {
+    instance.defaults.headers.Authorization = accessToken;
+    const res = await instance.get('/admin/users?limit=200');
 
     return res.data;
   } catch (error: any) {
@@ -20,7 +36,7 @@ export const getUsers = async (accessToken: string) => {
   }
 };
 
-export const updatePaswword = async (password: string, accessToken: string) => {
+export const updatePaswword = async (password: PasswordRequest, accessToken: AccessToken) => {
   try {
     instance.defaults.headers.Authorization = accessToken;
     const res = await instance.put('/user/profile/reset-password', password);
@@ -31,7 +47,7 @@ export const updatePaswword = async (password: string, accessToken: string) => {
   }
 };
 
-export const updateProfile = async (user: ProfileRequest, accessToken: string) => {
+export const updateProfile = async (user: ProfileRequest, accessToken: AccessToken) => {
   try {
     instance.defaults.headers.Authorization = accessToken;
     const res = await instance.put('/user/profile', user);
@@ -42,7 +58,7 @@ export const updateProfile = async (user: ProfileRequest, accessToken: string) =
   }
 };
 
-export const getProfile = async (accessToken: string) => {
+export const getProfile = async (accessToken: AccessToken) => {
   try {
     instance.defaults.headers.Authorization = accessToken;
     const res = await instance.get('/user/profile');
@@ -53,7 +69,7 @@ export const getProfile = async (accessToken: string) => {
   }
 };
 
-export const logOut = async (accessToken: string) => {
+export const logOut = async (accessToken: AccessToken) => {
   try {
     instance.defaults.headers.Authorization = accessToken;
     await instance.post('/user/logout');

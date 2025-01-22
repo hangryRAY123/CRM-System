@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AddTask } from '../components/AddTask/AddTask';
-import { TabsList } from '../components/Tabs/TabsList';
-import { TasksList } from '../components/Tasks/TasksList';
+import { TabList } from '../components/Tab/TabList';
+import { TaskList } from '../components/Task/TaskList';
 import { fetchTasks } from '../api/https';
 import { TabKeys, AllTask, TasksInfo } from '../helpers/types';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -82,8 +82,8 @@ export const TodoList = () => {
               />
             )}
             <AddTask changeTask={changeTask} />
-            <TabsList info={info} changeTab={changeTab} />
-            <TasksList tasks={allTask} changeTask={changeTask} />
+            <TabList info={info} changeTab={changeTab} />
+            <TaskList tasks={allTask} changeTask={changeTask} />
           </>
         )}
       </section>

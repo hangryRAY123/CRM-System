@@ -2,7 +2,7 @@ import { notificationsAction } from '../notification/notifications-slice';
 import { authUser, updateToken, logOut } from '../../api/https';
 import { authAction } from './auth-slice';
 import { profileAction } from '../profile/profile-slice';
-import { AuthData } from '../../helpers/types';
+import { AuthData, AccessToken } from '../../helpers/types';
 import { profileState } from '../profile/profile-slice';
 import { authState } from './auth-slice';
 import TokenManager from '../../helpers/token-manager';
@@ -40,7 +40,7 @@ export const updateRefrashToken = () => {
   };
 };
 
-export const logOutUser = (token: string) => {
+export const logOutUser = (token: AccessToken) => {
   return async (
     dispatch: (arg0: {
       payload: any;

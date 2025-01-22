@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Tabs } from 'antd';
 import { TabKeys } from '../../helpers/types';
 
-export const TabsList: React.FC<{
+export const TabList: React.FC<{
   changeTab: (tab: TabKeys) => void;
   info: object;
 }> = (props) => {

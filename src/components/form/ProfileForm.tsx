@@ -41,7 +41,7 @@ export const ProfileForm = () => {
   return (
     <>
       {error && (
-        <Alert style={{ width: 'fit-content' }} message={error} type='error' showIcon closable />
+        <Alert style={{ width: 'fit-content', marginBottom: 15 }} message={error} type='error' showIcon closable />
       )}
       <Form
         style={{ width: 'fit-content', display: 'flex', flexDirection: 'column', gap: 20 }}

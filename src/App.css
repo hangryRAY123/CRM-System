@@ -61,6 +61,12 @@ section.auth .form-wrapper {
   gap: 15px;
 }
 
+.ant-table-content {
+  scrollbar-width: thin;
+  scrollbar-color: #eaeaea transparent;
+  scrollbar-gutter: stable;
+}
+
 .lock span,
 .lock svg {
   width: 100%;

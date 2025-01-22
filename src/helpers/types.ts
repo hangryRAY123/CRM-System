@@ -59,3 +59,7 @@ export type User = {
   roles: string[];
   phoneNumber: string;
 };
+
+export type PasswordRequest = string;
+
+export type AccessToken = string;
