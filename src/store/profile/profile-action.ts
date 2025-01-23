@@ -10,7 +10,6 @@ export const getProfileData = (token: AccessToken) => {
     }) => void
   ) => {
     const res = await getProfile(token);
-
     dispatch(profileAction.setProfile(res));
     try {
     } catch (error: any) {
@@ -28,7 +27,6 @@ export const updateProfileData = (user: ProfileRequest, token: AccessToken) => {
   ) => {
     try {
       const res = await updateProfile(user, token);
-
       dispatch(profileAction.setProfile(res));
       dispatch(profileAction.setIsEdit(false as any));
       dispatch(notificationsAction.setError(''));

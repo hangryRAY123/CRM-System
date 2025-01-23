@@ -1,17 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Profile } from '../../helpers/types';
+import { User } from '../../helpers/types';
 
 export const profileState = {
-  data: <Profile>{
+  data: <User>{
     date: '',
     email: '',
     id: 0,
-    isAdmin: false,
+    roles: [],
     isBlocked: false,
     phoneNumber: '',
     username: '',
   },
   isEdit: <boolean>false,
+  isAdmin: <boolean>false,
 };
 
 export const profileSlice = createSlice({
@@ -22,13 +23,16 @@ export const profileSlice = createSlice({
       state.data.date = action.payload.date;
       state.data.email = action.payload.email;
       state.data.id = action.payload.id;
-      state.data.isAdmin = action.payload.isAdmin;
+      state.data.roles = action.payload.roles;
       state.data.isBlocked = action.payload.isBlocked;
       state.data.phoneNumber = action.payload.phoneNumber;
       state.data.username = action.payload.username;
     },
     setIsEdit: (state) => {
       state.isEdit = !state.isEdit;
+    },
+    checkRole: (state, action) => {
+      state.isAdmin = state.data.roles.includes(action.payload);
     },
   },
 });

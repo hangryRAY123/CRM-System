@@ -1,5 +1,5 @@
 import { notificationsAction } from '../notification/notifications-slice';
-import { authUser, updateToken, logOut } from '../../api/https';
+import { authUser, updateToken, logOut, getProfile } from '../../api/https';
 import { authAction } from './auth-slice';
 import { profileAction } from '../profile/profile-slice';
 import { AuthData, AccessToken } from '../../helpers/types';
@@ -11,13 +11,22 @@ export const authUserData = (user: AuthData) => {
   return async (
     dispatch: (arg0: {
       payload: any;
-      type: 'auth/setIsAuth' | 'notifications/setError' | 'notifications/setSuccess';
+      type:
+        | 'profile/setProfile'
+        | 'profile/checkRole'
+        | 'auth/setIsAuth'
+        | 'notifications/setError'
+        | 'notifications/setSuccess';
     }) => void
   ) => {
     try {
       const res = await authUser(user);
       TokenManager.setToken(res.accessToken);
+      const token = <AccessToken>TokenManager.getToken();
+      const profile = await getProfile(token);
+      dispatch(profileAction.setProfile(profile));
       dispatch(authAction.setIsAuth(true));
+      dispatch(profileAction.checkRole('ADMIN'));
       dispatch(notificationsAction.setError(''));
       dispatch(notificationsAction.setSuccess('successfully registered'));
     } catch (error: any) {

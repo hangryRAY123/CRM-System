@@ -1,32 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { GetProp, TableProps, Popconfirm } from 'antd';
 import { Table, Tag, Alert } from 'antd';
-import type { SorterResult } from 'antd/es/table/interface';
 import { useSelector, useDispatch } from 'react-redux';
 import { User } from '../../helpers/types';
 import { NavLink } from 'react-router-dom';
-import { deleteUserData } from '../../store/user/user-action';
+import { deleteUserData, sortUserData } from '../../store/user/user-action';
 import TokenManager from '../../helpers/token-manager';
+import qs from 'qs';
 
 type ColumnsType<T extends object = object> = TableProps<T>['columns'];
 type TablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>;
 
 interface TableParams {
   pagination?: TablePaginationConfig;
-  sortField?: SorterResult<any>['field'];
-  sortOrder?: SorterResult<any>['order'];
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1];
 }
 
+interface FilterParams {
+  sortOrder?: string;
+  sortBy?: string;
+}
+
 export const UserList: React.FC = () => {
-  const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
       pageSize: 10,
     },
   });
+  const [filterParams, setFilterParams] = useState<FilterParams>({});
   const users = useSelector((state: any) => state.user.data);
+  const isLoading = useSelector((state: any) => state.user.isLoading);
   const error = useSelector((state: any) => state.notifications.error);
   const dispatch: any = useDispatch();
   const token = TokenManager.getToken();
@@ -103,9 +107,13 @@ export const UserList: React.FC = () => {
     },
   ];
 
-  const fetchData = () => {
-    // setLoading(true);
-    // setLoading(false);
+  const sortData = () => {
+    const sort = qs.stringify(filterParams);
+
+    if (token) {
+      dispatch(sortUserData(sort, token));
+    }
+
     setTableParams({
       ...tableParams,
       pagination: {
@@ -115,20 +123,16 @@ export const UserList: React.FC = () => {
     });
   };
 
-  useEffect(fetchData, [
-    tableParams.pagination?.current,
-    tableParams.pagination?.pageSize,
-    tableParams?.sortOrder,
-    tableParams?.sortField,
-    JSON.stringify(tableParams.filters),
-  ]);
+  useEffect(sortData, [filterParams.sortOrder]);
 
   const handleTableChange: TableProps<User>['onChange'] = (pagination, filters, sorter) => {
+    setFilterParams({
+      sortBy: Array.isArray(sorter) ? undefined : sorter.field?.toString(),
+      sortOrder: Array.isArray(sorter) ? undefined : sorter.order?.replace('end', ''),
+    });
     setTableParams({
       pagination,
       filters,
-      sortOrder: Array.isArray(sorter) ? undefined : sorter.order,
-      sortField: Array.isArray(sorter) ? undefined : sorter.field,
     });
   };
 
@@ -148,7 +152,7 @@ export const UserList: React.FC = () => {
         rowKey={(user) => user.id}
         dataSource={users}
         pagination={tableParams.pagination}
-        loading={loading}
+        loading={isLoading}
         onChange={handleTableChange}
         scroll={{ x: 'max-content' }}
       />

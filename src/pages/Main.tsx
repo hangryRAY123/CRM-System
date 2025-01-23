@@ -17,6 +17,7 @@ const { Content, Sider } = Layout;
 export const Main = () => {
   const isCollapsed = useSelector((state: any) => state.auth.isCollapsed);
   const isAuth = useSelector((state: any) => state.auth.isAuth);
+  const isAdmin = useSelector((state: any) => state.profile.isAdmin);
   const navigate = useNavigate();
   const dispatch: any = useDispatch();
 
@@ -53,7 +54,7 @@ export const Main = () => {
             <Content style={{ margin: '24px 16px 0' }}>
               <Routes>
                 <Route path='/profile' element={<Profile />} />
-                <Route path='/users' element={<Users />} />
+                {isAdmin && <Route path='/users' element={<Users />} />}
                 <Route path='/todolist' element={<TodoList />} />
               </Routes>
             </Content>

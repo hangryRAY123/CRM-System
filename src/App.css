@@ -49,12 +49,15 @@ section.auth .form-wrapper {
   flex-grow: 1;
   width: 60%;
 }
+
 .btn-wrapper {
   display: flex;
 }
+
 .btn-wrapper .ant-form-item {
   width: 100%;
 }
+
 .btn-wrapper .ant-form-item-control-input-content {
   display: flex;
   align-items: center;
@@ -83,9 +86,11 @@ section.auth .form-wrapper {
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -111,4 +116,8 @@ section.auth .form-wrapper {
 
 .read-the-docs {
   color: #888;
+}
+
+.nav .ant-menu-item[aria-disabled='true'] {
+  display: none;
 }

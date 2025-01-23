@@ -16,6 +16,16 @@ const instance = axios.create({
   },
 });
 
+export const sortUsers = async (sort: string, accessToken: AccessToken) => {
+  try {
+    instance.defaults.headers.Authorization = accessToken;
+    const res = await instance.get(`/admin/users?${sort ? sort + '&limit=200' : 'limit=200'}`);
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error.response.data || 'Failed to sort users. Please try again later.');
+  }
+};
+
 export const deleteUser = async (id: number, accessToken: AccessToken) => {
   try {
     instance.defaults.headers.Authorization = accessToken;
