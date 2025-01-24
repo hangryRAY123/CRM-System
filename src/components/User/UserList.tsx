@@ -4,7 +4,15 @@ import { Table, Tag, Alert } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { User } from '../../helpers/types';
 import { NavLink } from 'react-router-dom';
+import { Sort } from '../Sort/Sort';
+import { SearchUser } from '../SearchUser/SearchUser';
 import { deleteUserData, sortUserData } from '../../store/user/user-action';
+import {
+  LockOutlined,
+  UnlockOutlined,
+  UserAddOutlined,
+  UserDeleteOutlined,
+} from '@ant-design/icons';
 import TokenManager from '../../helpers/token-manager';
 import qs from 'qs';
 
@@ -31,9 +39,16 @@ export const UserList: React.FC = () => {
   const [filterParams, setFilterParams] = useState<FilterParams>({});
   const users = useSelector((state: any) => state.user.data);
   const isLoading = useSelector((state: any) => state.user.isLoading);
+  const isBlocked = useSelector((state: any) => state.user.isBlocked);
   const error = useSelector((state: any) => state.notifications.error);
   const dispatch: any = useDispatch();
   const token = TokenManager.getToken();
+
+  const handleBlock = (id: number) => {
+    if (token) {
+      console.log(id);
+    }
+  };
 
   const handleDelete = (id: number) => {
     if (token) {
@@ -58,12 +73,19 @@ export const UserList: React.FC = () => {
     },
     {
       title: 'Blocked',
-      dataIndex: 'isBlocked',
-      render: (name) => {
-        if (!name) {
-          return <span>No</span>;
+      render: (user) => {
+        if (!user.isBlocked) {
+          return (
+            <Popconfirm title='Block user?' onConfirm={() => handleBlock(user.id)}>
+              <UnlockOutlined className='blocked' />
+            </Popconfirm>
+          );
         } else {
-          return <span>Yes</span>;
+          return (
+            <Popconfirm title='Unblock user?' onConfirm={() => handleBlock(user.id)}>
+              <LockOutlined className='blocked' />
+            </Popconfirm>
+          );
         }
       },
     },
@@ -72,11 +94,13 @@ export const UserList: React.FC = () => {
       dataIndex: 'roles',
       render: (tags: string[]) => (
         <span>
+          {tags.includes('ADMIN') ? (
+            <UserDeleteOutlined className='blocked' />
+          ) : (
+            <UserAddOutlined className='blocked' />
+          )}
           {tags.map((tag) => {
             let color = tag.length > 5 ? 'geekblue' : 'green';
-            if (tag === 'loser') {
-              color = 'volcano';
-            }
             return (
               <Tag style={{ marginBottom: 8 }} color={color} key={tag}>
                 {tag.toUpperCase()}
@@ -100,7 +124,7 @@ export const UserList: React.FC = () => {
           <NavLink to={`/user/${user.id}`}>Profile</NavLink>
           <span style={{ marginLeft: 5, marginRight: 5 }}>|</span>
           <Popconfirm title='Sure to delete?' onConfirm={() => handleDelete(user.id)}>
-            <span style={{ fontWeight: 500, cursor: 'pointer' }}>Delete</span>
+            <span style={{ fontWeight: 500, cursor: 'pointer', color: '#646cff' }}>Delete</span>
           </Popconfirm>
         </div>
       ),
@@ -108,7 +132,7 @@ export const UserList: React.FC = () => {
   ];
 
   const sortData = () => {
-    const sort = qs.stringify(filterParams);
+    const sort = qs.stringify(filterParams) + isBlocked;
 
     if (token) {
       dispatch(sortUserData(sort, token));
@@ -147,6 +171,8 @@ export const UserList: React.FC = () => {
           closable
         />
       )}
+      <SearchUser />
+      <Sort />
       <Table<User>
         columns={columns}
         rowKey={(user) => user.id}

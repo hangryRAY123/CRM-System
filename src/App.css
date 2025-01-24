@@ -121,3 +121,16 @@ section.auth .form-wrapper {
 .nav .ant-menu-item[aria-disabled='true'] {
   display: none;
 }
+
+.blocked {
+  color: #646cff;
+  padding: 5px;
+  border: 1px solid #646cff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.blocked svg {
+  width: 20px;
+  height: 20px;
+}

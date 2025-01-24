@@ -11,10 +11,10 @@ export const sortUserData = (sort: string, token: AccessToken) => {
     }) => void
   ) => {
     try {
-      await dispatch(userAction.setIsLoading(true));
+      dispatch(userAction.setIsLoading(true));
       const res = await sortUsers(sort, token);
       dispatch(userAction.setUsers(res.data));
-      await dispatch(userAction.setIsLoading(false));
+      dispatch(userAction.setIsLoading(false));
     } catch (error: any) {
       dispatch(userAction.setIsLoading(false));
       dispatch(notificationsAction.setError(error.message));
