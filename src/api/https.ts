@@ -16,6 +16,15 @@ const instance = axios.create({
   },
 });
 
+export const blockUser = async (id: number, accessToken: AccessToken, block: string) => {
+  try {
+    instance.defaults.headers.Authorization = accessToken;
+    await instance.post(`/admin/users/${id}/${block}`);
+  } catch (error: any) {
+    throw new Error(error.response.data || 'Failed to block user. Please try again later.');
+  }
+};
+
 export const sortUsers = async (sort: string, accessToken: AccessToken) => {
   try {
     instance.defaults.headers.Authorization = accessToken;

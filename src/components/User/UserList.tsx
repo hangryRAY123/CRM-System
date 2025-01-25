@@ -6,13 +6,9 @@ import { User } from '../../helpers/types';
 import { NavLink } from 'react-router-dom';
 import { Sort } from '../Sort/Sort';
 import { SearchUser } from '../SearchUser/SearchUser';
-import { deleteUserData, sortUserData } from '../../store/user/user-action';
-import {
-  LockOutlined,
-  UnlockOutlined,
-  UserAddOutlined,
-  UserDeleteOutlined,
-} from '@ant-design/icons';
+import { deleteUserData, sortUserData, blockUserData } from '../../store/user/user-action';
+import { userAction } from '../../store/user/user-slice';
+import { LockOutlined, UnlockOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import TokenManager from '../../helpers/token-manager';
 import qs from 'qs';
 
@@ -39,20 +35,32 @@ export const UserList: React.FC = () => {
   const [filterParams, setFilterParams] = useState<FilterParams>({});
   const users = useSelector((state: any) => state.user.data);
   const isLoading = useSelector((state: any) => state.user.isLoading);
-  const isBlocked = useSelector((state: any) => state.user.isBlocked);
+  const sort = useSelector((state: any) => state.user.sort);
   const error = useSelector((state: any) => state.notifications.error);
   const dispatch: any = useDispatch();
   const token = TokenManager.getToken();
 
-  const handleBlock = (id: number) => {
+  const handleRole = (id: number) => {
     if (token) {
       console.log(id);
     }
   };
 
+  const handleBlock = (id: number, isBlock: boolean) => {
+    let block = 'block';
+
+    if (isBlock) {
+      block = 'unblock';
+    }
+
+    if (token) {
+      dispatch(blockUserData(id, token, sort, block));
+    }
+  };
+
   const handleDelete = (id: number) => {
     if (token) {
-      dispatch(deleteUserData(id, token));
+      dispatch(deleteUserData(id, token, sort));
     }
   };
 
@@ -76,13 +84,16 @@ export const UserList: React.FC = () => {
       render: (user) => {
         if (!user.isBlocked) {
           return (
-            <Popconfirm title='Block user?' onConfirm={() => handleBlock(user.id)}>
+            <Popconfirm title='Block user?' onConfirm={() => handleBlock(user.id, user.isBlocked)}>
               <UnlockOutlined className='blocked' />
             </Popconfirm>
           );
         } else {
           return (
-            <Popconfirm title='Unblock user?' onConfirm={() => handleBlock(user.id)}>
+            <Popconfirm
+              title='Unblock user?'
+              onConfirm={() => handleBlock(user.id, user.isBlocked)}
+            >
               <LockOutlined className='blocked' />
             </Popconfirm>
           );
@@ -91,23 +102,26 @@ export const UserList: React.FC = () => {
     },
     {
       title: 'Role',
-      dataIndex: 'roles',
-      render: (tags: string[]) => (
-        <span>
-          {tags.includes('ADMIN') ? (
-            <UserDeleteOutlined className='blocked' />
+      render: (user: User) => (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {user.roles.includes('ADMIN') ? (
+            <Popconfirm title='Remove role admin?' onConfirm={() => handleRole(user.id)}>
+              <MinusOutlined style={{ marginRight: 8 }} />
+            </Popconfirm>
           ) : (
-            <UserAddOutlined className='blocked' />
+            <Popconfirm title='Add role admin?' onConfirm={() => handleRole(user.id)}>
+              <PlusOutlined style={{ marginRight: 8 }} />
+            </Popconfirm>
           )}
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? 'geekblue' : 'green';
+          {user.roles.map((role) => {
+            let color = role.length > 5 ? 'geekblue' : 'green';
             return (
-              <Tag style={{ marginBottom: 8 }} color={color} key={tag}>
-                {tag.toUpperCase()}
+              <Tag color={color} key={role}>
+                {role.toUpperCase()}
               </Tag>
             );
           })}
-        </span>
+        </div>
       ),
     },
     {
@@ -132,19 +146,12 @@ export const UserList: React.FC = () => {
   ];
 
   const sortData = () => {
-    const sort = qs.stringify(filterParams) + isBlocked;
+    const sortData = qs.stringify(filterParams) + sort;
+    dispatch(userAction.setSort(sortData));
 
     if (token) {
-      dispatch(sortUserData(sort, token));
+      dispatch(sortUserData(sortData, token));
     }
-
-    setTableParams({
-      ...tableParams,
-      pagination: {
-        ...tableParams.pagination,
-        total: 0,
-      },
-    });
   };
 
   useEffect(sortData, [filterParams.sortOrder]);

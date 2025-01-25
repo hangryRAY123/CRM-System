@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from 'antd';
+import { Input, Form } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import TokenManager from '../../helpers/token-manager';
 import { sortUserData } from '../../store/user/user-action';
@@ -8,12 +8,12 @@ const { Search } = Input;
 
 export const SearchUser: React.FC = () => {
   const isLoading = useSelector((state: any) => state.user.isLoading);
-  const isBlocked = useSelector((state: any) => state.user.isBlocked);
+  const sort = useSelector((state: any) => state.user.sort);
   const dispatch: any = useDispatch();
   const token = TokenManager.getToken();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    let search = 'search=' + e.target.value + isBlocked;
+    let search = 'search=' + e.target.value + '&' + sort;
 
     if (token) {
       dispatch(sortUserData(search, token));
@@ -21,11 +21,13 @@ export const SearchUser: React.FC = () => {
   };
 
   return (
-    <Search
-      style={{ marginBottom: 20 }}
-      onChange={handleChange}
-      placeholder='Enter user email'
-      loading={isLoading}
-    />
+    <Form>
+      <Search
+        style={{ marginBottom: 20 }}
+        onChange={handleChange}
+        placeholder='Enter user email'
+        loading={isLoading}
+      />
+    </Form>
   );
 };

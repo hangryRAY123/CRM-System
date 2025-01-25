@@ -3,8 +3,8 @@ import { User } from '../../helpers/types';
 
 const userState = {
   data: [] as User[],
-  isLoading: false,
-  isBlocked: '',
+  isLoading: <boolean>false,
+  sort: <string>'',
 };
 
 export const userSlice = createSlice({
@@ -17,8 +17,8 @@ export const userSlice = createSlice({
     setIsLoading: (state, action) => {
       state.isLoading = action.payload;
     },
-    setIsBlocked: (state, action) => {
-      state.isBlocked = action.payload;
+    setSort: (state, action) => {
+      state.sort = action.payload;
     },
   },
 });

@@ -10,7 +10,7 @@ export const Sort: React.FC = () => {
   const token = TokenManager.getToken();
 
   const handleChange = (value: string) => {
-    dispatch(userAction.setIsBlocked(value));
+    dispatch(userAction.setSort(value));
     if (token) {
       dispatch(sortUserData(value, token));
     }
