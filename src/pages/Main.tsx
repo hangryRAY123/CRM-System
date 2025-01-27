@@ -1,6 +1,7 @@
 import { Nav } from '../components/Nav/Nav';
 import { TodoList } from './TodoList';
 import { Profile } from './Profile';
+import { UserProfile } from './UserProfile';
 import { Users } from './Users';
 import { MainFooter } from '../components/MainFooter/MainFooter';
 import { MainHeader } from '../components/MainHeader/MainHeader';
@@ -54,6 +55,7 @@ export const Main = () => {
             <Content style={{ margin: '24px 16px 0' }}>
               <Routes>
                 <Route path='/profile' element={<Profile />} />
+                <Route path='/profile/:id' element={<UserProfile />} />
                 {isAdmin && <Route path='/users' element={<Users />} />}
                 <Route path='/todolist' element={<TodoList />} />
               </Routes>

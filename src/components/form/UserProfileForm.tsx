@@ -5,16 +5,19 @@ import { VALIDATE_AUTH } from '../../helpers/constants';
 import { CheckCircleOutlined, EditOutlined, CloseOutlined } from '@ant-design/icons';
 import { ProfileRequest } from '../../helpers/types';
 import { profileAction } from '../../store/profile/profile-slice';
-import { updateProfileData } from '../../store/profile/profile-action';
+import { updateUserProfileData } from '../../store/user/user-action';
+import { getUserProfileData } from '../../store/user/user-action';
+import { useParams } from 'react-router-dom';
 import TokenManager from '../../helpers/token-manager';
 
-export const ProfileForm = () => {
-  const profile = useSelector((state: any) => state.profile);
+export const UserProfileForm = () => {
+  const profile = useSelector((state: any) => state.user.userProfile);
   const isEdit = useSelector((state: any) => state.profile.isEdit);
   const error = useSelector((state: any) => state.notifications.error);
   const dispatch: any = useDispatch();
   const token = TokenManager.getToken();
   const [form] = Form.useForm();
+  const { id } = useParams();
 
   const handleEdit = () => {
     dispatch(profileAction.setIsEdit());
@@ -22,17 +25,20 @@ export const ProfileForm = () => {
 
   const onFinish = async (values: ProfileRequest) => {
     if (token) {
-      dispatch(updateProfileData(values, token));
+      dispatch(updateUserProfileData(Number(id), token, values));
     }
   };
 
   useEffect(() => {
     form.setFieldsValue({
-      username: profile.data.username,
-      email: profile.data.email,
-      phoneNumber: profile.data.phoneNumber,
+      username: profile.username,
+      email: profile.email,
+      phoneNumber: profile.phoneNumber,
     });
-  }, [profile.data.username]);
+    if (token) {
+      dispatch(getUserProfileData(Number(id), token));
+    }
+  }, [profile.username]);
 
   return (
     <>
@@ -71,7 +77,7 @@ export const ProfileForm = () => {
           >
             {isEdit && <Input />}
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{profile.data.username}</h3>}
+          {!isEdit && <h3 style={{ margin: 0 }}>{profile.username}</h3>}
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Form.Item
@@ -91,7 +97,7 @@ export const ProfileForm = () => {
           >
             {isEdit && <Input />}
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{profile.data.email}</h3>}
+          {!isEdit && <h3 style={{ margin: 0 }}>{profile.email}</h3>}
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Form.Item
@@ -107,7 +113,7 @@ export const ProfileForm = () => {
           >
             {isEdit && <Input />}
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{profile.data.phoneNumber}</h3>}
+          {!isEdit && <h3 style={{ margin: 0 }}>{profile.phoneNumber}</h3>}
         </div>
         <div className='btn-wrapper'>
           {isEdit && (

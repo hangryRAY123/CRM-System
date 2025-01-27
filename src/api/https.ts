@@ -16,6 +16,39 @@ const instance = axios.create({
   },
 });
 
+export const updateUserProfile = async (
+  id: number,
+  accessToken: AccessToken,
+  user: ProfileRequest
+) => {
+  try {
+    instance.defaults.headers.Authorization = accessToken;
+    const res = await instance.put(`/admin/users/${id}`, user);
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error.response.data || 'Failed to get user profile. Please try again later.');
+  }
+};
+
+export const getUserProfile = async (id: number, accessToken: AccessToken) => {
+  try {
+    instance.defaults.headers.Authorization = accessToken;
+    const res = await instance.get(`/admin/users/${id}`);
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error.response.data || 'Failed to get user profile. Please try again later.');
+  }
+};
+
+export const rolesUser = async (id: number, accessToken: AccessToken, roles: string[]) => {
+  try {
+    instance.defaults.headers.Authorization = accessToken;
+    await instance.post(`/admin/users/${id}/rights`, { roles: roles });
+  } catch (error: any) {
+    throw new Error(error.response.data || 'Failed to change user role. Please try again later.');
+  }
+};
+
 export const blockUser = async (id: number, accessToken: AccessToken, block: string) => {
   try {
     instance.defaults.headers.Authorization = accessToken;

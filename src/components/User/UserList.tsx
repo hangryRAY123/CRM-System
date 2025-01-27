@@ -6,7 +6,12 @@ import { User } from '../../helpers/types';
 import { NavLink } from 'react-router-dom';
 import { Sort } from '../Sort/Sort';
 import { SearchUser } from '../SearchUser/SearchUser';
-import { deleteUserData, sortUserData, blockUserData } from '../../store/user/user-action';
+import {
+  deleteUserData,
+  sortUserData,
+  blockUserData,
+  rolesUserData,
+} from '../../store/user/user-action';
 import { userAction } from '../../store/user/user-slice';
 import { LockOutlined, UnlockOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import TokenManager from '../../helpers/token-manager';
@@ -40,9 +45,17 @@ export const UserList: React.FC = () => {
   const dispatch: any = useDispatch();
   const token = TokenManager.getToken();
 
-  const handleRole = (id: number) => {
+  const handleRole = (id: number, roles: string[]) => {
+    let newRoles;
+
+    if (roles.includes('ADMIN')) {
+      newRoles = roles.filter((role) => role !== 'ADMIN');
+    } else {
+      newRoles = [...roles, 'ADMIN'];
+    }
+
     if (token) {
-      console.log(id);
+      dispatch(rolesUserData(id, token, sort, newRoles));
     }
   };
 
@@ -63,6 +76,28 @@ export const UserList: React.FC = () => {
       dispatch(deleteUserData(id, token, sort));
     }
   };
+
+  const handleTableChange: TableProps<User>['onChange'] = (pagination, filters, sorter) => {
+    setFilterParams({
+      sortBy: Array.isArray(sorter) ? undefined : sorter.field?.toString(),
+      sortOrder: Array.isArray(sorter) ? undefined : sorter.order?.replace('end', ''),
+    });
+    setTableParams({
+      pagination,
+      filters,
+    });
+  };
+
+  const sortData = () => {
+    const sortData = qs.stringify(filterParams) + sort;
+    dispatch(userAction.setSort(sortData));
+
+    if (token) {
+      dispatch(sortUserData(sortData, token));
+    }
+  };
+
+  useEffect(sortData, [filterParams.sortOrder]);
 
   const columns: ColumnsType<User> = [
     {
@@ -105,11 +140,14 @@ export const UserList: React.FC = () => {
       render: (user: User) => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           {user.roles.includes('ADMIN') ? (
-            <Popconfirm title='Remove role admin?' onConfirm={() => handleRole(user.id)}>
+            <Popconfirm
+              title='Remove role admin?'
+              onConfirm={() => handleRole(user.id, user.roles)}
+            >
               <MinusOutlined style={{ marginRight: 8 }} />
             </Popconfirm>
           ) : (
-            <Popconfirm title='Add role admin?' onConfirm={() => handleRole(user.id)}>
+            <Popconfirm title='Add role admin?' onConfirm={() => handleRole(user.id, user.roles)}>
               <PlusOutlined style={{ marginRight: 8 }} />
             </Popconfirm>
           )}
@@ -135,7 +173,7 @@ export const UserList: React.FC = () => {
       width: 100,
       render: (user: User) => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <NavLink to={`/user/${user.id}`}>Profile</NavLink>
+          <NavLink to={`/profile/${user.id}`}>Profile</NavLink>
           <span style={{ marginLeft: 5, marginRight: 5 }}>|</span>
           <Popconfirm title='Sure to delete?' onConfirm={() => handleDelete(user.id)}>
             <span style={{ fontWeight: 500, cursor: 'pointer', color: '#646cff' }}>Delete</span>
@@ -144,28 +182,6 @@ export const UserList: React.FC = () => {
       ),
     },
   ];
-
-  const sortData = () => {
-    const sortData = qs.stringify(filterParams) + sort;
-    dispatch(userAction.setSort(sortData));
-
-    if (token) {
-      dispatch(sortUserData(sortData, token));
-    }
-  };
-
-  useEffect(sortData, [filterParams.sortOrder]);
-
-  const handleTableChange: TableProps<User>['onChange'] = (pagination, filters, sorter) => {
-    setFilterParams({
-      sortBy: Array.isArray(sorter) ? undefined : sorter.field?.toString(),
-      sortOrder: Array.isArray(sorter) ? undefined : sorter.order?.replace('end', ''),
-    });
-    setTableParams({
-      pagination,
-      filters,
-    });
-  };
 
   return (
     <>
