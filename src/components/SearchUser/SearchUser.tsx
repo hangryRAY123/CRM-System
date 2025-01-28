@@ -3,6 +3,7 @@ import { Input, Form } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import TokenManager from '../../helpers/token-manager';
 import { sortUserData } from '../../store/user/user-action';
+import { userAction } from '../../store/user/user-slice';
 
 const { Search } = Input;
 
@@ -14,6 +15,7 @@ export const SearchUser: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     let search = 'search=' + e.target.value + '&' + sort;
+    dispatch(userAction.setSort(search));
 
     if (token) {
       dispatch(sortUserData(search, token));

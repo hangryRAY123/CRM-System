@@ -11,7 +11,7 @@ import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-// import { updateRefrashToken } from '../store/authorization/auth-action';
+import { updateRefrashToken } from '../store/authorization/auth-action';
 
 const { Content, Sider } = Layout;
 
@@ -23,7 +23,9 @@ export const Main = () => {
   const dispatch: any = useDispatch();
 
   useEffect(() => {
-    // dispatch(updateRefrashToken());
+    if (!isAuth) {
+      dispatch(updateRefrashToken());
+    }
 
     const timeout = setTimeout(() => {
       if (!isAuth) {

@@ -9,7 +9,7 @@ import { updateProfileData } from '../../store/profile/profile-action';
 import TokenManager from '../../helpers/token-manager';
 
 export const ProfileForm = () => {
-  const profile = useSelector((state: any) => state.profile);
+  const profile = useSelector((state: any) => state.profile.data);
   const isEdit = useSelector((state: any) => state.profile.isEdit);
   const error = useSelector((state: any) => state.notifications.error);
   const dispatch: any = useDispatch();
@@ -28,11 +28,11 @@ export const ProfileForm = () => {
 
   useEffect(() => {
     form.setFieldsValue({
-      username: profile.data.username,
-      email: profile.data.email,
-      phoneNumber: profile.data.phoneNumber,
+      username: profile.username,
+      email: profile.email,
+      phoneNumber: profile.phoneNumber,
     });
-  }, [profile.data.username]);
+  }, [profile.username]);
 
   return (
     <>
@@ -71,7 +71,7 @@ export const ProfileForm = () => {
           >
             {isEdit && <Input />}
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{profile.data.username}</h3>}
+          {!isEdit && <h3 style={{ margin: 0 }}>{profile.username}</h3>}
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Form.Item
@@ -91,7 +91,7 @@ export const ProfileForm = () => {
           >
             {isEdit && <Input />}
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{profile.data.email}</h3>}
+          {!isEdit && <h3 style={{ margin: 0 }}>{profile.email}</h3>}
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Form.Item
@@ -107,7 +107,7 @@ export const ProfileForm = () => {
           >
             {isEdit && <Input />}
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{profile.data.phoneNumber}</h3>}
+          {!isEdit && <h3 style={{ margin: 0 }}>{profile.phoneNumber}</h3>}
         </div>
         <div className='btn-wrapper'>
           {isEdit && (
