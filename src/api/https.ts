@@ -154,7 +154,7 @@ export const regUser = async (user: UserRegistration) => {
   try {
     await instance.post('/auth/signup', user);
   } catch (error: any) {
-    throw new Error(error.res.data || 'Failed to register user. Please try again later.');
+    throw new Error(error.response.data || 'Failed to register user. Please try again later.');
   }
 };
 
