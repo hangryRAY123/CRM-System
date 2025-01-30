@@ -87,6 +87,10 @@ export const RegForm: React.FC = () => {
               message: 'Please input your nickname!',
             },
             {
+              pattern: /^[a-zA-Zа-яА-ЯёЁ]+$/,
+              message: 'Please enter only Russian or Latin alphabets',
+            },
+            {
               min: VALIDATE_AUTH.NAME.MIN,
               max: VALIDATE_AUTH.NAME.MAX,
               message: `Name must be between ${VALIDATE_AUTH.PASSWORD.MIN} and ${VALIDATE_AUTH.PASSWORD.MAX} characters`,
@@ -182,7 +186,6 @@ export const RegForm: React.FC = () => {
           name='phone'
           label='Phone Number'
           rules={[
-            { required: true, message: 'Please input your Phone!' },
             {
               pattern: /^(\+\d{1,3}[- ]?)?\d{10}$/,
               message: 'Please enter a valid phone number! (+1111111111)',
