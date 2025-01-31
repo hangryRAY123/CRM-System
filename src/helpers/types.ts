@@ -30,9 +30,7 @@ export type AuthData = {
   password: string;
 };
 
-export type RefreshToken = {
-  refreshToken: string;
-};
+export type RefreshToken = string;
 
 export type ProfileRequest = {
   username: string;

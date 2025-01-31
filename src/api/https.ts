@@ -6,11 +6,12 @@ import {
   ProfileRequest,
   PasswordRequest,
   AccessToken,
+  RefreshToken,
 } from '../helpers/types';
 
 const instance = axios.create({
   withCredentials: true,
-  baseURL: 'https://easydev.club/api/v2/',
+  baseURL: 'https://easydev.club/api/v1/',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -61,7 +62,7 @@ export const blockUser = async (id: number, accessToken: AccessToken, block: str
 export const sortUsers = async (sort: string, accessToken: AccessToken) => {
   try {
     instance.defaults.headers.Authorization = accessToken;
-    const res = await instance.get(`/admin/users?${sort ? sort + '&limit=200' : 'limit=200'}`);
+    const res = await instance.get(`/admin/users?${sort ? sort + 'limit=200' : 'limit=200'}`);
     return res.data;
   } catch (error: any) {
     throw new Error(error.response.data || 'Failed to sort users. Please try again later.');
@@ -130,9 +131,11 @@ export const logOut = async (accessToken: AccessToken) => {
   }
 };
 
-export const updateToken = async () => {
+export const updateToken = async (token: RefreshToken) => {
   try {
-    const res = await instance.post('/auth/refresh');
+    const res = await instance.post('/auth/refresh', {
+      refreshToken: token,
+    });
 
     return res.data;
   } catch (error: any) {

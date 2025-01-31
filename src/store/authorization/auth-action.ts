@@ -2,7 +2,7 @@ import { notificationsAction } from '../notification/notifications-slice';
 import { authUser, updateToken, logOut, getProfile } from '../../api/https';
 import { authAction } from './auth-slice';
 import { profileAction } from '../profile/profile-slice';
-import { AuthData, AccessToken } from '../../helpers/types';
+import { AuthData, AccessToken, RefreshToken } from '../../helpers/types';
 import { profileState } from '../profile/profile-slice';
 import { authState } from './auth-slice';
 import TokenManager from '../../helpers/token-manager';
@@ -22,6 +22,7 @@ export const authUserData = (user: AuthData) => {
     try {
       const res = await authUser(user);
       TokenManager.setToken(res.accessToken);
+      localStorage.setItem('refreshToken', res.refreshToken);
       const token = <AccessToken>TokenManager.getToken();
       const profile = await getProfile(token);
       dispatch(profileAction.setProfile(profile));
@@ -36,12 +37,22 @@ export const authUserData = (user: AuthData) => {
   };
 };
 
-export const updateRefrashToken = () => {
-  return async (dispatch: (arg0: { payload: any; type: 'auth/setIsAuth' }) => void) => {
+export const updateRefrashToken = (refreshToken: RefreshToken) => {
+  return async (
+    dispatch: (arg0: {
+      payload: any;
+      type: 'auth/setIsAuth' | 'profile/setProfile' | 'profile/checkRole';
+    }) => void
+  ) => {
     try {
-      const res = await updateToken();
+      const res = await updateToken(refreshToken);
+      localStorage.setItem('refreshToken', res.refreshToken);
       TokenManager.setToken(res.accessToken);
+      const token = <AccessToken>TokenManager.getToken();
+      const profile = await getProfile(token);
+      dispatch(profileAction.setProfile(profile));
       dispatch(authAction.setIsAuth(true));
+      dispatch(profileAction.checkRole('ADMIN'));
     } catch (error: any) {
       dispatch(authAction.setIsAuth(false));
       throw new Error(error.message || 'Failed to refresh token. Please try again later.');

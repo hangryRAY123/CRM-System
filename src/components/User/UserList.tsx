@@ -40,10 +40,13 @@ export const UserList: React.FC = () => {
   const [filterParams, setFilterParams] = useState<FilterParams>({});
   const users = useSelector((state: any) => state.user.data);
   const isLoading = useSelector((state: any) => state.user.isLoading);
-  const sort = useSelector((state: any) => state.user.sort);
+  const sorting = useSelector((state: any) => state.user.sort.sorting);
+  const search = useSelector((state: any) => state.user.sort.search);
+  const filter = useSelector((state: any) => state.user.sort.filter);
   const error = useSelector((state: any) => state.notifications.error);
   const dispatch: any = useDispatch();
   const token = TokenManager.getToken();
+  const sort = search + sorting + filter;
 
   const handleRole = (id: number, roles: string[]) => {
     let newRoles;
@@ -89,11 +92,18 @@ export const UserList: React.FC = () => {
   };
 
   const sortData = () => {
-    const sortData = qs.stringify(filterParams) + sort;
-    dispatch(userAction.setSort(sortData));
+    let sortData = qs.stringify(filterParams) + '&';
+
+    if (qs.stringify(filterParams) == '') {
+      sortData = '';
+    }
+
+    dispatch(userAction.setSorting(sortData));
+
+    const searching = search + sortData + filter;
 
     if (token) {
-      dispatch(sortUserData(sortData, token));
+      dispatch(sortUserData(searching, token));
     }
   };
 

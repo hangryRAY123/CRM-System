@@ -13,7 +13,11 @@ const userState = {
     username: '',
   },
   isLoading: <boolean>false,
-  sort: <string>'',
+  sort: {
+    sorting: <string>'',
+    search: <string>'',
+    filter: <string>'',
+  },
 };
 
 export const userSlice = createSlice({
@@ -26,8 +30,14 @@ export const userSlice = createSlice({
     setIsLoading: (state, action) => {
       state.isLoading = action.payload;
     },
-    setSort: (state, action) => {
-      state.sort = action.payload;
+    setSorting: (state, action) => {
+      state.sort.sorting = action.payload;
+    },
+    setSearch: (state, action) => {
+      state.sort.search = action.payload;
+    },
+    setFilter: (state, action) => {
+      state.sort.filter = action.payload;
     },
     setUserProfile: (state, action) => {
       state.userProfile.date = action.payload.date;

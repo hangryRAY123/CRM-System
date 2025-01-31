@@ -9,9 +9,10 @@ import { WechatOutlined } from '@ant-design/icons';
 import { Layout } from 'antd';
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { updateRefrashToken } from '../store/authorization/auth-action';
+import { userAction } from '../store/user/user-slice';
 
 const { Content, Sider } = Layout;
 
@@ -21,10 +22,18 @@ export const Main = () => {
   const isAdmin = useSelector((state: any) => state.profile.isAdmin);
   const navigate = useNavigate();
   const dispatch: any = useDispatch();
+  const location = useLocation();
+  const token = localStorage.getItem('refreshToken');
 
   useEffect(() => {
-    if (!isAuth) {
-      dispatch(updateRefrashToken());
+    if (location.pathname !== 'users') {
+      dispatch(userAction.setSorting(''));
+      dispatch(userAction.setSearch(''));
+      dispatch(userAction.setFilter(''));
+    }
+
+    if (!isAuth && token) {
+      dispatch(updateRefrashToken(token));
     }
 
     const timeout = setTimeout(() => {
@@ -32,10 +41,11 @@ export const Main = () => {
         navigate('/');
       }
     }, 1000);
+
     return () => {
       clearTimeout(timeout);
     };
-  }, [isAuth, dispatch]);
+  }, [isAuth, dispatch, location.pathname]);
 
   return (
     <>
