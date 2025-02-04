@@ -1,8 +1,9 @@
 import { NavLink } from 'react-router-dom';
 import { Button, Form, Input, Alert } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { regUserData } from '../../store/registration/reg-action';
-import { useEffect } from 'react';
+import { notificationsAction } from '../../store/notification/notifications-slice';
+import { regUser } from '../../api/auth';
+import { useEffect, useState } from 'react';
 import { VALIDATE_AUTH } from '../../helpers/constants';
 
 const formItemLayout = {
@@ -34,7 +35,7 @@ export const RegForm: React.FC = () => {
   const dispatch: any = useDispatch();
   const error = useSelector((state: any) => state.notifications.error);
   const success = useSelector((state: any) => state.notifications.success);
-  const userLogin = useSelector((state: any) => state.reg.login);
+  const [userLogin, setUserLogin] = useState<string>('');
 
   const onFinish = async (values: any) => {
     const user = {
@@ -45,7 +46,19 @@ export const RegForm: React.FC = () => {
       username: values.nickname,
     };
 
-    dispatch(regUserData(user));
+    try {
+      await regUser(user);
+      setUserLogin(user.login);
+      dispatch(notificationsAction.setError(''));
+      dispatch(notificationsAction.setSuccess('successfully registered'));
+    } catch (error: any) {
+      dispatch(
+        notificationsAction.setError(
+          error.response.data || 'Failed to register user. Please try again later.'
+        )
+      );
+      dispatch(notificationsAction.setSuccess(''));
+    }
   };
 
   useEffect(() => {

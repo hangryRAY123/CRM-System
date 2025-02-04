@@ -1,38 +1,18 @@
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
 import { Button, Form, Input, Alert } from 'antd';
 import { VALIDATE_AUTH } from '../../helpers/constants';
 import { CheckCircleOutlined, EditOutlined, CloseOutlined } from '@ant-design/icons';
 import { ProfileRequest } from '../../helpers/types';
-import { profileAction } from '../../store/profile/profile-slice';
-import { updateProfileData } from '../../store/profile/profile-action';
-import TokenManager from '../../helpers/token-manager';
 
-export const ProfileForm = () => {
-  const profile = useSelector((state: any) => state.profile.data);
-  const isEdit = useSelector((state: any) => state.profile.isEdit);
-  const error = useSelector((state: any) => state.notifications.error);
-  const dispatch: any = useDispatch();
-  const token = TokenManager.getToken();
-  const [form] = Form.useForm();
-
-  const handleEdit = () => {
-    dispatch(profileAction.setIsEdit());
-  };
-
-  const onFinish = async (values: ProfileRequest) => {
-    if (token) {
-      dispatch(updateProfileData(values, token));
-    }
-  };
-
-  useEffect(() => {
-    form.setFieldsValue({
-      username: profile.username,
-      email: profile.email,
-      phoneNumber: profile.phoneNumber,
-    });
-  }, [profile.username]);
+export const ProfileForm: React.FC<{
+  error: string;
+  form: any;
+  isEdit: boolean;
+  profile: any;
+  onFinish: (values: ProfileRequest) => void;
+  handleEdit: () => void;
+}> = (props) => {
+  const { error, form, isEdit, profile, onFinish, handleEdit } = props;
 
   return (
     <>

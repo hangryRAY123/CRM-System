@@ -1,16 +1,28 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Authorization } from './pages/Authorization';
-import { Registration } from './pages/Registrtion';
-import { Main } from './pages/Main';
+import { AuthLayout } from './layout/AuthLayout';
+import { MainLayout } from './layout/MainLayout';
+import { RegForm } from './components/Form/RegForm';
+import { AuthForm } from './components/Form/AuthForm';
+import { Profile } from './pages/Profile';
+import { UserProfile } from './pages/UserProfile';
+import { Users } from './pages/Users';
+import { TodoList } from './pages/TodoList';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Authorization />} />
-        <Route path='/reg' element={<Registration />} />
-        <Route path='/*' element={<Main />} />
+        <Route path='/' element={<AuthLayout />}>
+          <Route index element={<AuthForm />} />
+          <Route path='reg' element={<RegForm />} />
+        </Route>
+        <Route path='/' element={<MainLayout />}>
+          <Route path='profile' element={<Profile />} />
+          <Route path='profile/:id' element={<UserProfile />} />
+          <Route path='users' element={<Users />} />
+          <Route path='todolist' element={<TodoList />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

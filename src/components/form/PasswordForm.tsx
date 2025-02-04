@@ -4,7 +4,6 @@ import { VALIDATE_AUTH } from '../../helpers/constants';
 import { Button, Modal, Form, Input, Alert } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { updatePasswordData } from '../../store/profile/profile-action';
-import TokenManager from '../../helpers/token-manager';
 
 export const PasswordForm = () => {
   const [open, setOpen] = useState(false);
@@ -12,7 +11,6 @@ export const PasswordForm = () => {
   const error = useSelector((state: any) => state.notifications.error);
   const success = useSelector((state: any) => state.notifications.success);
   const dispatch: any = useDispatch();
-  const token = TokenManager.getToken();
 
   const showModal = () => {
     setOpen(true);
@@ -23,9 +21,7 @@ export const PasswordForm = () => {
   };
 
   const onFinish = async (values: any) => {
-    if (token) {
-      dispatch(updatePasswordData(values, token));
-    }
+    dispatch(updatePasswordData(values));
   };
 
   useEffect(() => {

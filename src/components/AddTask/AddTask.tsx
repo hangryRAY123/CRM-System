@@ -1,4 +1,4 @@
-import { addingTask } from '../../api/https';
+import { addTask } from '../../api/todo';
 import { useState } from 'react';
 import React from 'react';
 import type { FormProps } from 'antd';
@@ -17,7 +17,7 @@ export const AddTask: React.FC<{
 
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
     try {
-      await addingTask(values.newTask);
+      await addTask(values.newTask);
       await props.changeTask(values.newTask);
       formNewTask.resetFields();
     } catch (e: any) {

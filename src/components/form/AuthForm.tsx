@@ -5,7 +5,6 @@ import { Button, Form, Input, Alert } from 'antd';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { authUserData } from '../../store/authorization/auth-action';
-import { authAction } from '../../store/authorization/auth-slice';
 import { AuthData } from '../../helpers/types';
 import { VALIDATE_AUTH } from '../../helpers/constants';
 
@@ -13,20 +12,16 @@ export const AuthForm: React.FC = () => {
   const [form] = Form.useForm();
   const dispatch: any = useDispatch();
   const error = useSelector((state: any) => state.notifications.error);
-  const user = useSelector((state: any) => state.auth.data);
   const isAuth = useSelector((state: any) => state.auth.isAuth);
   const [isLoading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const onFinish = async (values: AuthData) => {
+  const onFinish = async (user: AuthData) => {
     setLoading(true);
-    dispatch(authAction.setAuthData(values));
+    dispatch(authUserData(user));
   };
 
   useEffect(() => {
-    if (user.login) {
-      dispatch(authUserData(user));
-    }
     if (error) {
       setLoading(false);
     }
@@ -34,7 +29,7 @@ export const AuthForm: React.FC = () => {
       setLoading(false);
       navigate('/todolist');
     }
-  }, [user, dispatch, error, isAuth]);
+  }, [error, isAuth]);
 
   return (
     <div className='form-wrapper'>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { GetProp, TableProps, Popconfirm } from 'antd';
+import type { SorterResult } from 'antd/es/table/interface';
 import { Table, Tag, Alert } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { User } from '../../helpers/types';
@@ -10,43 +11,35 @@ import {
   deleteUserData,
   sortUserData,
   blockUserData,
-  rolesUserData,
+  updateRolesUserData,
 } from '../../store/user/user-action';
 import { userAction } from '../../store/user/user-slice';
 import { LockOutlined, UnlockOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import TokenManager from '../../helpers/token-manager';
-import qs from 'qs';
 
 type ColumnsType<T extends object = object> = TableProps<T>['columns'];
 type TablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>;
 
 interface TableParams {
   pagination?: TablePaginationConfig;
+  sortField?: SorterResult<any>['field'];
+  sortOrder?: SorterResult<any>['order'];
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1];
 }
 
-interface FilterParams {
-  sortOrder?: string;
-  sortBy?: string;
-}
-
 export const UserList: React.FC = () => {
+  const users = useSelector((state: any) => state.user.data);
+  const total = useSelector((state: any) => state.user.total);
+  const isLoading = useSelector((state: any) => state.user.isLoading);
+  const error = useSelector((state: any) => state.notifications.error);
+  const dispatch: any = useDispatch();
+  const sort = useSelector((state: any) => state.user.sort);
+
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
-      pageSize: 10,
+      pageSize: 20,
     },
   });
-  const [filterParams, setFilterParams] = useState<FilterParams>({});
-  const users = useSelector((state: any) => state.user.data);
-  const isLoading = useSelector((state: any) => state.user.isLoading);
-  const sorting = useSelector((state: any) => state.user.sort.sorting);
-  const search = useSelector((state: any) => state.user.sort.search);
-  const filter = useSelector((state: any) => state.user.sort.filter);
-  const error = useSelector((state: any) => state.notifications.error);
-  const dispatch: any = useDispatch();
-  const token = TokenManager.getToken();
-  const sort = search + sorting + filter;
 
   const handleRole = (id: number, roles: string[]) => {
     let newRoles;
@@ -57,9 +50,7 @@ export const UserList: React.FC = () => {
       newRoles = [...roles, 'ADMIN'];
     }
 
-    if (token) {
-      dispatch(rolesUserData(id, token, sort, newRoles));
-    }
+    dispatch(updateRolesUserData(id, sort, newRoles));
   };
 
   const handleBlock = (id: number, isBlock: boolean) => {
@@ -69,45 +60,39 @@ export const UserList: React.FC = () => {
       block = 'unblock';
     }
 
-    if (token) {
-      dispatch(blockUserData(id, token, sort, block));
-    }
+    dispatch(blockUserData(id, sort, block));
   };
 
   const handleDelete = (id: number) => {
-    if (token) {
-      dispatch(deleteUserData(id, token, sort));
-    }
+    dispatch(deleteUserData(id, sort));
   };
 
   const handleTableChange: TableProps<User>['onChange'] = (pagination, filters, sorter) => {
-    setFilterParams({
-      sortBy: Array.isArray(sorter) ? undefined : sorter.field?.toString(),
-      sortOrder: Array.isArray(sorter) ? undefined : sorter.order?.replace('end', ''),
-    });
     setTableParams({
       pagination,
       filters,
+      sortOrder: Array.isArray(sorter) ? undefined : sorter.order,
+      sortField: Array.isArray(sorter) ? undefined : sorter.field,
     });
+
+    if (pagination.current) {
+      dispatch(userAction.setPaginationCurrent(pagination.current - 1));
+    }
+    dispatch(userAction.setSortField(Array.isArray(sorter) ? undefined : sorter.field));
+    dispatch(userAction.setSortOrder(Array.isArray(sorter) ? undefined : sorter.order));
   };
 
-  const sortData = () => {
-    let sortData = qs.stringify(filterParams) + '&';
+  useEffect(() => {
+    setTableParams({
+      ...tableParams,
+      pagination: {
+        ...tableParams.pagination,
+        total: total,
+      },
+    });
 
-    if (qs.stringify(filterParams) == '') {
-      sortData = '';
-    }
-
-    dispatch(userAction.setSorting(sortData));
-
-    const searching = search + sortData + filter;
-
-    if (token) {
-      dispatch(sortUserData(searching, token));
-    }
-  };
-
-  useEffect(sortData, [filterParams.sortOrder]);
+    dispatch(sortUserData(sort));
+  }, [sort, total]);
 
   const columns: ColumnsType<User> = [
     {

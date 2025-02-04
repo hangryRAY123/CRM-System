@@ -2,17 +2,17 @@ import {
   getUsers,
   deleteUser,
   sortUsers,
-  rolesUser,
+  updateRolesUser,
   blockUser,
   getUserProfile,
   updateUserProfile,
-} from '../../api/https';
+} from '../../api/users';
 import { userAction } from './user-slice';
 import { profileAction } from '../profile/profile-slice';
-import { AccessToken, ProfileRequest } from '../../helpers/types';
+import { ProfileRequest } from '../../helpers/types';
 import { notificationsAction } from '../notification/notifications-slice';
 
-export const updateUserProfileData = (id: number, token: AccessToken, user: ProfileRequest) => {
+export const updateUserProfileData = (id: number, user: ProfileRequest) => {
   return async (
     dispatch: (arg0: {
       payload: any;
@@ -20,17 +20,21 @@ export const updateUserProfileData = (id: number, token: AccessToken, user: Prof
     }) => void
   ) => {
     try {
-      const res = await updateUserProfile(id, token, user);
+      const res = await updateUserProfile(id, user);
       dispatch(userAction.setUserProfile(res));
       dispatch(profileAction.setIsEdit(false as any));
       dispatch(notificationsAction.setError(''));
     } catch (error: any) {
-      dispatch(notificationsAction.setError(error.message));
+      dispatch(
+        notificationsAction.setError(
+          error.response.data || 'Failed to get user profile. Please try again later.'
+        )
+      );
     }
   };
 };
 
-export const getUserProfileData = (id: number, token: AccessToken) => {
+export const getUserProfileData = (id: number) => {
   return async (
     dispatch: (arg0: {
       payload: any;
@@ -38,15 +42,19 @@ export const getUserProfileData = (id: number, token: AccessToken) => {
     }) => void
   ) => {
     try {
-      const res = await getUserProfile(id, token);
+      const res = await getUserProfile(id);
       dispatch(userAction.setUserProfile(res));
     } catch (error: any) {
-      dispatch(notificationsAction.setError(error.message));
+      dispatch(
+        notificationsAction.setError(
+          error.response.data || 'Failed to get user profile. Please try again later.'
+        )
+      );
     }
   };
 };
 
-export const rolesUserData = (id: number, token: AccessToken, sort: string, roles: string[]) => {
+export const updateRolesUserData = (id: number, sort: string, roles: string[]) => {
   return async (
     dispatch: (arg0: {
       payload: any;
@@ -55,17 +63,21 @@ export const rolesUserData = (id: number, token: AccessToken, sort: string, role
   ) => {
     try {
       dispatch(userAction.setIsLoading(true));
-      await rolesUser(id, token, roles);
-      const res = await sortUsers(sort, token);
+      await updateRolesUser(id, roles);
+      const res = await sortUsers(sort);
       dispatch(userAction.setUsers(res.data));
       dispatch(userAction.setIsLoading(false));
     } catch (error: any) {
-      dispatch(notificationsAction.setError(error.message));
+      dispatch(
+        notificationsAction.setError(
+          error.response.data || 'Failed to change user role. Please try again later.'
+        )
+      );
     }
   };
 };
 
-export const blockUserData = (id: number, token: AccessToken, sort: string, block: string) => {
+export const blockUserData = (id: number, sort: string, block: string) => {
   return async (
     dispatch: (arg0: {
       payload: any;
@@ -74,17 +86,45 @@ export const blockUserData = (id: number, token: AccessToken, sort: string, bloc
   ) => {
     try {
       dispatch(userAction.setIsLoading(true));
-      await blockUser(id, token, block);
-      const res = await sortUsers(sort, token);
+      await blockUser(id, block);
+      const res = await sortUsers(sort);
       dispatch(userAction.setUsers(res.data));
       dispatch(userAction.setIsLoading(false));
     } catch (error: any) {
-      dispatch(notificationsAction.setError(error.message));
+      dispatch(
+        notificationsAction.setError(
+          error.response.data || 'Failed to block user. Please try again later.'
+        )
+      );
     }
   };
 };
 
-export const sortUserData = (sort: string, token: AccessToken) => {
+export const sortUserData = (sort: string) => {
+  return async (
+    dispatch: (arg0: {
+      payload: any;
+      type: 'user/setUsers' | 'user/setIsLoading' | 'user/setTotal' | 'notifications/setError';
+    }) => void
+  ) => {
+    try {
+      dispatch(userAction.setIsLoading(true));
+      const res = await sortUsers(sort);
+      dispatch(userAction.setUsers(res.data));
+      dispatch(userAction.setTotal(res.meta.totalAmount));
+      dispatch(userAction.setIsLoading(false));
+    } catch (error: any) {
+      dispatch(userAction.setIsLoading(false));
+      dispatch(
+        notificationsAction.setError(
+          error.response.data || 'Failed to sort users. Please try again later.'
+        )
+      );
+    }
+  };
+};
+
+export const deleteUserData = (id: number, sort: string) => {
   return async (
     dispatch: (arg0: {
       payload: any;
@@ -93,44 +133,33 @@ export const sortUserData = (sort: string, token: AccessToken) => {
   ) => {
     try {
       dispatch(userAction.setIsLoading(true));
-      const res = await sortUsers(sort, token);
+      await deleteUser(id);
+      const res = await sortUsers(sort);
       dispatch(userAction.setUsers(res.data));
       dispatch(userAction.setIsLoading(false));
     } catch (error: any) {
-      dispatch(userAction.setIsLoading(false));
-      dispatch(notificationsAction.setError(error.message));
+      dispatch(
+        notificationsAction.setError(
+          error.response.data || 'Failed to delete user. Please try again later.'
+        )
+      );
     }
   };
 };
 
-export const deleteUserData = (id: number, token: AccessToken, sort: string) => {
-  return async (
-    dispatch: (arg0: {
-      payload: any;
-      type: 'user/setUsers' | 'user/setIsLoading' | 'notifications/setError';
-    }) => void
-  ) => {
-    try {
-      dispatch(userAction.setIsLoading(true));
-      await deleteUser(id, token);
-      const res = await sortUsers(sort, token);
-      dispatch(userAction.setUsers(res.data));
-      dispatch(userAction.setIsLoading(false));
-    } catch (error: any) {
-      dispatch(notificationsAction.setError(error.message));
-    }
-  };
-};
-
-export const getUsersData = (token: AccessToken) => {
+export const getUsersData = () => {
   return async (
     dispatch: (arg0: { payload: any; type: 'user/setUsers' | 'notifications/setError' }) => void
   ) => {
     try {
-      const res = await getUsers(token);
+      const res = await getUsers();
       dispatch(userAction.setUsers(res.data));
     } catch (error: any) {
-      dispatch(notificationsAction.setError(error.message));
+      dispatch(
+        notificationsAction.setError(
+          error.response.data || 'Failed to fetch users. Please try again later.'
+        )
+      );
     }
   };
 };

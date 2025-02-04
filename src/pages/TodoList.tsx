@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { AddTask } from '../components/AddTask/AddTask';
 import { TabList } from '../components/Tab/TabList';
 import { TaskList } from '../components/Task/TaskList';
-import { fetchTasks } from '../api/https';
+import { fetchTasks } from '../api/todo';
 import { TabKeys, AllTask, TasksInfo } from '../helpers/types';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Divider, Alert } from 'antd';

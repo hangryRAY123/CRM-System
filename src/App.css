@@ -134,3 +134,7 @@ section.auth .form-wrapper {
   width: 20px;
   height: 20px;
 }
+
+.ant-pagination-options {
+  display: none !important;
+}

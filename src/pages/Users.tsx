@@ -1,25 +1,29 @@
 import { Divider } from 'antd';
 import { UserList } from '../components/User/UserList';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { userAction } from '../store/user/user-slice';
 
 export const Users = () => {
   const dispatch = useDispatch();
+  const isAdmin = useSelector((state: any) => state.profile.isAdmin);
 
   useEffect(() => {
     return () => {
-      dispatch(userAction.setSorting(''));
-      dispatch(userAction.setSearch(''));
-      dispatch(userAction.setFilter(''));
+      dispatch(userAction.setBlocked(undefined));
+      dispatch(userAction.setSortField(undefined));
+      dispatch(userAction.setSortOrder(undefined));
+      dispatch(userAction.setSearch(undefined));
     };
   }, []);
   return (
-    <>
-      <Divider orientation='left'>Users</Divider>
-      <section>
-        <UserList />
-      </section>
-    </>
+    isAdmin && (
+      <>
+        <Divider orientation='left'>Users</Divider>
+        <section>
+          <UserList />
+        </section>
+      </>
+    )
   );
 };

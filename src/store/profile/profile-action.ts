@@ -1,24 +1,28 @@
-import { ProfileRequest, AccessToken, PasswordRequest } from '../../helpers/types';
-import { getProfile, updatePaswword, updateProfile } from '../../api/https';
+import { ProfileRequest, PasswordRequest } from '../../helpers/types';
+import { getProfile, updatePaswword, updateProfile } from '../../api/profile';
 import { notificationsAction } from '../notification/notifications-slice';
 import { profileAction } from './profile-slice';
-export const getProfileData = (token: AccessToken) => {
+export const getProfileData = () => {
   return async (
     dispatch: (arg0: {
       payload: any;
       type: 'profile/setProfile' | 'notifications/setError';
     }) => void
   ) => {
-    const res = await getProfile(token);
+    const res = await getProfile();
     dispatch(profileAction.setProfile(res));
     try {
     } catch (error: any) {
-      dispatch(notificationsAction.setError(error.message || 'Failed to load user data'));
+      dispatch(
+        notificationsAction.setError(
+          error.response.data || 'Failed to fetch user data. Please try again later.'
+        )
+      );
     }
   };
 };
 
-export const updateProfileData = (user: ProfileRequest, token: AccessToken) => {
+export const updateProfileData = (user: ProfileRequest) => {
   return async (
     dispatch: (arg0: {
       payload: any;
@@ -26,17 +30,21 @@ export const updateProfileData = (user: ProfileRequest, token: AccessToken) => {
     }) => void
   ) => {
     try {
-      const res = await updateProfile(user, token);
+      const res = await updateProfile(user);
       dispatch(profileAction.setProfile(res));
       dispatch(profileAction.setIsEdit(false as any));
       dispatch(notificationsAction.setError(''));
     } catch (error: any) {
-      dispatch(notificationsAction.setError(error.message || 'Failed to update user data'));
+      dispatch(
+        notificationsAction.setError(
+          error.response.data || 'Failed to fetch user data. Please try again later.'
+        )
+      );
     }
   };
 };
 
-export const updatePasswordData = (password: PasswordRequest, token: AccessToken) => {
+export const updatePasswordData = (password: PasswordRequest) => {
   return async (
     dispatch: (arg0: {
       payload: any;
@@ -44,11 +52,15 @@ export const updatePasswordData = (password: PasswordRequest, token: AccessToken
     }) => void
   ) => {
     try {
-      await updatePaswword(password, token);
+      await updatePaswword(password);
       dispatch(notificationsAction.setSuccess('Password changed successfully'));
       dispatch(notificationsAction.setError(''));
     } catch (error: any) {
-      dispatch(notificationsAction.setError(error.message || 'Failed to update password'));
+      dispatch(
+        notificationsAction.setError(
+          error.response.data || 'Failed to update password. Please try again later.'
+        )
+      );
     }
   };
 };

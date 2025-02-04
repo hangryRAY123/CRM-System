@@ -1,6 +1,6 @@
 import { TaskItem } from './style';
 import React from 'react';
-import { deleteTask, updateTask } from '../../api/https';
+import { deleteTask, updateTask } from '../../api/todo';
 import { useState } from 'react';
 import { VALIDATE_TASK } from '../../helpers/constants';
 import type { FormProps, CheckboxProps } from 'antd';

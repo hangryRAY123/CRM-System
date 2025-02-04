@@ -1,11 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { AuthData } from '../../helpers/types';
 
 export const authState = {
-  data: <AuthData>{
-    login: '',
-    password: '',
-  },
   isAuth: <boolean>false,
   isCollapsed: <boolean>false,
 };
@@ -14,10 +9,6 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState: authState,
   reducers: {
-    setAuthData: (state, action) => {
-      state.data.login = action.payload.login;
-      state.data.password = action.payload.password;
-    },
     setIsAuth: (state, action) => {
       state.isAuth = action.payload;
     },

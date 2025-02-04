@@ -3,6 +3,7 @@ import { User } from '../../helpers/types';
 
 const userState = {
   data: [] as User[],
+  total: 0,
   userProfile: <User>{
     date: '',
     email: '',
@@ -12,11 +13,13 @@ const userState = {
     phoneNumber: '',
     username: '',
   },
-  isLoading: <boolean>false,
+  isLoading: false,
   sort: {
-    sorting: <string>'',
-    search: <string>'',
-    filter: <string>'',
+    isBlocked: undefined,
+    search: undefined,
+    offset: 0,
+    sortBy: undefined,
+    sortOrder: undefined,
   },
 };
 
@@ -30,14 +33,20 @@ export const userSlice = createSlice({
     setIsLoading: (state, action) => {
       state.isLoading = action.payload;
     },
-    setSorting: (state, action) => {
-      state.sort.sorting = action.payload;
+    setBlocked: (state, action) => {
+      state.sort.isBlocked = action.payload;
     },
     setSearch: (state, action) => {
       state.sort.search = action.payload;
     },
-    setFilter: (state, action) => {
-      state.sort.filter = action.payload;
+    setPaginationCurrent: (state, action) => {
+      state.sort.offset = action.payload;
+    },
+    setSortField: (state, action) => {
+      state.sort.sortBy = action.payload;
+    },
+    setSortOrder: (state, action) => {
+      state.sort.sortOrder = action.payload;
     },
     setUserProfile: (state, action) => {
       state.userProfile.date = action.payload.date;
@@ -47,6 +56,9 @@ export const userSlice = createSlice({
       state.userProfile.isBlocked = action.payload.isBlocked;
       state.userProfile.phoneNumber = action.payload.phoneNumber;
       state.userProfile.username = action.payload.username;
+    },
+    setTotal: (state, action) => {
+      state.total = action.payload;
     },
   },
 });

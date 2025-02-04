@@ -1,10 +1,10 @@
 import { notificationsAction } from '../notification/notifications-slice';
-import { authUser, updateToken, logOut, getProfile } from '../../api/https';
+import { authUser, updateToken, logOut } from '../../api/auth';
+import { getProfile } from '../../api/profile';
 import { authAction } from './auth-slice';
 import { profileAction } from '../profile/profile-slice';
-import { AuthData, AccessToken, RefreshToken } from '../../helpers/types';
+import { AuthData, RefreshToken } from '../../helpers/types';
 import { profileState } from '../profile/profile-slice';
-import { authState } from './auth-slice';
 import TokenManager from '../../helpers/token-manager';
 
 export const authUserData = (user: AuthData) => {
@@ -23,16 +23,18 @@ export const authUserData = (user: AuthData) => {
       const res = await authUser(user);
       TokenManager.setToken(res.accessToken);
       localStorage.setItem('refreshToken', res.refreshToken);
-      const token = <AccessToken>TokenManager.getToken();
-      const profile = await getProfile(token);
+      
+      const profile = await getProfile();
       dispatch(profileAction.setProfile(profile));
       dispatch(authAction.setIsAuth(true));
       dispatch(profileAction.checkRole('ADMIN'));
       dispatch(notificationsAction.setError(''));
-      dispatch(notificationsAction.setSuccess('successfully registered'));
     } catch (error: any) {
-      dispatch(notificationsAction.setError(error.message));
-      dispatch(notificationsAction.setSuccess(''));
+      dispatch(
+        notificationsAction.setError(
+          error.response.data || 'Failed to authenticate user. Please try again later.'
+        )
+      );
     }
   };
 };
@@ -48,19 +50,19 @@ export const updateRefrashToken = (refreshToken: RefreshToken) => {
       const res = await updateToken(refreshToken);
       localStorage.setItem('refreshToken', res.refreshToken);
       TokenManager.setToken(res.accessToken);
-      const token = <AccessToken>TokenManager.getToken();
-      const profile = await getProfile(token);
+
+      const profile = await getProfile();
       dispatch(profileAction.setProfile(profile));
       dispatch(authAction.setIsAuth(true));
       dispatch(profileAction.checkRole('ADMIN'));
     } catch (error: any) {
       dispatch(authAction.setIsAuth(false));
-      throw new Error(error.message || 'Failed to refresh token. Please try again later.');
+      throw new Error(error.response.data || 'Failed to refresh token. Please try again later.');
     }
   };
 };
 
-export const logOutUser = (token: AccessToken) => {
+export const logOutUser = () => {
   return async (
     dispatch: (arg0: {
       payload: any;
@@ -68,9 +70,8 @@ export const logOutUser = (token: AccessToken) => {
     }) => void
   ) => {
     try {
-      await logOut(token);
+      await logOut();
       TokenManager.clearToken();
-      dispatch(authAction.setAuthData(authState.data));
       dispatch(profileAction.setProfile(profileState.data));
       dispatch(authAction.setIsAuth(false));
     } catch {

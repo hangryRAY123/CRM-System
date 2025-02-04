@@ -1,13 +1,13 @@
 import { LockOutlined } from '@ant-design/icons';
-import { RegForm } from '../components/Form/RegForm';
+import { Outlet } from 'react-router-dom';
 
-export const Registration: React.FC = () => {
+export const AuthLayout = () => {
   return (
     <section className='auth'>
       <div className='lock'>
         <LockOutlined />
       </div>
-      <RegForm />
+      <Outlet />
     </section>
   );
 };
