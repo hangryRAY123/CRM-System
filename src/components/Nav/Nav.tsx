@@ -8,7 +8,7 @@ type MenuItem = Required<MenuProps>['items'][number];
 
 export const Nav: React.FC = () => {
   const location = useLocation();
-  const isAdmin = useSelector((state: any) => state.profile.isAdmin);
+  const isAdmin = useSelector((state: any) => state.store.isAdmin);
 
   const items: MenuItem[] = [
     { key: '/profile', icon: <UserOutlined />, label: <NavLink to='/profile'>Профиль</NavLink> },

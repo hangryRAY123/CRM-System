@@ -1,7 +1,7 @@
 import React from 'react';
 import { Select, Space } from 'antd';
 import { useDispatch } from 'react-redux';
-import { userAction } from '../../store/user/user-slice';
+import { storeAction } from '../../store/store-slice';
 
 export const Sort: React.FC = () => {
   const dispatch: any = useDispatch();
@@ -11,8 +11,8 @@ export const Sort: React.FC = () => {
       value = undefined;
     }
 
-    dispatch(userAction.setBlocked(value));
-    dispatch(userAction.setPaginationCurrent(0));
+    dispatch(storeAction.setBlocked(value));
+    dispatch(storeAction.setPaginationCurrent(0));
   };
 
   return (

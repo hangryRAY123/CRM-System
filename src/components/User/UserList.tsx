@@ -7,14 +7,9 @@ import { User } from '../../helpers/types';
 import { NavLink } from 'react-router-dom';
 import { Sort } from '../Sort/Sort';
 import { SearchUser } from '../SearchUser/SearchUser';
-import {
-  deleteUserData,
-  sortUserData,
-  blockUserData,
-  updateRolesUserData,
-} from '../../store/user/user-action';
-import { userAction } from '../../store/user/user-slice';
+import { storeAction } from '../../store/store-slice';
 import { LockOutlined, UnlockOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { sortUsers, deleteUser, blockUser, updateRolesUser } from '../../api/users';
 
 type ColumnsType<T extends object = object> = TableProps<T>['columns'];
 type TablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>;
@@ -27,21 +22,19 @@ interface TableParams {
 }
 
 export const UserList: React.FC = () => {
-  const users = useSelector((state: any) => state.user.data);
-  const total = useSelector((state: any) => state.user.total);
-  const isLoading = useSelector((state: any) => state.user.isLoading);
-  const error = useSelector((state: any) => state.notifications.error);
-  const dispatch: any = useDispatch();
-  const sort = useSelector((state: any) => state.user.sort);
-
+  const [users, setUsers] = useState<any>([]);
+  const isLoading = useSelector((state: any) => state.store.isLoading);
+  const error = useSelector((state: any) => state.store.notifications.error);
+  const sort = useSelector((state: any) => state.store.sort);
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
       pageSize: 20,
     },
   });
+  const dispatch: any = useDispatch();
 
-  const handleRole = (id: number, roles: string[]) => {
+  const handleRole = async (id: number, roles: string[]) => {
     let newRoles;
 
     if (roles.includes('ADMIN')) {
@@ -50,21 +43,57 @@ export const UserList: React.FC = () => {
       newRoles = [...roles, 'ADMIN'];
     }
 
-    dispatch(updateRolesUserData(id, sort, newRoles));
+    try {
+      dispatch(storeAction.setIsLoading(true));
+      await updateRolesUser(id, newRoles);
+      const usersData = await sortUsers(sort);
+      setUsers(usersData.data);
+      dispatch(storeAction.setIsLoading(false));
+    } catch (error: any) {
+      dispatch(
+        storeAction.setError(
+          error.response.data || 'Failed to change user role. Please try again later.'
+        )
+      );
+    }
   };
 
-  const handleBlock = (id: number, isBlock: boolean) => {
+  const handleBlock = async (id: number, isBlock: boolean) => {
     let block = 'block';
 
     if (isBlock) {
       block = 'unblock';
     }
 
-    dispatch(blockUserData(id, sort, block));
+    try {
+      dispatch(storeAction.setIsLoading(true));
+      await blockUser(id, block);
+      const usersData = await sortUsers(sort);
+      setUsers(usersData.data);
+      dispatch(storeAction.setIsLoading(false));
+    } catch (error: any) {
+      dispatch(
+        storeAction.setError(
+          error.response.data || 'Failed to block user. Please try again later.'
+        )
+      );
+    }
   };
 
-  const handleDelete = (id: number) => {
-    dispatch(deleteUserData(id, sort));
+  const handleDelete = async (id: number) => {
+    try {
+      dispatch(storeAction.setIsLoading(true));
+      await deleteUser(id);
+      const usersData = await sortUsers(sort);
+      setUsers(usersData.data);
+      dispatch(storeAction.setIsLoading(false));
+    } catch (error: any) {
+      dispatch(
+        storeAction.setError(
+          error.response.data || 'Failed to delete user. Please try again later.'
+        )
+      );
+    }
   };
 
   const handleTableChange: TableProps<User>['onChange'] = (pagination, filters, sorter) => {
@@ -76,23 +105,39 @@ export const UserList: React.FC = () => {
     });
 
     if (pagination.current) {
-      dispatch(userAction.setPaginationCurrent(pagination.current - 1));
+      dispatch(storeAction.setPaginationCurrent(pagination.current - 1));
     }
-    dispatch(userAction.setSortField(Array.isArray(sorter) ? undefined : sorter.field));
-    dispatch(userAction.setSortOrder(Array.isArray(sorter) ? undefined : sorter.order));
+    dispatch(storeAction.setSortField(Array.isArray(sorter) ? undefined : sorter.field));
+    dispatch(
+      storeAction.setSortOrder(Array.isArray(sorter) ? undefined : sorter.order?.replace('end', ''))
+    );
   };
 
   useEffect(() => {
-    setTableParams({
-      ...tableParams,
-      pagination: {
-        ...tableParams.pagination,
-        total: total,
-      },
-    });
-
-    dispatch(sortUserData(sort));
-  }, [sort, total]);
+    const getUserData = async () => {
+      try {
+        dispatch(storeAction.setIsLoading(true));
+        const usersData = await sortUsers(sort);
+        setUsers(usersData.data);
+        setTableParams({
+          ...tableParams,
+          pagination: {
+            ...tableParams.pagination,
+            total: usersData.meta.totalAmount,
+          },
+        });
+        dispatch(storeAction.setIsLoading(false));
+      } catch (error: any) {
+        dispatch(storeAction.setIsLoading(false));
+        dispatch(
+          storeAction.setError(
+            error.response.data || 'Failed to sort users. Please try again later.'
+          )
+        );
+      }
+    };
+    getUserData();
+  }, [sort]);
 
   const columns: ColumnsType<User> = [
     {

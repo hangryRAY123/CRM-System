@@ -3,13 +3,14 @@ import { EditOutlined } from '@ant-design/icons';
 import { VALIDATE_AUTH } from '../../helpers/constants';
 import { Button, Modal, Form, Input, Alert } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { updatePasswordData } from '../../store/profile/profile-action';
+import { storeAction } from '../../store/store-slice';
+import { updatePaswword } from '../../api/profile';
 
 export const PasswordForm = () => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
-  const error = useSelector((state: any) => state.notifications.error);
-  const success = useSelector((state: any) => state.notifications.success);
+  const error = useSelector((state: any) => state.store.notifications.error);
+  const success = useSelector((state: any) => state.store.notifications.success);
   const dispatch: any = useDispatch();
 
   const showModal = () => {
@@ -20,8 +21,18 @@ export const PasswordForm = () => {
     setOpen(false);
   };
 
-  const onFinish = async (values: any) => {
-    dispatch(updatePasswordData(values));
+  const onFinish = async (password: any) => {
+    try {
+      await updatePaswword(password);
+      dispatch(storeAction.setSuccess('Password changed successfully'));
+      dispatch(storeAction.setError(''));
+    } catch (error: any) {
+      dispatch(
+        storeAction.setError(
+          error.response.data || 'Failed to update password. Please try again later.'
+        )
+      );
+    }
   };
 
   useEffect(() => {

@@ -7,13 +7,13 @@ import { Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { updateRefrashToken } from '../store/authorization/auth-action';
+import { updateRefrashToken } from '../store/store-action';
 
 const { Content, Sider } = Layout;
 
 export const MainLayout = () => {
-  const isCollapsed = useSelector((state: any) => state.auth.isCollapsed);
-  const isAuth = useSelector((state: any) => state.auth.isAuth);
+  const isCollapsed = useSelector((state: any) => state.store.isCollapsed);
+  const isAuth = useSelector((state: any) => state.store.isAuth);
   const navigate = useNavigate();
   const dispatch: any = useDispatch();
   const token = localStorage.getItem('refreshToken');

@@ -1,51 +1,86 @@
 import { ProfileForm } from '../components/Form/ProfileForm';
 import { PasswordForm } from '../components/Form/PasswordForm';
-import { Divider } from 'antd';
-import { useEffect } from 'react';
+import { Divider, Spin } from 'antd';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Form } from 'antd';
 import { ProfileRequest } from '../helpers/types';
-import { profileAction } from '../store/profile/profile-slice';
-import { updateProfileData } from '../store/profile/profile-action';
+import { storeAction } from '../store/store-slice';
+import { getProfile, updateProfile } from '../api/profile';
 
 export const Profile = () => {
-  const profile = useSelector((state: any) => state.profile.data);
-  const isEdit = useSelector((state: any) => state.profile.isEdit);
-  const error = useSelector((state: any) => state.notifications.error);
+  const [profile, setProfile] = useState<object>({});
+  const [isEdit, setEdit] = useState<boolean>(false);
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const error = useSelector((state: any) => state.store.notifications.error);
   const dispatch: any = useDispatch();
   const [form] = Form.useForm();
 
   const handleEdit = () => {
-    dispatch(profileAction.setIsEdit());
+    setEdit(!isEdit);
   };
 
-  const onFinish = async (values: ProfileRequest) => {
-    dispatch(updateProfileData(values));
+  const onFinish = async (user: ProfileRequest) => {
+    try {
+      const profileData = await updateProfile(user);
+      setProfile(profileData);
+      setEdit(false);
+
+      dispatch(storeAction.setError(''));
+    } catch (error: any) {
+      dispatch(
+        storeAction.setError(
+          error.response.data || 'Failed to fetch user data. Please try again later.'
+        )
+      );
+    }
   };
 
   useEffect(() => {
-    form.setFieldsValue({
-      username: profile.username,
-      email: profile.email,
-      phoneNumber: profile.phoneNumber,
-    });
-  }, [profile.username]);
+    const getProfileData = async () => {
+      try {
+        setLoading(true);
+        const profileData = await getProfile();
+        setProfile(profileData);
+        form.setFieldsValue({
+          username: profileData.username,
+          email: profileData.email,
+          phoneNumber: profileData.phoneNumber,
+        });
+        setLoading(false);
+
+        dispatch(storeAction.setError(''));
+      } catch (error: any) {
+        setLoading(false);
+        dispatch(
+          storeAction.setError(
+            error.response.data || 'Failed to fetch profile. Please try again later.'
+          )
+        );
+      }
+    };
+    getProfileData();
+  }, []);
 
   return (
     <>
       <Divider orientation='left'>Profile</Divider>
       <section>
-        <div style={{ textAlign: 'left' }}>
-          <ProfileForm
-            error={error}
-            form={form}
-            isEdit={isEdit}
-            profile={profile}
-            onFinish={onFinish}
-            handleEdit={handleEdit}
-          />
-          <PasswordForm />
-        </div>
+        {isLoading ? (
+          <Spin size='large' />
+        ) : (
+          <div style={{ textAlign: 'left' }}>
+            <ProfileForm
+              error={error}
+              form={form}
+              isEdit={isEdit}
+              profile={profile}
+              onFinish={onFinish}
+              handleEdit={handleEdit}
+            />
+            <PasswordForm />
+          </div>
+        )}
       </section>
     </>
   );

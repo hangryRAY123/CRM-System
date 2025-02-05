@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { Button, Form, Input, Alert } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { notificationsAction } from '../../store/notification/notifications-slice';
+import { storeAction } from '../../store/store-slice';
 import { regUser } from '../../api/auth';
 import { useEffect, useState } from 'react';
 import { VALIDATE_AUTH } from '../../helpers/constants';
@@ -33,8 +33,8 @@ const tailFormItemLayout = {
 export const RegForm: React.FC = () => {
   const [form] = Form.useForm();
   const dispatch: any = useDispatch();
-  const error = useSelector((state: any) => state.notifications.error);
-  const success = useSelector((state: any) => state.notifications.success);
+  const error = useSelector((state: any) => state.store.notifications.error);
+  const success = useSelector((state: any) => state.store.notifications.success);
   const [userLogin, setUserLogin] = useState<string>('');
 
   const onFinish = async (values: any) => {
@@ -49,15 +49,15 @@ export const RegForm: React.FC = () => {
     try {
       await regUser(user);
       setUserLogin(user.login);
-      dispatch(notificationsAction.setError(''));
-      dispatch(notificationsAction.setSuccess('successfully registered'));
+      dispatch(storeAction.setError(''));
+      dispatch(storeAction.setSuccess('successfully registered'));
     } catch (error: any) {
       dispatch(
-        notificationsAction.setError(
+        storeAction.setError(
           error.response.data || 'Failed to register user. Please try again later.'
         )
       );
-      dispatch(notificationsAction.setSuccess(''));
+      dispatch(storeAction.setSuccess(''));
     }
   };
 
