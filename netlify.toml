@@ -2,4 +2,4 @@
   from = "/*"
   to = "/auth/login"
   status = 301
-  force = true 
+  force = true  
