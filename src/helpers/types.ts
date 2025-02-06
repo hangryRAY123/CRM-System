@@ -47,11 +47,11 @@ export type UserRegistration = {
 };
 
 export type Sort = {
-  isBlocked: string;
-  search: string;
-  offset: number;
-  sortBy: string;
-  sortOrder: string;
+  isBlocked: string | undefined;
+  search: string | undefined;
+  offset: number | undefined;
+  sortBy: string | undefined;
+  sortOrder: string | undefined;
 };
 
 export type PasswordRequest = string;

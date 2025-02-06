@@ -3,7 +3,7 @@ import { Button, Form, Input, Alert } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { notificationsAction } from '../../store/notification/notifications-slice';
 import { regUser } from '../../api/auth';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { VALIDATE_AUTH } from '../../helpers/constants';
 
 const formItemLayout = {
@@ -51,6 +51,7 @@ export const RegForm: React.FC = () => {
       setUserLogin(user.login);
       dispatch(notificationsAction.setError(''));
       dispatch(notificationsAction.setSuccess('successfully registered'));
+      form.resetFields();
     } catch (error: any) {
       dispatch(
         notificationsAction.setError(
@@ -60,10 +61,6 @@ export const RegForm: React.FC = () => {
       dispatch(notificationsAction.setSuccess(''));
     }
   };
-
-  useEffect(() => {
-    form.resetFields();
-  }, [success]);
 
   return (
     <div className='form-wrapper'>

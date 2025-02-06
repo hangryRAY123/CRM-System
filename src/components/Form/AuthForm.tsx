@@ -1,35 +1,46 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { LockOutlined, UserOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Alert } from 'antd';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { authUserData } from '../../store/auth/auth-action';
 import { AuthData } from '../../helpers/types';
 import { VALIDATE_AUTH } from '../../helpers/constants';
+import { authUser } from '../../api/auth';
+import { getProfile } from '../../api/profile';
+import { authAction } from '../../store/auth/auth-slice';
+import { notificationsAction } from '../../store/notification/notifications-slice';
+import TokenManager from '../../helpers/token-manager';
 
 export const AuthForm: React.FC = () => {
   const [form] = Form.useForm();
   const dispatch: any = useDispatch();
   const error = useSelector((state: any) => state.notifications.error);
-  const isAuth = useSelector((state: any) => state.auth.isAuth);
   const [isLoading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const onFinish = async (user: AuthData) => {
-    setLoading(true);
-    dispatch(authUserData(user));
-  };
+    try {
+      setLoading(true);
+      const res = await authUser(user);
+      TokenManager.setToken(res.accessToken);
+      localStorage.setItem('refreshToken', res.refreshToken);
 
-  useEffect(() => {
-    if (error) {
-      setLoading(false);
-    }
-    if (isAuth) {
+      const profile = await getProfile();
+      dispatch(authAction.setIsAuth(true));
+      dispatch(authAction.checkRole(profile));
+      dispatch(notificationsAction.setError(''));
       setLoading(false);
       navigate('/todolist');
+    } catch (error: any) {
+      setLoading(false);
+      dispatch(
+        notificationsAction.setError(
+          error.response.data || 'Failed to authenticate user. Please try again later.'
+        )
+      );
     }
-  }, [error, isAuth]);
+  };
 
   return (
     <div className='form-wrapper'>

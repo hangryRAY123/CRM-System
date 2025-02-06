@@ -4,11 +4,11 @@ import { Sort } from '../../helpers/types';
 const userState = {
   isLoading: <boolean>false,
   sort: <Sort>{
-    isBlocked: '',
-    search: '',
+    isBlocked: undefined,
+    search: undefined,
     offset: 0,
-    sortBy: '',
-    sortOrder: '',
+    sortBy: undefined,
+    sortOrder: undefined,
   },
 };
 

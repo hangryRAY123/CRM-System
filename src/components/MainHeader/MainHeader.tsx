@@ -1,16 +1,26 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Button, Layout } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { logOutUser } from '../../store/auth/auth-action';
 import { authAction } from '../../store/auth/auth-slice';
+import { logOut } from '../../api/auth';
+import TokenManager from '../../helpers/token-manager';
+import { useNavigate } from 'react-router-dom';
 const { Header } = Layout;
 
 export const MainHeader = () => {
   const isCollapsed = useSelector((state: any) => state.auth.isCollapsed);
+  const navigate = useNavigate();
   const dispatch: any = useDispatch();
 
-  const handleLogOut = () => {
-    dispatch(logOutUser());
+  const handleLogOut = async () => {
+    try {
+      await logOut();
+      TokenManager.clearToken();
+      dispatch(authAction.setIsAuth(false));
+      navigate('/auth/login');
+    } catch {
+      throw new Error('Failed to log out. Please try again later.');
+    }
   };
 
   const handleMenuClick = () => {
