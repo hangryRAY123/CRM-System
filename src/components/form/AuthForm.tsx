@@ -4,15 +4,15 @@ import { LockOutlined, UserOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Alert } from 'antd';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { authUserData } from '../../store/store-action';
+import { authUserData } from '../../store/auth/auth-action';
 import { AuthData } from '../../helpers/types';
 import { VALIDATE_AUTH } from '../../helpers/constants';
 
 export const AuthForm: React.FC = () => {
   const [form] = Form.useForm();
   const dispatch: any = useDispatch();
-  const error = useSelector((state: any) => state.store.notifications.error);
-  const isAuth = useSelector((state: any) => state.store.isAuth);
+  const error = useSelector((state: any) => state.notifications.error);
+  const isAuth = useSelector((state: any) => state.auth.isAuth);
   const [isLoading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -88,7 +88,7 @@ export const AuthForm: React.FC = () => {
           <Button block type='primary' htmlType='submit'>
             Log in
           </Button>
-          or <NavLink to='/reg'>Register now!</NavLink>
+          or <NavLink to='/auth/register'>Register now!</NavLink>
         </Form.Item>
       </Form>
     </div>

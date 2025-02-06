@@ -1,14 +1,19 @@
-import { authUser, updateToken, logOut } from './../api/auth';
-import { getProfile } from './../api/profile';
-import { storeAction } from './store-slice';
-import { AuthData, RefreshToken } from '../helpers/types';
-import TokenManager from '../helpers/token-manager';
+import { authUser, updateToken, logOut } from '../../api/auth';
+import { getProfile } from '../../api/profile';
+import { authAction } from './auth-slice';
+import { notificationsAction } from '../notification/notifications-slice';
+import { AuthData, RefreshToken } from '../../helpers/types';
+import TokenManager from '../../helpers/token-manager';
 
 export const authUserData = (user: AuthData) => {
   return async (
     dispatch: (arg0: {
       payload: any;
-      type: 'store/checkRole' | 'store/setIsAuth' | 'store/setError' | 'store/setSuccess';
+      type:
+        | 'auth/checkRole'
+        | 'auth/setIsAuth'
+        | 'notifications/setError'
+        | 'notifications/setSuccess';
     }) => void
   ) => {
     try {
@@ -17,12 +22,12 @@ export const authUserData = (user: AuthData) => {
       localStorage.setItem('refreshToken', res.refreshToken);
 
       const profile = await getProfile();
-      dispatch(storeAction.setIsAuth(true));
-      dispatch(storeAction.checkRole(profile));
-      dispatch(storeAction.setError(''));
+      dispatch(authAction.setIsAuth(true));
+      dispatch(authAction.checkRole(profile));
+      dispatch(notificationsAction.setError(''));
     } catch (error: any) {
       dispatch(
-        storeAction.setError(
+        notificationsAction.setError(
           error.response.data || 'Failed to authenticate user. Please try again later.'
         )
       );
@@ -32,7 +37,7 @@ export const authUserData = (user: AuthData) => {
 
 export const updateRefrashToken = (refreshToken: RefreshToken) => {
   return async (
-    dispatch: (arg0: { payload: any; type: 'store/setIsAuth' | 'store/checkRole' }) => void
+    dispatch: (arg0: { payload: any; type: 'auth/setIsAuth' | 'auth/checkRole' }) => void
   ) => {
     try {
       const res = await updateToken(refreshToken);
@@ -40,21 +45,21 @@ export const updateRefrashToken = (refreshToken: RefreshToken) => {
       TokenManager.setToken(res.accessToken);
 
       const profile = await getProfile();
-      dispatch(storeAction.setIsAuth(true));
-      dispatch(storeAction.checkRole(profile));
+      dispatch(authAction.setIsAuth(true));
+      dispatch(authAction.checkRole(profile));
     } catch (error: any) {
-      dispatch(storeAction.setIsAuth(false));
+      dispatch(authAction.setIsAuth(false));
       throw new Error(error.response.data || 'Failed to refresh token. Please try again later.');
     }
   };
 };
 
 export const logOutUser = () => {
-  return async (dispatch: (arg0: { payload: any; type: 'store/setIsAuth' }) => void) => {
+  return async (dispatch: (arg0: { payload: any; type: 'auth/setIsAuth' }) => void) => {
     try {
       await logOut();
       TokenManager.clearToken();
-      dispatch(storeAction.setIsAuth(false));
+      dispatch(authAction.setIsAuth(false));
     } catch {
       throw new Error('Failed to log out. Please try again later.');
     }

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Input, Form } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
-import { storeAction } from '../../store/store-slice';
+import { userAction } from '../../store/user/user-slice';
 
 const { Search } = Input;
 
 export const SearchUser: React.FC = () => {
-  const isLoading = useSelector((state: any) => state.store.isLoading);
+  const isLoading = useSelector((state: any) => state.user.isLoading);
   const dispatch: any = useDispatch();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -14,8 +14,8 @@ export const SearchUser: React.FC = () => {
     if (e.target.value === '') {
       searching = undefined;
     }
-    dispatch(storeAction.setSearch(searching));
-    dispatch(storeAction.setPaginationCurrent(0));
+    dispatch(userAction.setSearch(searching));
+    dispatch(userAction.setPaginationCurrent(0));
   };
 
   return (

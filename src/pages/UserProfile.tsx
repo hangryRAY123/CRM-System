@@ -5,14 +5,15 @@ import { ProfileRequest } from '../helpers/types';
 import { useParams } from 'react-router-dom';
 import { Divider, Spin } from 'antd';
 import { ProfileForm } from '../components/Form/ProfileForm';
-import { storeAction } from '../store/store-slice';
+import { notificationsAction } from '../store/notification/notifications-slice';
 import { getUserProfile, updateUserProfile } from '../api/users';
+import { User } from '../helpers/types';
 
 export const UserProfile = () => {
-  const [profile, setProfile] = useState<object>({});
+  const [profile, setProfile] = useState<User>();
   const [isEdit, setEdit] = useState<boolean>(false);
   const [isLoading, setLoading] = useState<boolean>(false);
-  const error = useSelector((state: any) => state.store.notifications.error);
+  const error = useSelector((state: any) => state.notifications.error);
   const dispatch: any = useDispatch();
   const [form] = Form.useForm();
   const { id } = useParams();
@@ -27,10 +28,10 @@ export const UserProfile = () => {
       setProfile(profileData);
       setEdit(false);
 
-      dispatch(storeAction.setError(''));
+      dispatch(notificationsAction.setError(''));
     } catch (error: any) {
       dispatch(
-        storeAction.setError(
+        notificationsAction.setError(
           error.response.data || 'Failed to get user profile. Please try again later.'
         )
       );
@@ -50,11 +51,11 @@ export const UserProfile = () => {
         });
         setLoading(false);
 
-        dispatch(storeAction.setError(''));
+        dispatch(notificationsAction.setError(''));
       } catch (error: any) {
         setLoading(false);
         dispatch(
-          storeAction.setError(
+          notificationsAction.setError(
             error.response.data || 'Failed to get user profile. Please try again later.'
           )
         );

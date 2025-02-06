@@ -2,18 +2,18 @@ import { Divider } from 'antd';
 import { UserList } from '../components/User/UserList';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { storeAction } from '../store/store-slice';
+import { userAction } from '../store/user/user-slice';
 
 export const Users = () => {
   const dispatch = useDispatch();
-  const isAdmin = useSelector((state: any) => state.store.isAdmin);
+  const isAdmin = useSelector((state: any) => state.auth.isAdmin);
 
   useEffect(() => {
     return () => {
-      dispatch(storeAction.setBlocked(undefined));
-      dispatch(storeAction.setSortField(undefined));
-      dispatch(storeAction.setSortOrder(undefined));
-      dispatch(storeAction.setSearch(undefined));
+      dispatch(userAction.setBlocked(undefined));
+      dispatch(userAction.setSortField(undefined));
+      dispatch(userAction.setSortOrder(undefined));
+      dispatch(userAction.setSearch(undefined));
     };
   }, []);
   return (

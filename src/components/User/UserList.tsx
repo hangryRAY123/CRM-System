@@ -7,7 +7,8 @@ import { User } from '../../helpers/types';
 import { NavLink } from 'react-router-dom';
 import { Sort } from '../Sort/Sort';
 import { SearchUser } from '../SearchUser/SearchUser';
-import { storeAction } from '../../store/store-slice';
+import { userAction } from '../../store/user/user-slice';
+import { notificationsAction } from '../../store/notification/notifications-slice';
 import { LockOutlined, UnlockOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { sortUsers, deleteUser, blockUser, updateRolesUser } from '../../api/users';
 
@@ -23,13 +24,14 @@ interface TableParams {
 
 export const UserList: React.FC = () => {
   const [users, setUsers] = useState<any>([]);
-  const isLoading = useSelector((state: any) => state.store.isLoading);
-  const error = useSelector((state: any) => state.store.notifications.error);
-  const sort = useSelector((state: any) => state.store.sort);
+  const isLoading = useSelector((state: any) => state.user.isLoading);
+  const error = useSelector((state: any) => state.notifications.error);
+  const sort = useSelector((state: any) => state.user.sort);
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
       pageSize: 20,
+      showSizeChanger: false,
     },
   });
   const dispatch: any = useDispatch();
@@ -44,14 +46,14 @@ export const UserList: React.FC = () => {
     }
 
     try {
-      dispatch(storeAction.setIsLoading(true));
+      dispatch(userAction.setIsLoading(true));
       await updateRolesUser(id, newRoles);
       const usersData = await sortUsers(sort);
       setUsers(usersData.data);
-      dispatch(storeAction.setIsLoading(false));
+      dispatch(userAction.setIsLoading(false));
     } catch (error: any) {
       dispatch(
-        storeAction.setError(
+        notificationsAction.setError(
           error.response.data || 'Failed to change user role. Please try again later.'
         )
       );
@@ -66,14 +68,14 @@ export const UserList: React.FC = () => {
     }
 
     try {
-      dispatch(storeAction.setIsLoading(true));
+      dispatch(userAction.setIsLoading(true));
       await blockUser(id, block);
       const usersData = await sortUsers(sort);
       setUsers(usersData.data);
-      dispatch(storeAction.setIsLoading(false));
+      dispatch(userAction.setIsLoading(false));
     } catch (error: any) {
       dispatch(
-        storeAction.setError(
+        notificationsAction.setError(
           error.response.data || 'Failed to block user. Please try again later.'
         )
       );
@@ -82,14 +84,14 @@ export const UserList: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      dispatch(storeAction.setIsLoading(true));
+      dispatch(userAction.setIsLoading(true));
       await deleteUser(id);
       const usersData = await sortUsers(sort);
       setUsers(usersData.data);
-      dispatch(storeAction.setIsLoading(false));
+      dispatch(userAction.setIsLoading(false));
     } catch (error: any) {
       dispatch(
-        storeAction.setError(
+        notificationsAction.setError(
           error.response.data || 'Failed to delete user. Please try again later.'
         )
       );
@@ -105,18 +107,18 @@ export const UserList: React.FC = () => {
     });
 
     if (pagination.current) {
-      dispatch(storeAction.setPaginationCurrent(pagination.current - 1));
+      dispatch(userAction.setPaginationCurrent(pagination.current - 1));
     }
-    dispatch(storeAction.setSortField(Array.isArray(sorter) ? undefined : sorter.field));
+    dispatch(userAction.setSortField(Array.isArray(sorter) ? undefined : sorter.field));
     dispatch(
-      storeAction.setSortOrder(Array.isArray(sorter) ? undefined : sorter.order?.replace('end', ''))
+      userAction.setSortOrder(Array.isArray(sorter) ? undefined : sorter.order?.replace('end', ''))
     );
   };
 
   useEffect(() => {
     const getUserData = async () => {
       try {
-        dispatch(storeAction.setIsLoading(true));
+        dispatch(userAction.setIsLoading(true));
         const usersData = await sortUsers(sort);
         setUsers(usersData.data);
         setTableParams({
@@ -126,11 +128,11 @@ export const UserList: React.FC = () => {
             total: usersData.meta.totalAmount,
           },
         });
-        dispatch(storeAction.setIsLoading(false));
+        dispatch(userAction.setIsLoading(false));
       } catch (error: any) {
-        dispatch(storeAction.setIsLoading(false));
+        dispatch(userAction.setIsLoading(false));
         dispatch(
-          storeAction.setError(
+          notificationsAction.setError(
             error.response.data || 'Failed to sort users. Please try again later.'
           )
         );

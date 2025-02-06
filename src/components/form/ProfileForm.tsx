@@ -51,7 +51,7 @@ export const ProfileForm: React.FC<{
           >
             {isEdit && <Input />}
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{profile.username}</h3>}
+          {!isEdit && <h3 style={{ margin: 0 }}>{profile?.username}</h3>}
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Form.Item
@@ -68,10 +68,10 @@ export const ProfileForm: React.FC<{
                 message: 'Please input your E-mail!',
               },
             ]}
-          >
+          > 
             {isEdit && <Input />}
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{profile.email}</h3>}
+          {!isEdit && <h3 style={{ margin: 0 }}>{profile?.email}</h3>}
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Form.Item
@@ -87,7 +87,7 @@ export const ProfileForm: React.FC<{
           >
             {isEdit && <Input />}
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{profile.phoneNumber}</h3>}
+          {!isEdit && <h3 style={{ margin: 0 }}>{profile?.phoneNumber}</h3>}
         </div>
         <div className='btn-wrapper'>
           {isEdit && (

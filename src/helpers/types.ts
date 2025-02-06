@@ -17,20 +17,10 @@ export type TasksInfo = {
   inWork: number;
 };
 
-export type UserRegistration = {
-  email: string;
-  login: string;
-  password: string;
-  phoneNumber: string;
-  username: string;
-};
-
 export type AuthData = {
   login: string;
   password: string;
 };
-
-export type RefreshToken = string;
 
 export type ProfileRequest = {
   username: string;
@@ -48,6 +38,24 @@ export type User = {
   phoneNumber: string;
 };
 
+export type UserRegistration = {
+  email: string;
+  login: string;
+  password: string;
+  phoneNumber: string;
+  username: string;
+};
+
+export type Sort = {
+  isBlocked: string;
+  search: string;
+  offset: number;
+  sortBy: string;
+  sortOrder: string;
+};
+
 export type PasswordRequest = string;
 
 export type AccessToken = string;
+
+export type RefreshToken = string;

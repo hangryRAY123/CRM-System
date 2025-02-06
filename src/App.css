@@ -135,6 +135,8 @@ section.auth .form-wrapper {
   height: 20px;
 }
 
-.ant-pagination-options {
-  display: none !important;
+.profile-item .ant-list-item-meta-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }

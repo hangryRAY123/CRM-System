@@ -1,12 +1,12 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Button, Layout } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { logOutUser } from '../../store/store-action';
-import { storeAction } from '../../store/store-slice';
+import { logOutUser } from '../../store/auth/auth-action';
+import { authAction } from '../../store/auth/auth-slice';
 const { Header } = Layout;
 
 export const MainHeader = () => {
-  const isCollapsed = useSelector((state: any) => state.store.isCollapsed);
+  const isCollapsed = useSelector((state: any) => state.auth.isCollapsed);
   const dispatch: any = useDispatch();
 
   const handleLogOut = () => {
@@ -14,7 +14,7 @@ export const MainHeader = () => {
   };
 
   const handleMenuClick = () => {
-    dispatch(storeAction.toggle());
+    dispatch(authAction.toggle());
   };
 
   return (

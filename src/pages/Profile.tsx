@@ -1,40 +1,15 @@
-import { ProfileForm } from '../components/Form/ProfileForm';
-import { PasswordForm } from '../components/Form/PasswordForm';
-import { Divider, Spin } from 'antd';
+import { Divider, Spin, List, Alert } from 'antd';
 import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Form } from 'antd';
-import { ProfileRequest } from '../helpers/types';
-import { storeAction } from '../store/store-slice';
-import { getProfile, updateProfile } from '../api/profile';
+import { useDispatch, useSelector } from 'react-redux';
+import { notificationsAction } from '../store/notification/notifications-slice';
+import { getProfile } from '../api/profile';
+import { User } from '../helpers/types';
 
 export const Profile = () => {
-  const [profile, setProfile] = useState<object>({});
-  const [isEdit, setEdit] = useState<boolean>(false);
+  const [profile, setProfile] = useState<User>();
   const [isLoading, setLoading] = useState<boolean>(false);
-  const error = useSelector((state: any) => state.store.notifications.error);
+  const error = useSelector((state: any) => state.notifications.error);
   const dispatch: any = useDispatch();
-  const [form] = Form.useForm();
-
-  const handleEdit = () => {
-    setEdit(!isEdit);
-  };
-
-  const onFinish = async (user: ProfileRequest) => {
-    try {
-      const profileData = await updateProfile(user);
-      setProfile(profileData);
-      setEdit(false);
-
-      dispatch(storeAction.setError(''));
-    } catch (error: any) {
-      dispatch(
-        storeAction.setError(
-          error.response.data || 'Failed to fetch user data. Please try again later.'
-        )
-      );
-    }
-  };
 
   useEffect(() => {
     const getProfileData = async () => {
@@ -42,18 +17,13 @@ export const Profile = () => {
         setLoading(true);
         const profileData = await getProfile();
         setProfile(profileData);
-        form.setFieldsValue({
-          username: profileData.username,
-          email: profileData.email,
-          phoneNumber: profileData.phoneNumber,
-        });
         setLoading(false);
 
-        dispatch(storeAction.setError(''));
+        dispatch(notificationsAction.setError(''));
       } catch (error: any) {
         setLoading(false);
         dispatch(
-          storeAction.setError(
+          notificationsAction.setError(
             error.response.data || 'Failed to fetch profile. Please try again later.'
           )
         );
@@ -66,20 +36,31 @@ export const Profile = () => {
     <>
       <Divider orientation='left'>Profile</Divider>
       <section>
+        {error && (
+          <Alert
+            style={{ width: 'fit-content', marginBottom: 15 }}
+            message={error}
+            type='error'
+            showIcon
+            closable
+          />
+        )}
         {isLoading ? (
           <Spin size='large' />
         ) : (
-          <div style={{ textAlign: 'left' }}>
-            <ProfileForm
-              error={error}
-              form={form}
-              isEdit={isEdit}
-              profile={profile}
-              onFinish={onFinish}
-              handleEdit={handleEdit}
+          <List itemLayout='horizontal' style={{ textAlign: 'left' }}>
+            <List.Item.Meta
+              className='profile-item'
+              title='Nickname:'
+              description={profile?.username}
             />
-            <PasswordForm />
-          </div>
+            <List.Item.Meta className='profile-item' title='E-mail:' description={profile?.email} />
+            <List.Item.Meta
+              className='profile-item'
+              title='Phone Number:'
+              description={profile?.phoneNumber || 'no phone'}
+            />
+          </List>
         )}
       </section>
     </>
