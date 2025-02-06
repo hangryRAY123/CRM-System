@@ -4,7 +4,7 @@ import { Form } from 'antd';
 import { ProfileRequest } from '../helpers/types';
 import { useParams } from 'react-router-dom';
 import { Divider, Spin } from 'antd';
-import { ProfileForm } from '../components/Formm/ProfileForm';
+import { ProfileForm } from '../components/Form/ProfileForm';
 import { notificationsAction } from '../store/notification/notifications-slice';
 import { getUserProfile, updateUserProfile } from '../api/users';
 import { User } from '../helpers/types';
