@@ -1,5 +1,4 @@
 [[redirects]]
-  from = "/*"
-  to = "/auth/login"
-  status = 301
-  force = true  
+from = "/*"
+to = "/"
+status = 200
