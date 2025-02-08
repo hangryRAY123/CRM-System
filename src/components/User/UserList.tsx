@@ -155,6 +155,7 @@ export const UserList: React.FC = () => {
     {
       title: 'Date',
       dataIndex: 'date',
+      render: (date) => <>{new Date(date).toLocaleString()}</>,
     },
     {
       title: 'Blocked',

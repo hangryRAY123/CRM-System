@@ -76,7 +76,7 @@ export const RegForm: React.FC = () => {
       {success && (
         <p style={{ color: 'green' }}>
           <span style={{ fontSize: 25, color: '#646cff' }}>{userLogin}</span>&nbsp;
-          {success}. <NavLink to='/'>Login now!</NavLink>{' '}
+          {success}. <NavLink to='/auth/login'>Login now!</NavLink>{' '}
         </p>
       )}
       <Form
