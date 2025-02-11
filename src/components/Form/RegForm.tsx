@@ -197,7 +197,7 @@ export const RegForm: React.FC = () => {
           label='Phone Number'
           rules={[
             {
-              pattern: /^(\+\d{1,3}[- ]?)?\d{10}$/,
+              pattern: /^(\+\d{1}[- ]?)?\d{10}$/,
               message: 'Please enter a valid phone number! (+1111111111)',
             },
           ]}
