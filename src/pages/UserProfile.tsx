@@ -11,6 +11,7 @@ import { User } from '../helpers/types';
 
 export const UserProfile = () => {
   const [profile, setProfile] = useState<User>();
+  const [fields, setFields] = useState({} as ProfileRequest);
   const [isEdit, setEdit] = useState<boolean>(false);
   const [isLoading, setLoading] = useState<boolean>(false);
   const error = useSelector((state: any) => state.notifications.error);
@@ -22,11 +23,19 @@ export const UserProfile = () => {
     setEdit(!isEdit);
   };
 
-  const onFinish = async (user: ProfileRequest) => {
+  const onValuesChange = (value: ProfileRequest) => {
+    setFields((prevFields) => ({
+      ...prevFields,
+      ...value,
+    }));
+  };
+
+  const onFinish = async () => {
     try {
-      const profileData = await updateUserProfile(Number(id), user);
+      const profileData = await updateUserProfile(Number(id), fields);
       setProfile(profileData);
       setEdit(false);
+      setFields({} as ProfileRequest);
 
       dispatch(notificationsAction.setError(''));
     } catch (error: any) {
@@ -77,6 +86,7 @@ export const UserProfile = () => {
               isEdit={isEdit}
               profile={profile}
               onFinish={onFinish}
+              onValuesChange={onValuesChange}
               handleEdit={handleEdit}
             />
           </div>

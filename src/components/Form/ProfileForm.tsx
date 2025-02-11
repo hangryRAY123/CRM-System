@@ -10,9 +10,10 @@ export const ProfileForm: React.FC<{
   isEdit: boolean;
   profile: any;
   onFinish: (values: ProfileRequest) => void;
+  onValuesChange: (value: ProfileRequest) => void;
   handleEdit: () => void;
 }> = (props) => {
-  const { error, form, isEdit, profile, onFinish, handleEdit } = props;
+  const { error, form, isEdit, profile, onFinish, handleEdit, onValuesChange } = props;
 
   return (
     <>
@@ -30,6 +31,7 @@ export const ProfileForm: React.FC<{
         name='profile'
         form={form}
         onFinish={onFinish}
+        onValuesChange={onValuesChange}
       >
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Form.Item
@@ -68,7 +70,7 @@ export const ProfileForm: React.FC<{
                 message: 'Please input your E-mail!',
               },
             ]}
-          > 
+          >
             {isEdit && <Input />}
           </Form.Item>
           {!isEdit && <h3 style={{ margin: 0 }}>{profile?.email}</h3>}
