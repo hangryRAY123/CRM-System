@@ -12,7 +12,7 @@ export const TodoList = () => {
   const [error, setError] = useState<string>('');
   const [allTask, setAllTask] = useState<AllTask[]>([]);
   const [info, setInfo] = useState<TasksInfo>({ all: 0, completed: 0, inWork: 0 });
-  const [currentTab, setCurrentTab] = useState<TabKeys>(TabKeys.all);
+  const [currentTab, setCurrentTab] = useState<TabKeys>(TabKeys.ALL);
 
   useEffect(() => {
     const fetchTasksList = async () => {
