@@ -12,11 +12,10 @@ export const Nav: React.FC = () => {
 
   const items: MenuItem[] = [
     { key: '/profile', icon: <UserOutlined />, label: <NavLink to='/profile'>Профиль</NavLink> },
-    {
+    isAdmin && {
       key: '/users',
       icon: <UsergroupAddOutlined />,
       label: <NavLink to='/users'>Пользватели</NavLink>,
-      disabled: !isAdmin,
     },
     {
       key: '/todolist',

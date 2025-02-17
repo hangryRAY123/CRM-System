@@ -1,7 +1,7 @@
 export enum TabKeys {
-  all = 'all',
-  completed = 'completed',
-  inWork = 'inWork',
+  ALL = 'all',
+  COMPLETED = 'completed',
+  INWORK = 'inWork',
 }
 
 export type AllTask = {
@@ -28,13 +28,19 @@ export type ProfileRequest = {
   phoneNumber: string;
 };
 
+export enum Roles {
+  ADMIN = 'ADMIN',
+  MODERATOR = 'MODERATOR',
+  USER = 'USER',
+}
+
 export type User = {
   id: number;
   username: string;
   email: string;
   date: string;
   isBlocked: boolean;
-  roles: string[];
+  roles: Roles[];
   phoneNumber: string;
 };
 
@@ -46,13 +52,13 @@ export type UserRegistration = {
   username: string;
 };
 
-export type Sort = {
-  isBlocked: string | undefined;
-  search: string | undefined;
-  offset: number | undefined;
-  sortBy: string | undefined;
-  sortOrder: string | undefined;
-};
+export type Sort = Partial<{
+  isBlocked: string;
+  search: string;
+  offset: number;
+  sortBy: string;
+  sortOrder: string;
+}>;
 
 export type PasswordRequest = string;
 

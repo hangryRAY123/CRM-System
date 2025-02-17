@@ -23,7 +23,7 @@ class TokenManager {
     this.accessToken = null;
   }
 
-  public isTokenSet(): boolean {
+  public checkToken(): boolean {
     return this.accessToken !== null;
   }
 }

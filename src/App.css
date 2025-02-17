@@ -118,10 +118,6 @@ section.auth .form-wrapper {
   color: #888;
 }
 
-.nav .ant-menu-item[aria-disabled='true'] {
-  display: none;
-}
-
 .blocked {
   color: #646cff;
   padding: 5px;
@@ -139,4 +135,15 @@ section.auth .form-wrapper {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+#profile input[readonly] {
+  border: none;
+  outline: none;
+  color: inherit;
+  font-weight: bold;
+}
+
+#profile .ant-form-item {
+  width: 100%;
 }

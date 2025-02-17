@@ -4,16 +4,17 @@ import { VALIDATE_AUTH } from '../../helpers/constants';
 import { CheckCircleOutlined, EditOutlined, CloseOutlined } from '@ant-design/icons';
 import { ProfileRequest } from '../../helpers/types';
 
-export const ProfileForm: React.FC<{
+type Profile = {
   error: string;
   form: any;
   isEdit: boolean;
-  profile: any;
   onFinish: (values: ProfileRequest) => void;
   onValuesChange: (value: ProfileRequest) => void;
   handleEdit: () => void;
-}> = (props) => {
-  const { error, form, isEdit, profile, onFinish, handleEdit, onValuesChange } = props;
+};
+
+export const ProfileForm: React.FC<Profile> = (props) => {
+  const { error, form, isEdit, onFinish, handleEdit, onValuesChange } = props;
 
   return (
     <>
@@ -27,13 +28,13 @@ export const ProfileForm: React.FC<{
         />
       )}
       <Form
-        style={{ width: 'fit-content', display: 'flex', flexDirection: 'column', gap: 20 }}
+        style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 20 }}
         name='profile'
         form={form}
         onFinish={onFinish}
         onValuesChange={onValuesChange}
       >
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
           <Form.Item
             style={{ marginBottom: 0 }}
             name='username'
@@ -51,11 +52,10 @@ export const ProfileForm: React.FC<{
               },
             ]}
           >
-            {isEdit && <Input />}
+            <Input readOnly={!isEdit} />
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{profile?.username}</h3>}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
           <Form.Item
             style={{ marginBottom: 0 }}
             name='email'
@@ -71,11 +71,10 @@ export const ProfileForm: React.FC<{
               },
             ]}
           >
-            {isEdit && <Input />}
+            <Input readOnly={!isEdit} />
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{profile?.email}</h3>}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
           <Form.Item
             style={{ marginBottom: 0 }}
             name='phoneNumber'
@@ -87,14 +86,13 @@ export const ProfileForm: React.FC<{
               },
             ]}
           >
-            {isEdit && <Input />}
+            <Input readOnly={!isEdit} />
           </Form.Item>
-          {!isEdit && <h3 style={{ margin: 0 }}>{profile?.phoneNumber}</h3>}
         </div>
         <div className='btn-wrapper'>
           {isEdit && (
             <Form.Item>
-              <Button type='primary' htmlType='submit' style={{ width: '100%' }}>
+              <Button type='primary' htmlType='submit' style={{ width: 'fit-content' }}>
                 <CheckCircleOutlined />
                 Save
               </Button>
@@ -102,7 +100,7 @@ export const ProfileForm: React.FC<{
                 type='primary'
                 htmlType='button'
                 onClick={handleEdit}
-                style={{ width: '100%' }}
+                style={{ width: 'fit-content' }}
               >
                 <CloseOutlined />
                 Cansel
@@ -110,7 +108,7 @@ export const ProfileForm: React.FC<{
             </Form.Item>
           )}
           {!isEdit && (
-            <Button type='primary' htmlType='button' onClick={handleEdit} style={{ width: '100%' }}>
+            <Button type='primary' htmlType='button' onClick={handleEdit} style={{ width: 'fit-content' }}>
               <EditOutlined />
               Edit profile
             </Button>

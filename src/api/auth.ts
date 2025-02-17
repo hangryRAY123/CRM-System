@@ -2,11 +2,7 @@ import { instance } from './https';
 import { UserRegistration, AuthData, RefreshToken } from '../helpers/types';
 
 export const logOut = async () => {
-  try {
-    await instance.post('/user/logout');
-  } catch (error: any) {
-    throw new Error(error.response.data || 'Failed to log out. Please try again later.');
-  }
+  await instance.post('/user/logout');
 };
 
 export const updateToken = async (token: RefreshToken) => {
@@ -16,11 +12,11 @@ export const updateToken = async (token: RefreshToken) => {
   return res.data;
 };
 
-export const authUser = async (user: AuthData) => {
+export const authorizeUser = async (user: AuthData) => {
   const res = await instance.post('/auth/signin', user);
   return res.data;
 };
 
-export const regUser = async (user: UserRegistration) => {
+export const registerUser = async (user: UserRegistration) => {
   await instance.post('/auth/signup', user);
 };

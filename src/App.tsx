@@ -1,9 +1,9 @@
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
-import { AuthLayout } from './layout/AuthLayout';
+import { AuthorizationLayout } from './layout/AuthorizationLayout';
 import { MainLayout } from './layout/MainLayout';
-import { RegForm } from './components/Form/RegForm';
-import { AuthForm } from './components/Form/AuthForm';
+import { RegistrationForm } from './components/Form/RegistrationForm';
+import { AuthorizationForm } from './components/Form/AuthorizationForm';
 import { Profile } from './pages/Profile';
 import { UserProfile } from './pages/UserProfile';
 import { Users } from './pages/Users';
@@ -45,9 +45,9 @@ function App() {
 
   return (
     <Routes>
-      <Route path='/auth/' element={<AuthLayout />}>
-        <Route path='login' element={<AuthForm />} />
-        <Route path='register' element={<RegForm />} />
+      <Route path='/auth/' element={<AuthorizationLayout />}>
+        <Route path='login' element={<AuthorizationForm />} />
+        <Route path='register' element={<RegistrationForm />} />
       </Route>
       <Route path='/' element={<MainLayout />}>
         <Route path='profile' element={<Profile />} />

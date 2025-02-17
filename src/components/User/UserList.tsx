@@ -3,14 +3,14 @@ import { GetProp, TableProps, Popconfirm } from 'antd';
 import type { SorterResult } from 'antd/es/table/interface';
 import { Table, Tag, Alert } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
-import { User } from '../../helpers/types';
+import { User, Roles } from '../../helpers/types';
 import { NavLink } from 'react-router-dom';
 import { Sort } from '../Sort/Sort';
 import { SearchUser } from '../SearchUser/SearchUser';
 import { userAction } from '../../store/user/user-slice';
 import { notificationsAction } from '../../store/notification/notifications-slice';
 import { LockOutlined, UnlockOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import { sortUsers, deleteUser, blockUser, updateRolesUser } from '../../api/users';
+import { getUsers, deleteUser, blockUser, updateRolesUser } from '../../api/users';
 
 type ColumnsType<T extends object = object> = TableProps<T>['columns'];
 type TablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>;
@@ -48,7 +48,7 @@ export const UserList: React.FC = () => {
     try {
       dispatch(userAction.setIsLoading(true));
       await updateRolesUser(id, newRoles);
-      const usersData = await sortUsers(sort);
+      const usersData = await getUsers(sort);
       setUsers(usersData.data);
       dispatch(userAction.setIsLoading(false));
     } catch (error: any) {
@@ -70,7 +70,7 @@ export const UserList: React.FC = () => {
     try {
       dispatch(userAction.setIsLoading(true));
       await blockUser(id, block);
-      const usersData = await sortUsers(sort);
+      const usersData = await getUsers(sort);
       setUsers(usersData.data);
       dispatch(userAction.setIsLoading(false));
     } catch (error: any) {
@@ -86,7 +86,7 @@ export const UserList: React.FC = () => {
     try {
       dispatch(userAction.setIsLoading(true));
       await deleteUser(id);
-      const usersData = await sortUsers(sort);
+      const usersData = await getUsers(sort);
       setUsers(usersData.data);
       dispatch(userAction.setIsLoading(false));
     } catch (error: any) {
@@ -119,7 +119,7 @@ export const UserList: React.FC = () => {
     const getUserData = async () => {
       try {
         dispatch(userAction.setIsLoading(true));
-        const usersData = await sortUsers(sort);
+        const usersData = await getUsers(sort);
         setUsers(usersData.data);
         setTableParams({
           ...tableParams,
@@ -182,7 +182,7 @@ export const UserList: React.FC = () => {
       title: 'Role',
       render: (user: User) => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          {user.roles.includes('ADMIN') ? (
+          {user.roles.includes('ADMIN' as Roles) ? (
             <Popconfirm
               title='Remove role admin?'
               onConfirm={() => handleRole(user.id, user.roles)}

@@ -20,7 +20,7 @@ export const blockUser = async (id: number, block: string) => {
   await instance.post(`/admin/users/${id}/${block}`);
 };
 
-export const sortUsers = async (sort: Sort) => {
+export const getUsers = async (sort: Sort) => {
   const res = await instance.get('/admin/users', {
     params: sort,
   });
@@ -29,9 +29,4 @@ export const sortUsers = async (sort: Sort) => {
 
 export const deleteUser = async (id: number) => {
   await instance.delete(`/admin/users/${id}`);
-};
-
-export const getUsers = async () => {
-  const res = await instance.get('/admin/users');
-  return res.data;
 };

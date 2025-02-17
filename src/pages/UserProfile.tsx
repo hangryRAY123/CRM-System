@@ -21,6 +21,11 @@ export const UserProfile = () => {
 
   const handleEdit = () => {
     setEdit(!isEdit);
+    form.setFieldsValue({
+      username: profile?.username,
+      email: profile?.email,
+      phoneNumber: profile?.phoneNumber,
+    });
   };
 
   const onValuesChange = (value: ProfileRequest) => {
@@ -84,7 +89,6 @@ export const UserProfile = () => {
               error={error}
               form={form}
               isEdit={isEdit}
-              profile={profile}
               onFinish={onFinish}
               onValuesChange={onValuesChange}
               handleEdit={handleEdit}

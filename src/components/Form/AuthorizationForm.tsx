@@ -3,42 +3,38 @@ import { useState } from 'react';
 import { LockOutlined, UserOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Alert } from 'antd';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { AuthData } from '../../helpers/types';
 import { VALIDATE_AUTH } from '../../helpers/constants';
-import { authUser } from '../../api/auth';
+import { authorizeUser } from '../../api/auth';
 import { getProfile } from '../../api/profile';
 import { authAction } from '../../store/auth/auth-slice';
-import { notificationsAction } from '../../store/notification/notifications-slice';
 import TokenManager from '../../helpers/token-manager';
 
-export const AuthForm: React.FC = () => {
+export const AuthorizationForm: React.FC = () => {
   const [form] = Form.useForm();
   const dispatch: any = useDispatch();
-  const error = useSelector((state: any) => state.notifications.error);
+  const [error, setError] = useState<string>();
   const [isLoading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const onFinish = async (user: AuthData) => {
     try {
+      setError('');
       setLoading(true);
-      const res = await authUser(user);
+      const res = await authorizeUser(user);
       TokenManager.setToken(res.accessToken);
       localStorage.setItem('refreshToken', res.refreshToken);
 
       const profile = await getProfile();
       dispatch(authAction.setIsAuth(true));
       dispatch(authAction.checkRole(profile));
-      dispatch(notificationsAction.setError(''));
+      setError('');
       setLoading(false);
       navigate('/todolist');
     } catch (error: any) {
       setLoading(false);
-      dispatch(
-        notificationsAction.setError(
-          error.response.data || 'Failed to authenticate user. Please try again later.'
-        )
-      );
+      setError(error.response.data || 'Failed to authenticate user. Please try again later.');
     }
   };
 
