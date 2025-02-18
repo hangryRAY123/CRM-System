@@ -137,13 +137,13 @@ section.auth .form-wrapper {
   gap: 10px;
 }
 
-#profile input[readonly] {
+.profile-form input[readonly] {
   border: none;
   outline: none;
   color: inherit;
   font-weight: bold;
 }
 
-#profile .ant-form-item {
+.profile-form .ant-form-item {
   width: 100%;
 }

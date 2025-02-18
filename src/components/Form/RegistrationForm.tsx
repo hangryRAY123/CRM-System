@@ -3,6 +3,8 @@ import { Button, Form, Input, Alert } from 'antd';
 import { registerUser } from '../../api/auth';
 import { useState } from 'react';
 import { VALIDATE_AUTH } from '../../helpers/constants';
+import { AxiosError } from 'axios';
+import { UserRegistration } from '../../helpers/types';
 
 const formItemLayout = {
   labelCol: {
@@ -30,17 +32,17 @@ const tailFormItemLayout = {
 
 export const RegistrationForm: React.FC = () => {
   const [form] = Form.useForm();
-  const [error, setError] = useState<string>();
-  const [success, setSuccess] = useState<string>();
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<string>('');
   const [userLogin, setUserLogin] = useState<string>('');
 
-  const onFinish = async (values: any) => {
+  const onFinish = async (values: UserRegistration) => {
     const user = {
       email: values.email,
       login: values.login,
       password: values.password,
-      phoneNumber: values.phone,
-      username: values.nickname,
+      phoneNumber: values.phoneNumber,
+      username: values.username,
     };
 
     try {
@@ -50,9 +52,11 @@ export const RegistrationForm: React.FC = () => {
       setError('');
       setSuccess('successfully registered');
       form.resetFields();
-    } catch (error: any) {
-      setError(error.response.data || 'Failed to register user. Please try again later.');
-      setSuccess('');
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        setError(error.response?.data || 'Failed to register user. Please try again later.');
+        setSuccess('');
+      }
     }
   };
 
@@ -82,8 +86,8 @@ export const RegistrationForm: React.FC = () => {
         scrollToFirstError
       >
         <Form.Item
-          name='nickname'
-          label='Nickname'
+          name='username'
+          label='Username'
           tooltip='What do you want others to call you?'
           rules={[
             {
@@ -187,7 +191,7 @@ export const RegistrationForm: React.FC = () => {
         </Form.Item>
 
         <Form.Item
-          name='phone'
+          name='phoneNumber'
           label='Phone Number'
           rules={[
             {

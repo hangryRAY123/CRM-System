@@ -3,13 +3,14 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { notificationsAction } from '../store/notification/notifications-slice';
 import { getProfile } from '../api/profile';
-import { User } from '../helpers/types';
+import { User, State } from '../helpers/types';
+import { AxiosError } from 'axios';
 
 export const Profile = () => {
   const [profile, setProfile] = useState<User>();
   const [isLoading, setLoading] = useState<boolean>(false);
-  const error = useSelector((state: any) => state.notifications.error);
-  const dispatch: any = useDispatch();
+  const error = useSelector((state: State) => state.notifications.error);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const getProfileData = async () => {
@@ -20,13 +21,15 @@ export const Profile = () => {
         setLoading(false);
 
         dispatch(notificationsAction.setError(''));
-      } catch (error: any) {
-        setLoading(false);
-        dispatch(
-          notificationsAction.setError(
-            error.response.data || 'Failed to fetch profile. Please try again later.'
-          )
-        );
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          setLoading(false);
+          dispatch(
+            notificationsAction.setError(
+              error.response?.data || 'Failed to fetch profile. Please try again later.'
+            )
+          );
+        }
       }
     };
     getProfileData();

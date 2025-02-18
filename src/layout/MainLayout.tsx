@@ -4,12 +4,13 @@ import { WechatOutlined } from '@ant-design/icons';
 import { Layout } from 'antd';
 import { Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { State } from '../helpers/types';
 
 const { Content, Sider } = Layout;
 
 export const MainLayout = () => {
-  const isCollapsed = useSelector((state: any) => state.auth.isCollapsed);
-  const isAuth = useSelector((state: any) => state.auth.isAuth);
+  const isCollapsed = useSelector((state: State) => state.auth.isCollapsed);
+  const isAuth = useSelector((state: State) => state.auth.isAuth);
 
   return (
     <>

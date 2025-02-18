@@ -5,12 +5,13 @@ import { authAction } from '../../store/auth/auth-slice';
 import { logOut } from '../../api/auth';
 import TokenManager from '../../helpers/token-manager';
 import { useNavigate } from 'react-router-dom';
+import { State } from '../../helpers/types';
 const { Header } = Layout;
 
 export const MainHeader = () => {
-  const isCollapsed = useSelector((state: any) => state.auth.isCollapsed);
+  const isCollapsed = useSelector((state: State) => state.auth.isCollapsed);
   const navigate = useNavigate();
-  const dispatch: any = useDispatch();
+  const dispatch = useDispatch();
 
   const handleLogOut = async () => {
     try {

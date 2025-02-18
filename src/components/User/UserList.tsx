@@ -3,7 +3,7 @@ import { GetProp, TableProps, Popconfirm } from 'antd';
 import type { SorterResult } from 'antd/es/table/interface';
 import { Table, Tag, Alert } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
-import { User, Roles } from '../../helpers/types';
+import { User, State, Roles } from '../../helpers/types';
 import { NavLink } from 'react-router-dom';
 import { Sort } from '../Sort/Sort';
 import { SearchUser } from '../SearchUser/SearchUser';
@@ -11,22 +11,23 @@ import { userAction } from '../../store/user/user-slice';
 import { notificationsAction } from '../../store/notification/notifications-slice';
 import { LockOutlined, UnlockOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { getUsers, deleteUser, blockUser, updateRolesUser } from '../../api/users';
+import { AxiosError } from 'axios';
 
 type ColumnsType<T extends object = object> = TableProps<T>['columns'];
 type TablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>;
 
 interface TableParams {
   pagination?: TablePaginationConfig;
-  sortField?: SorterResult<any>['field'];
-  sortOrder?: SorterResult<any>['order'];
+  sortField?: SorterResult<string>['field'];
+  sortOrder?: SorterResult<string>['order'];
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1];
 }
 
 export const UserList: React.FC = () => {
-  const [users, setUsers] = useState<any>([]);
-  const isLoading = useSelector((state: any) => state.user.isLoading);
-  const error = useSelector((state: any) => state.notifications.error);
-  const sort = useSelector((state: any) => state.user.sort);
+  const [users, setUsers] = useState<User[]>([]);
+  const isLoading = useSelector((state: State) => state.user.isLoading);
+  const error = useSelector((state: State) => state.notifications.error);
+  const sort = useSelector((state: State) => state.user.sort);
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
@@ -34,7 +35,7 @@ export const UserList: React.FC = () => {
       showSizeChanger: false,
     },
   });
-  const dispatch: any = useDispatch();
+  const dispatch = useDispatch();
 
   const handleRole = async (id: number, roles: string[]) => {
     let newRoles;
@@ -51,12 +52,14 @@ export const UserList: React.FC = () => {
       const usersData = await getUsers(sort);
       setUsers(usersData.data);
       dispatch(userAction.setIsLoading(false));
-    } catch (error: any) {
-      dispatch(
-        notificationsAction.setError(
-          error.response.data || 'Failed to change user role. Please try again later.'
-        )
-      );
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        dispatch(
+          notificationsAction.setError(
+            error.response?.data || 'Failed to change user role. Please try again later.'
+          )
+        );
+      }
     }
   };
 
@@ -73,12 +76,14 @@ export const UserList: React.FC = () => {
       const usersData = await getUsers(sort);
       setUsers(usersData.data);
       dispatch(userAction.setIsLoading(false));
-    } catch (error: any) {
-      dispatch(
-        notificationsAction.setError(
-          error.response.data || 'Failed to block user. Please try again later.'
-        )
-      );
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        dispatch(
+          notificationsAction.setError(
+            error.response?.data || 'Failed to block user. Please try again later.'
+          )
+        );
+      }
     }
   };
 
@@ -89,12 +94,14 @@ export const UserList: React.FC = () => {
       const usersData = await getUsers(sort);
       setUsers(usersData.data);
       dispatch(userAction.setIsLoading(false));
-    } catch (error: any) {
-      dispatch(
-        notificationsAction.setError(
-          error.response.data || 'Failed to delete user. Please try again later.'
-        )
-      );
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        dispatch(
+          notificationsAction.setError(
+            error.response?.data || 'Failed to delete user. Please try again later.'
+          )
+        );
+      }
     }
   };
 
@@ -129,13 +136,15 @@ export const UserList: React.FC = () => {
           },
         });
         dispatch(userAction.setIsLoading(false));
-      } catch (error: any) {
-        dispatch(userAction.setIsLoading(false));
-        dispatch(
-          notificationsAction.setError(
-            error.response.data || 'Failed to sort users. Please try again later.'
-          )
-        );
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          dispatch(userAction.setIsLoading(false));
+          dispatch(
+            notificationsAction.setError(
+              error.response?.data || 'Failed to sort users. Please try again later.'
+            )
+          );
+        }
       }
     };
     getUserData();

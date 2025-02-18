@@ -15,10 +15,11 @@ import TokenManager from './helpers/token-manager';
 import { updateToken } from './api/auth';
 import { getProfile } from './api/profile';
 import { authAction } from './store/auth/auth-slice';
+import { AxiosError } from 'axios';
 
 function App() {
   const navigate = useNavigate();
-  const dispatch: any = useDispatch();
+  const dispatch = useDispatch();
   const refreshToken = localStorage.getItem('refreshToken');
 
   useEffect(() => {
@@ -33,10 +34,14 @@ function App() {
           dispatch(authAction.setIsAuth(true));
           dispatch(authAction.checkRole(profile));
         }
-      } catch (error: any) {
-        dispatch(authAction.setIsAuth(false));
-        navigate('/auth/login');
-        throw new Error(error.response.data || 'Failed to refresh token. Please try again later.');
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          dispatch(authAction.setIsAuth(false));
+          navigate('/auth/login');
+          throw new Error(
+            error.response?.data || 'Failed to refresh token. Please try again later.'
+          );
+        }
       }
     };
 

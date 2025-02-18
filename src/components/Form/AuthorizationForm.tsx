@@ -10,11 +10,12 @@ import { authorizeUser } from '../../api/auth';
 import { getProfile } from '../../api/profile';
 import { authAction } from '../../store/auth/auth-slice';
 import TokenManager from '../../helpers/token-manager';
+import { AxiosError } from 'axios';
 
 export const AuthorizationForm: React.FC = () => {
   const [form] = Form.useForm();
-  const dispatch: any = useDispatch();
-  const [error, setError] = useState<string>();
+  const dispatch = useDispatch();
+  const [error, setError] = useState<string>('');
   const [isLoading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -32,9 +33,11 @@ export const AuthorizationForm: React.FC = () => {
       setError('');
       setLoading(false);
       navigate('/todolist');
-    } catch (error: any) {
-      setLoading(false);
-      setError(error.response.data || 'Failed to authenticate user. Please try again later.');
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        setLoading(false);
+        setError(error.response?.data || 'Failed to authenticate user. Please try again later.');
+      }
     }
   };
 

@@ -60,6 +60,19 @@ export type Sort = Partial<{
   sortOrder: string;
 }>;
 
+export type State = {
+  notifications: { error: string; success: string };
+  auth: {
+    isAuth: boolean;
+    isAdmin: boolean;
+    isCollapsed: boolean;
+  };
+  user: {
+    isLoading: boolean;
+    sort: Sort;
+  };
+};
+
 export type PasswordRequest = string;
 
 export type AccessToken = string;

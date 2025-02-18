@@ -1,18 +1,22 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import { UserOutlined, BarsOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
+import { State } from '../../helpers/types';
 
-type MenuItem = Required<MenuProps>['items'][number];
+type MenuItem = {
+  key: string;
+  icon: React.ReactNode;
+  label: React.ReactNode;
+};
 
 export const Nav: React.FC = () => {
   const location = useLocation();
-  const isAdmin = useSelector((state: any) => state.auth.isAdmin);
+  const isAdmin = useSelector((state: State) => state.auth.isAdmin);
 
   const items: MenuItem[] = [
     { key: '/profile', icon: <UserOutlined />, label: <NavLink to='/profile'>Профиль</NavLink> },
-    isAdmin && {
+    {
       key: '/users',
       icon: <UsergroupAddOutlined />,
       label: <NavLink to='/users'>Пользватели</NavLink>,
@@ -24,13 +28,15 @@ export const Nav: React.FC = () => {
     },
   ];
 
+  const filteredItems = items.filter((item: MenuItem) => isAdmin || item.key !== '/users');
+
   return (
     <div className='nav'>
       <Menu
         defaultSelectedKeys={[`${location.pathname}`]}
         mode='inline'
         theme='dark'
-        items={items}
+        items={filteredItems}
       />
     </div>
   );

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { userAction } from '../../store/user/user-slice';
 
 export const Sort: React.FC = () => {
-  const dispatch: any = useDispatch();
+  const dispatch = useDispatch();
 
   const handleChange = (value: undefined | boolean | string) => {
     if (value === '') {
