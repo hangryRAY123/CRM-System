@@ -22,11 +22,11 @@ export type AuthData = {
   password: string;
 };
 
-export type ProfileRequest = {
+export type ProfileRequest = Partial<{
   username: string;
   email: string;
   phoneNumber: string;
-};
+}>;
 
 export enum Roles {
   ADMIN = 'ADMIN',

@@ -10,9 +10,18 @@ import { notificationsAction } from '../../store/notification/notifications-slic
 import { getUserProfile, updateUserProfile } from '../../api/users';
 import { AxiosError } from 'axios';
 
+const defaultProfile: User = {
+  id: 0,
+  username: '',
+  email: '',
+  date: '',
+  isBlocked: false,
+  roles: [],
+  phoneNumber: '',
+};
+
 export const ProfileForm: React.FC = () => {
-  const [profile, setProfile] = useState({} as User);
-  const [fields, setFields] = useState({} as ProfileRequest);
+  const [profile, setProfile] = useState<User>(defaultProfile);
   const [isEdit, setEdit] = useState<boolean>(false);
   const [isLoading, setLoading] = useState<boolean>(false);
   const error = useSelector((state: State) => state.notifications.error);
@@ -22,26 +31,30 @@ export const ProfileForm: React.FC = () => {
 
   const handleEdit = () => {
     setEdit(!isEdit);
-    form.setFieldsValue({
-      username: profile?.username,
-      email: profile?.email,
-      phoneNumber: profile?.phoneNumber,
-    });
+    form.setFieldsValue(profile);
   };
 
-  const onValuesChange = (value: ProfileRequest) => {
-    setFields((prevFields: ProfileRequest) => ({
-      ...prevFields,
-      ...value,
-    }));
-  };
+  const onFinish = async (data: ProfileRequest) => {
+    const getChangedValues = <T,>(input: Partial<T>, defaultObj: T): Partial<T> => {
+      const result: Partial<T> = {};
+      for (const key in defaultObj) {
+        if (input.hasOwnProperty(key)) {
+          const inputValue = input[key];
+          const defaultValue = defaultObj[key];
+          if (inputValue !== defaultValue) {
+            result[key] = inputValue;
+          }
+        }
+      }
+      return result;
+    };
 
-  const onFinish = async () => {
+    const fields = getChangedValues(data, profile);
+
     try {
       const profileData = await updateUserProfile(Number(id), fields);
       setProfile(profileData);
       setEdit(false);
-      setFields({} as ProfileRequest);
 
       dispatch(notificationsAction.setError(''));
     } catch (error) {
@@ -61,12 +74,7 @@ export const ProfileForm: React.FC = () => {
         setLoading(true);
         const profileData = await getUserProfile(Number(id));
         setProfile(profileData);
-        form.setFieldsValue({
-          username: profileData.username,
-          email: profileData.email,
-          phoneNumber: profileData.phoneNumber,
-        });
-
+        form.setFieldsValue(profileData);
         setLoading(false);
         dispatch(notificationsAction.setError(''));
       } catch (error) {
@@ -80,6 +88,7 @@ export const ProfileForm: React.FC = () => {
         }
       }
     };
+
     getUserProfileData();
   }, []);
 
@@ -104,7 +113,6 @@ export const ProfileForm: React.FC = () => {
             name='profile'
             form={form}
             onFinish={onFinish}
-            onValuesChange={onValuesChange}
           >
             <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
               <Form.Item

@@ -6,8 +6,18 @@ import { getProfile } from '../api/profile';
 import { User, State } from '../helpers/types';
 import { AxiosError } from 'axios';
 
+const defaultProfile: User = {
+  id: 0,
+  username: '',
+  email: '',
+  date: '',
+  isBlocked: false,
+  roles: [],
+  phoneNumber: '',
+};
+
 export const Profile = () => {
-  const [profile, setProfile] = useState<User>();
+  const [profile, setProfile] = useState<User>(defaultProfile);
   const [isLoading, setLoading] = useState<boolean>(false);
   const error = useSelector((state: State) => state.notifications.error);
   const dispatch = useDispatch();
