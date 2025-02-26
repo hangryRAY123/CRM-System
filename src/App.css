@@ -32,15 +32,65 @@ section {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+section.auth {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+section.auth .form-wrapper {
+  flex-grow: 1;
+  width: 40%;
+}
+
+.lock {
+  flex-grow: 1;
+  width: 60%;
+}
+
+.btn-wrapper {
+  display: flex;
+}
+
+.btn-wrapper .ant-form-item {
+  width: 100%;
+}
+
+.btn-wrapper .ant-form-item-control-input-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.ant-table-content {
+  scrollbar-width: thin;
+  scrollbar-color: #eaeaea transparent;
+  scrollbar-gutter: stable;
+}
+
+.lock span,
+.lock svg {
+  width: 100%;
+  height: 100%;
+}
+
+.lock svg {
+  fill: #1677ff;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -66,4 +116,34 @@ section {
 
 .read-the-docs {
   color: #888;
+}
+
+.blocked {
+  color: #646cff;
+  padding: 5px;
+  border: 1px solid #646cff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.blocked svg {
+  width: 20px;
+  height: 20px;
+}
+
+.profile-item .ant-list-item-meta-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-form input[readonly] {
+  border: none;
+  outline: none;
+  color: inherit;
+  font-weight: bold;
+}
+
+.profile-form .ant-form-item {
+  width: 100%;
 }

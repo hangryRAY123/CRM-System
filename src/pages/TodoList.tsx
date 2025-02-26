@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
 import { AddTask } from '../components/AddTask/AddTask';
-import { TabsList } from '../components/Tabs/TabsList';
-import { TasksList } from '../components/Tasks/TasksList';
-import { fetchTasks } from '../https';
+import { TabList } from '../components/Tab/TabList';
+import { TaskList } from '../components/Task/TaskList';
+import { fetchTasks } from '../api/todo';
 import { TabKeys, AllTask, TasksInfo } from '../helpers/types';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Divider, Alert } from 'antd';
 
 export const TodoList = () => {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [allTask, setAllTask] = useState<AllTask[]>([]);
   const [info, setInfo] = useState<TasksInfo>({ all: 0, completed: 0, inWork: 0 });
-  const [currentTab, setCurrentTab] = useState<TabKeys>(TabKeys.tab1);
+  const [currentTab, setCurrentTab] = useState<TabKeys>(TabKeys.ALL);
 
   useEffect(() => {
     const fetchTasksList = async () => {
@@ -63,17 +65,28 @@ export const TodoList = () => {
   };
 
   return (
-    <section>
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : (
-        <>
-          {error && <div style={{ color: 'red' }}>{error}</div>}
-          <AddTask changeTask={changeTask} />
-          <TabsList info={info} changeTab={changeTab} />
-          <TasksList tasks={allTask} changeTask={changeTask} />
-        </>
-      )}
-    </section>
+    <>
+      <Divider orientation='left'>TodoList</Divider>
+      <section>
+        {isLoading ? (
+          <LoadingOutlined />
+        ) : (
+          <>
+            {error && (
+              <Alert
+                style={{ width: 'fit-content', marginBottom: 15 }}
+                message={error}
+                type='error'
+                showIcon
+                closable
+              />
+            )}
+            <AddTask changeTask={changeTask} />
+            <TabList info={info} changeTab={changeTab} />
+            <TaskList tasks={allTask} changeTask={changeTask} />
+          </>
+        )}
+      </section>
+    </>
   );
 };

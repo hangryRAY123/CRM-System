@@ -1,0 +1,216 @@
+import { NavLink } from 'react-router-dom';
+import { Button, Form, Input, Alert } from 'antd';
+import { registerUser } from '../../api/auth';
+import { useState } from 'react';
+import { VALIDATE_AUTH } from '../../helpers/constants';
+import { AxiosError } from 'axios';
+import { UserRegistration } from '../../helpers/types';
+
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
+
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 24,
+      offset: 0,
+    },
+    sm: {
+      span: 16,
+      offset: 8,
+    },
+  },
+};
+
+export const RegistrationForm: React.FC = () => {
+  const [form] = Form.useForm();
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<string>('');
+  const [userLogin, setUserLogin] = useState<string>('');
+
+  const onFinish = async (values: UserRegistration) => {
+    const user = {
+      email: values.email,
+      login: values.login,
+      password: values.password,
+      phoneNumber: values.phoneNumber,
+      username: values.username,
+    };
+
+    try {
+      setError('');
+      await registerUser(user);
+      setUserLogin(user.login);
+      setError('');
+      setSuccess('successfully registered');
+      form.resetFields();
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        setError(error.response?.data || 'Failed to register user. Please try again later.');
+        setSuccess('');
+      }
+    }
+  };
+
+  return (
+    <div className='form-wrapper'>
+      {error && (
+        <Alert
+          style={{ width: 'fit-content', marginLeft: 'auto', marginBottom: 15 }}
+          message={error}
+          type='error'
+          showIcon
+          closable
+        />
+      )}
+      {success && (
+        <p style={{ color: 'green' }}>
+          <span style={{ fontSize: 25, color: '#646cff' }}>{userLogin}</span>&nbsp;
+          {success}. <NavLink to='/auth/login'>Login now!</NavLink>{' '}
+        </p>
+      )}
+      <Form
+        {...formItemLayout}
+        form={form}
+        name='register'
+        onFinish={onFinish}
+        initialValues={{ residence: ['zhejiang', 'hangzhou', 'xihu'], prefix: '86' }}
+        scrollToFirstError
+      >
+        <Form.Item
+          name='username'
+          label='Username'
+          tooltip='What do you want others to call you?'
+          rules={[
+            {
+              required: true,
+              message: 'Please input your nickname!',
+            },
+            {
+              pattern: /^[a-zA-Zа-яА-ЯёЁ]+$/,
+              message: 'Please enter only Russian or Latin alphabets',
+            },
+            {
+              min: VALIDATE_AUTH.NAME.MIN,
+              max: VALIDATE_AUTH.NAME.MAX,
+              message: `Name must be between ${VALIDATE_AUTH.PASSWORD.MIN} and ${VALIDATE_AUTH.PASSWORD.MAX} characters`,
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name='login'
+          label='Login'
+          tooltip='Login name for the application'
+          rules={[
+            {
+              required: true,
+              message: 'Please input your username!',
+            },
+            {
+              pattern: /^[a-zA-Z]+$/,
+              message: `Login must contain only Latin characters!`,
+            },
+            {
+              min: VALIDATE_AUTH.LOGIN.MIN,
+              max: VALIDATE_AUTH.LOGIN.MAX,
+              message: `Login must be between ${VALIDATE_AUTH.LOGIN.MIN} and ${VALIDATE_AUTH.LOGIN.MAX} characters`,
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name='password'
+          label='Password'
+          rules={[
+            {
+              required: true,
+              message: 'Please input your password!',
+            },
+            {
+              min: VALIDATE_AUTH.PASSWORD.MIN,
+              max: VALIDATE_AUTH.PASSWORD.MAX,
+              message: `Password must be between ${VALIDATE_AUTH.PASSWORD.MIN} and ${VALIDATE_AUTH.PASSWORD.MAX} characters`,
+            },
+          ]}
+          hasFeedback
+        >
+          <Input.Password autoComplete='off' />
+        </Form.Item>
+
+        <Form.Item
+          name='confirm'
+          label='Confirm Password'
+          dependencies={['password']}
+          hasFeedback
+          rules={[
+            {
+              required: true,
+              message: 'Please confirm your password!',
+            },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error('The new password that you entered do not match!'));
+              },
+            }),
+          ]}
+        >
+          <Input.Password autoComplete='off' />
+        </Form.Item>
+
+        <Form.Item
+          name='email'
+          label='E-mail'
+          rules={[
+            {
+              type: 'email',
+              message: 'The input is not valid E-mail! (email@mail.com)',
+            },
+            {
+              required: true,
+              message: 'Please input your E-mail!',
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name='phoneNumber'
+          label='Phone Number'
+          rules={[
+            {
+              pattern: /^(\+\d{1}[- ]?)?\d{10}$/,
+              message: 'Please enter a valid phone number! (+1111111111)',
+            },
+          ]}
+        >
+          <Input style={{ width: '100%' }} />
+        </Form.Item>
+
+        <Form.Item {...tailFormItemLayout}>
+          <Button type='primary' htmlType='submit' style={{ width: '100%' }}>
+            Register
+          </Button>
+          <br />
+          or <NavLink to='/auth/login'>Login now!</NavLink>
+        </Form.Item>
+      </Form>
+    </div>
+  );
+};

@@ -1,13 +1,5 @@
-import axios from 'axios';
-import { TabKeys } from './helpers/types';
-
-const instance = axios.create({
-  withCredentials: true,
-  baseURL: 'https://easydev.club/api/v1/',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+import { instance } from './https';
+import { TabKeys } from '../helpers/types';
 
 export const updateTask = async (isDone: boolean, id: number, title: string) => {
   try {
@@ -27,19 +19,19 @@ export const deleteTask = async (taskId: number) => {
 
 export const fetchTasks = async (tab: TabKeys) => {
   try {
-    const response = await instance.get('/todos', {
+    const res = await instance.get('/todos', {
       params: {
         filter: tab,
       },
     });
 
-    return response.data;
+    return res.data;
   } catch (error: any) {
     throw new Error(error.message || 'Failed to fetch tasks. Please try again later.');
   }
 };
 
-export const addingTask = async (title: string) => {
+export const addTask = async (title: string) => {
   try {
     await instance.post('/todos', { isDone: false, title });
   } catch (error: any) {
