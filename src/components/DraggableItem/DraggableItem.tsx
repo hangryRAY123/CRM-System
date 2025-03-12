@@ -1,6 +1,6 @@
 import { useDrag } from "react-dnd";
 
-const DraggableItem = ({ name, type }) => {
+const DraggableItem = ({ name, type }: { name: string; type: string }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "component",
     item: { name, type },

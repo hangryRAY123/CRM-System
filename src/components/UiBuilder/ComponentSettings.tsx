@@ -1,14 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
+import { Component } from "../../helpers/types";
 
-const ComponentSettings = ({ component, onUpdate }) => {
+interface ComponentSettingsProps {
+  component: Component;
+  onUpdate: (id: number, updates: { text?: string; url?: string }) => void;
+}
+
+const ComponentSettings: React.FC<ComponentSettingsProps> = ({
+  component,
+  onUpdate,
+}) => {
   const [newText, setNewText] = useState(component.text || "");
   const [newUrl, setNewUrl] = useState(component.url || "");
 
-  const handleTextChange = (e) => {
+  const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewText(e.target.value);
   };
 
-  const handleUrlChange = (e) => {
+  const handleUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewUrl(e.target.value);
   };
 

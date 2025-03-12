@@ -9,13 +9,23 @@ import Menu from "../components/UiBuilder/Menu";
 import ColumnBlock from "../components/UiBuilder/ColumnBlock";
 import ImageBlock from "../components/UiBuilder/ImageBlock";
 import ComponentSettings from "../components/UiBuilder/ComponentSettings";
+import { Component } from "../helpers/types";
 
-export const UiBuilder = () => {  
-  const [components, setComponents] = useState([]);
-  const [selectedComponent, setSelectedComponent] = useState(null);
+interface DraggableItem {
+  type: Component["type"];
+  name: string;
+}
+
+export const UiBuilder: React.FC = () => {
+  const [components, setComponents] = useState<Component[]>([]);
+  const [selectedComponent, setSelectedComponent] = useState<Component | null>(
+    null
+  );
 
   useEffect(() => {
-    const savedComponents = JSON.parse(localStorage.getItem("ui-components"));
+    const savedComponents = JSON.parse(
+      localStorage.getItem("ui-components") || "[]"
+    );
     if (savedComponents) {
       setComponents(savedComponents);
     }
@@ -27,16 +37,16 @@ export const UiBuilder = () => {
     }
   }, [components]);
 
-  const handleDrop = (item) => {
-    const newComponent = { ...item, id: Date.now() };
+  const handleDrop = (item: DraggableItem) => {
+    const newComponent: Component = { ...item, id: Date.now() };
     setComponents((prevComponents) => [...prevComponents, newComponent]);
   };
 
-  const handleSelectComponent = (component) => {
+  const handleSelectComponent = (component: Component) => {
     setSelectedComponent(component);
   };
 
-  const handleUpdateComponent = (id, updates) => {
+  const handleUpdateComponent = (id: number, updates: Partial<Component>) => {
     setComponents((prevComponents) =>
       prevComponents.map((component) =>
         component.id === id ? { ...component, ...updates } : component
@@ -44,7 +54,7 @@ export const UiBuilder = () => {
     );
   };
 
-  const handleDeleteComponent = (id) => {
+  const handleDeleteComponent = (id: number) => {
     setComponents((prevComponents) =>
       prevComponents.filter((component) => component.id !== id)
     );
@@ -66,7 +76,7 @@ export const UiBuilder = () => {
           <h3>Drop Zone</h3>
           <DropZone onDrop={handleDrop} />
           <div className="placed-components">
-            {components.map((component, index) => {
+            {components.map((component) => {
               const Component =
                 component.type === "Header"
                   ? Header
@@ -79,6 +89,9 @@ export const UiBuilder = () => {
                   : component.type === "ImageBlock"
                   ? ImageBlock
                   : null;
+
+              if (!Component) return null;
+
               return (
                 <div
                   key={component.id}

@@ -1,9 +1,19 @@
 import { useDrop } from "react-dnd";
+import { FC } from "react";
 
-export const DropZone = ({ onDrop }) => {
+interface DraggableItem {
+  type: string;
+  name: string;
+}
+
+interface DropZoneProps {
+  onDrop: (item: any) => void;
+}
+
+export const DropZone: FC<DropZoneProps> = ({ onDrop }) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "component",
-    drop: (item) => onDrop(item),
+    drop: (item: DraggableItem) => onDrop(item),
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),

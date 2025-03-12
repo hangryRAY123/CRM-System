@@ -73,6 +73,14 @@ export type State = {
   };
 };
 
+export interface Component {
+  id: number;
+  type: "Header" | "Footer" | "Menu" | "ColumnBlock" | "ImageBlock";
+  text?: string;
+  url?: string;
+}
+
+
 export type PasswordRequest = string;
 
 export type AccessToken = string;
