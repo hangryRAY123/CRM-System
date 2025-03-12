@@ -15,7 +15,8 @@ import TokenManager from './helpers/token-manager';
 import { updateToken } from './api/auth';
 import { getProfile } from './api/profile';
 import { authAction } from './store/auth/auth-slice';
-import { AxiosError } from 'axios';
+import { UiBuilder } from './pages/UiBuilder';
+import { AxiosError } from 'axios';  
 
 function App() {
   const navigate = useNavigate();
@@ -59,6 +60,7 @@ function App() {
         <Route path='profile/:id' element={<UserProfile />} />
         <Route path='users' element={<Users />} />
         <Route path='todolist' element={<TodoList />} />
+        <Route path='ui-builder' element={<UiBuilder />} />
       </Route>
     </Routes>
   );

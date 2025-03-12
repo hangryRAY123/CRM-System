@@ -1,16 +1,16 @@
-import { TaskItem } from './style';
-import React from 'react';
-import { deleteTask, updateTask } from '../../api/todo';
-import { useState } from 'react';
-import { VALIDATE_TASK } from '../../helpers/constants';
-import type { FormProps, CheckboxProps } from 'antd';
-import { Button, Form, Input, Checkbox } from 'antd';
+import { TaskItem } from "./style";
+import React from "react";
+import { deleteTask, updateTask } from "../../api/todo";
+import { useState } from "react";
+import { VALIDATE_TASK } from "../../helpers/constants";
+import type { FormProps, CheckboxProps } from "antd";
+import { Button, Form, Input, Checkbox } from "antd";
 import {
   CheckCircleOutlined,
   EditOutlined,
   CloseOutlined,
   DeleteOutlined,
-} from '@ant-design/icons';
+} from "@ant-design/icons";
 
 type TaskProps = {
   children: React.ReactNode;
@@ -21,12 +21,12 @@ type TaskProps = {
 };
 
 export const Task: React.FC<TaskProps> = (props) => {
-  let { children, id, isDone, changeTask, title } = props;
+  const { children, id, isDone, changeTask, title } = props;
 
   const [isEdit, setEdit] = useState<boolean>(false);
   const [isChecked, setChecked] = useState<boolean>(isDone);
   const [task, setTask] = useState<string>(title);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
 
   type FieldType = {
     newTask: string;
@@ -41,17 +41,17 @@ export const Task: React.FC<TaskProps> = (props) => {
     setEdit(status);
   };
 
-  const handleUpdateTask: FormProps<FieldType>['onFinish'] = async (values) => {
+  const handleUpdateTask: FormProps<FieldType>["onFinish"] = async (values) => {
     try {
       await updateTask(isDone, id, values.newTask);
       await changeTask();
       await handleEdit(false);
     } catch (e: any) {
-      setError(e.message || 'Failed update task.');
+      setError(e.message || "Failed update task.");
       return;
     }
 
-    setError('');
+    setError("");
   };
 
   const handleDeleteTask = async () => {
@@ -59,43 +59,43 @@ export const Task: React.FC<TaskProps> = (props) => {
       await deleteTask(id);
       await changeTask();
     } catch (error: any) {
-      setError(error.message || 'Failed to fetch tasks.');
+      setError(error.message || "Failed to fetch tasks.");
     }
   };
 
-  const handleChecked: CheckboxProps['onChange'] = async (e) => {
+  const handleChecked: CheckboxProps["onChange"] = async (e) => {
     setChecked(e.target.checked);
 
     try {
       await updateTask(e.target.checked, id, task);
       await changeTask();
     } catch (error: any) {
-      setError(error.message || 'Failed to fetch tasks.');
+      setError(error.message || "Failed to fetch tasks.");
       return;
     }
 
-    setError('');
+    setError("");
   };
 
   return (
     <>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
+      {error && <div style={{ color: "red" }}>{error}</div>}
       <TaskItem>
-        <div className='change-task'>
+        <div className="change-task">
           <Checkbox onChange={handleChecked} checked={isChecked} />
           {!isEdit ? (
-            <p className={isChecked ? 'completed' : ''}>{children}</p>
+            <p className={isChecked ? "completed" : ""}>{children}</p>
           ) : (
             <Form
-              layout='inline'
-              style={{ flexWrap: 'nowrap', width: '100%' }}
+              layout="inline"
+              style={{ flexWrap: "nowrap", width: "100%" }}
               initialValues={{ newTask: task }}
               onFinish={handleUpdateTask}
-              autoComplete='off'
+              autoComplete="off"
             >
               <Form.Item<FieldType>
                 style={{ flexGrow: 1 }}
-                name='newTask'
+                name="newTask"
                 rules={[
                   {
                     required: true,
@@ -109,7 +109,7 @@ export const Task: React.FC<TaskProps> = (props) => {
               </Form.Item>
 
               <Form.Item style={{ marginRight: 0 }} label={null}>
-                <Button type='primary' htmlType='submit'>
+                <Button type="primary" htmlType="submit">
                   <CheckCircleOutlined />
                 </Button>
               </Form.Item>
@@ -117,11 +117,11 @@ export const Task: React.FC<TaskProps> = (props) => {
           )}
         </div>
 
-        <div className='btn-container'>
+        <div className="btn-container">
           {!isEdit ? (
             <Button
-              type='primary'
-              htmlType='button'
+              type="primary"
+              htmlType="button"
               onClick={() => {
                 handleEdit(true);
               }}
@@ -129,16 +129,16 @@ export const Task: React.FC<TaskProps> = (props) => {
               <EditOutlined />
             </Button>
           ) : (
-            <Button type='primary' htmlType='button' onClick={handleCansel}>
+            <Button type="primary" htmlType="button" onClick={handleCansel}>
               <CloseOutlined />
             </Button>
           )}
 
           <Button
-            type='primary'
-            htmlType='button'
-            color='danger'
-            variant='solid'
+            type="primary"
+            htmlType="button"
+            color="danger"
+            variant="solid"
             onClick={handleDeleteTask}
           >
             <DeleteOutlined />

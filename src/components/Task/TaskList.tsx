@@ -1,7 +1,7 @@
-import React from 'react';
-import { List } from './style';
-import { Task } from './Task';
-import { AllTask } from '../../helpers/types';
+import React from "react";
+import { List } from "./style";
+import { Task } from "./Task";
+import { AllTask } from "../../helpers/types";
 
 export const TaskList: React.FC<{
   tasks: AllTask[];

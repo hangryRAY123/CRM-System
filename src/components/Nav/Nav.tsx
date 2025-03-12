@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { Menu } from 'antd';
-import { UserOutlined, BarsOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { UserOutlined, BarsOutlined, UsergroupAddOutlined, DatabaseOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import { State } from '../../helpers/types';
 
@@ -25,6 +25,11 @@ export const Nav: React.FC = () => {
       key: '/todolist',
       icon: <BarsOutlined />,
       label: <NavLink to='/todolist'>Список задач</NavLink>,
+    },
+    {
+      key: '/ui-builder',
+      icon: <DatabaseOutlined />,
+      label: <NavLink to='/ui-builder'>UI Builder</NavLink>,
     },
   ];
 

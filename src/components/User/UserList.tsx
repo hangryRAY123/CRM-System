@@ -1,26 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import { GetProp, TableProps, Popconfirm } from 'antd';
-import type { SorterResult } from 'antd/es/table/interface';
-import { Table, Tag, Alert } from 'antd';
-import { useSelector, useDispatch } from 'react-redux';
-import { User, State, Roles } from '../../helpers/types';
-import { NavLink } from 'react-router-dom';
-import { Sort } from '../Sort/Sort';
-import { SearchUser } from '../SearchUser/SearchUser';
-import { userAction } from '../../store/user/user-slice';
-import { notificationsAction } from '../../store/notification/notifications-slice';
-import { LockOutlined, UnlockOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import { getUsers, deleteUser, blockUser, updateRolesUser } from '../../api/users';
-import { AxiosError } from 'axios';
+import React, { useEffect, useState } from "react";
+import { GetProp, TableProps, Popconfirm } from "antd";
+import type { SorterResult } from "antd/es/table/interface";
+import { Table, Tag, Alert } from "antd";
+import { useSelector, useDispatch } from "react-redux";
+import { User, State, Roles } from "../../helpers/types";
+import { NavLink } from "react-router-dom";
+import { Sort } from "../Sort/Sort";
+import { SearchUser } from "../SearchUser/SearchUser";
+import { userAction } from "../../store/user/user-slice";
+import { notificationsAction } from "../../store/notification/notifications-slice";
+import {
+  LockOutlined,
+  UnlockOutlined,
+  PlusOutlined,
+  MinusOutlined,
+} from "@ant-design/icons";
+import {
+  getUsers,
+  deleteUser,
+  blockUser,
+  updateRolesUser,
+} from "../../api/users";
+import { AxiosError } from "axios";
 
-type ColumnsType<T extends object = object> = TableProps<T>['columns'];
-type TablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>;
+type ColumnsType<T extends object = object> = TableProps<T>["columns"];
+type TablePaginationConfig = Exclude<
+  GetProp<TableProps, "pagination">,
+  boolean
+>;
 
 interface TableParams {
   pagination?: TablePaginationConfig;
-  sortField?: SorterResult<string>['field'];
-  sortOrder?: SorterResult<string>['order'];
-  filters?: Parameters<GetProp<TableProps, 'onChange'>>[1];
+  sortField?: SorterResult<string>["field"];
+  sortOrder?: SorterResult<string>["order"];
+  filters?: Parameters<GetProp<TableProps, "onChange">>[1];
 }
 
 export const UserList: React.FC = () => {
@@ -40,10 +53,14 @@ export const UserList: React.FC = () => {
   const handleRole = async (id: number, roles: string[]) => {
     let newRoles;
 
-    if (roles.includes('ADMIN')) {
-      newRoles = roles.filter((role) => role !== 'ADMIN');
+    if (roles === null) {
+      newRoles = ["ADMIN"];
     } else {
-      newRoles = [...roles, 'ADMIN'];
+      if (roles.includes("ADMIN")) {
+        newRoles = roles.filter((role) => role !== "ADMIN");
+      } else {
+        newRoles = [...roles, "ADMIN"];
+      }
     }
 
     try {
@@ -56,7 +73,8 @@ export const UserList: React.FC = () => {
       if (error instanceof AxiosError) {
         dispatch(
           notificationsAction.setError(
-            error.response?.data || 'Failed to change user role. Please try again later.'
+            error.response?.data ||
+              "Failed to change user role. Please try again later."
           )
         );
       }
@@ -64,10 +82,10 @@ export const UserList: React.FC = () => {
   };
 
   const handleBlock = async (id: number, isBlock: boolean) => {
-    let block = 'block';
+    let block = "block";
 
     if (isBlock) {
-      block = 'unblock';
+      block = "unblock";
     }
 
     try {
@@ -80,7 +98,8 @@ export const UserList: React.FC = () => {
       if (error instanceof AxiosError) {
         dispatch(
           notificationsAction.setError(
-            error.response?.data || 'Failed to block user. Please try again later.'
+            error.response?.data ||
+              "Failed to block user. Please try again later."
           )
         );
       }
@@ -98,14 +117,19 @@ export const UserList: React.FC = () => {
       if (error instanceof AxiosError) {
         dispatch(
           notificationsAction.setError(
-            error.response?.data || 'Failed to delete user. Please try again later.'
+            error.response?.data ||
+              "Failed to delete user. Please try again later."
           )
         );
       }
     }
   };
 
-  const handleTableChange: TableProps<User>['onChange'] = (pagination, filters, sorter) => {
+  const handleTableChange: TableProps<User>["onChange"] = (
+    pagination,
+    filters,
+    sorter
+  ) => {
     setTableParams({
       pagination,
       filters,
@@ -116,9 +140,13 @@ export const UserList: React.FC = () => {
     if (pagination.current) {
       dispatch(userAction.setPaginationCurrent(pagination.current - 1));
     }
-    dispatch(userAction.setSortField(Array.isArray(sorter) ? undefined : sorter.field));
     dispatch(
-      userAction.setSortOrder(Array.isArray(sorter) ? undefined : sorter.order?.replace('end', ''))
+      userAction.setSortField(Array.isArray(sorter) ? undefined : sorter.field)
+    );
+    dispatch(
+      userAction.setSortOrder(
+        Array.isArray(sorter) ? undefined : sorter.order?.replace("end", "")
+      )
     );
   };
 
@@ -141,7 +169,8 @@ export const UserList: React.FC = () => {
           dispatch(userAction.setIsLoading(false));
           dispatch(
             notificationsAction.setError(
-              error.response?.data || 'Failed to sort users. Please try again later.'
+              error.response?.data ||
+                "Failed to sort users. Please try again later."
             )
           );
         }
@@ -152,59 +181,65 @@ export const UserList: React.FC = () => {
 
   const columns: ColumnsType<User> = [
     {
-      title: 'Name',
-      dataIndex: 'username',
+      title: "Name",
+      dataIndex: "username",
       sorter: true,
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
+      title: "Email",
+      dataIndex: "email",
       sorter: true,
     },
     {
-      title: 'Date',
-      dataIndex: 'date',
+      title: "Date",
+      dataIndex: "date",
       render: (date) => <>{new Date(date).toLocaleString()}</>,
     },
     {
-      title: 'Blocked',
+      title: "Blocked",
       render: (user) => {
         if (!user.isBlocked) {
           return (
-            <Popconfirm title='Block user?' onConfirm={() => handleBlock(user.id, user.isBlocked)}>
-              <UnlockOutlined className='blocked' />
+            <Popconfirm
+              title="Block user?"
+              onConfirm={() => handleBlock(user.id, user.isBlocked)}
+            >
+              <UnlockOutlined className="blocked" />
             </Popconfirm>
           );
         } else {
           return (
             <Popconfirm
-              title='Unblock user?'
+              title="Unblock user?"
               onConfirm={() => handleBlock(user.id, user.isBlocked)}
             >
-              <LockOutlined className='blocked' />
+              <LockOutlined className="blocked" />
             </Popconfirm>
           );
         }
       },
     },
     {
-      title: 'Role',
+      title: "Role",
       render: (user: User) => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          {user.roles.includes('ADMIN' as Roles) ? (
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {user.roles?.includes("ADMIN" as Roles) ? (
             <Popconfirm
-              title='Remove role admin?'
+              title="Remove role admin?"
               onConfirm={() => handleRole(user.id, user.roles)}
             >
               <MinusOutlined style={{ marginRight: 8 }} />
             </Popconfirm>
           ) : (
-            <Popconfirm title='Add role admin?' onConfirm={() => handleRole(user.id, user.roles)}>
+            <Popconfirm
+              title="Add role admin?"
+              onConfirm={() => handleRole(user.id, user.roles)}
+            >
               <PlusOutlined style={{ marginRight: 8 }} />
             </Popconfirm>
           )}
-          {user.roles.map((role) => {
-            let color = role.length > 5 ? 'geekblue' : 'green';
+          {user.roles?.map((role) => {
+            let color = role.length > 5 ? "geekblue" : "green";
             return (
               <Tag color={color} key={role}>
                 {role.toUpperCase()}
@@ -215,20 +250,27 @@ export const UserList: React.FC = () => {
       ),
     },
     {
-      title: 'Phone',
-      dataIndex: 'phoneNumber',
+      title: "Phone",
+      dataIndex: "phoneNumber",
     },
     {
-      title: 'Actions',
-      key: 'action',
-      fixed: 'right',
+      title: "Actions",
+      key: "action",
+      fixed: "right",
       width: 100,
       render: (user: User) => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
           <NavLink to={`/profile/${user.id}`}>Profile</NavLink>
           <span style={{ marginLeft: 5, marginRight: 5 }}>|</span>
-          <Popconfirm title='Sure to delete?' onConfirm={() => handleDelete(user.id)}>
-            <span style={{ fontWeight: 500, cursor: 'pointer', color: '#646cff' }}>Delete</span>
+          <Popconfirm
+            title="Sure to delete?"
+            onConfirm={() => handleDelete(user.id)}
+          >
+            <span
+              style={{ fontWeight: 500, cursor: "pointer", color: "#646cff" }}
+            >
+              Delete
+            </span>
           </Popconfirm>
         </div>
       ),
@@ -239,9 +281,9 @@ export const UserList: React.FC = () => {
     <>
       {error && (
         <Alert
-          style={{ width: 'fit-content', marginBottom: 15 }}
+          style={{ width: "fit-content", marginBottom: 15 }}
           message={error}
-          type='error'
+          type="error"
           showIcon
           closable
         />
@@ -255,7 +297,7 @@ export const UserList: React.FC = () => {
         pagination={tableParams.pagination}
         loading={isLoading}
         onChange={handleTableChange}
-        scroll={{ x: 'max-content' }}
+        scroll={{ x: "max-content" }}
       />
     </>
   );

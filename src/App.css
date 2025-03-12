@@ -147,3 +147,81 @@ section.auth .form-wrapper {
 .profile-form .ant-form-item {
   width: 100%;
 }
+
+.ui-builder {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.draggable-item {
+  padding: 10px;
+  margin: 10px;
+  background-color: lightblue;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.drop-zone {
+  min-height: 300px;
+  border: 2px dashed #ccc;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.placed-components {
+  margin-top: 20px;
+}
+
+.placed-component {
+  padding: 10px;
+  margin: 10px;
+  background-color: lightgreen;
+  border-radius: 5px;
+}
+
+.header {
+  padding: 20px;
+  background-color: #4caf50;
+  color: white;
+}
+
+.footer {
+  padding: 20px;
+  background-color: #333;
+  color: white;
+}
+
+.menu {
+  width: 200px;
+  background-color: #f4f4f4;
+  padding: 10px;
+}
+
+.menu ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 10px;
+}
+
+.column-block {
+  display: flex;
+  gap: 10px;
+}
+
+.column-block > div {
+  flex: 1;
+  padding: 20px;
+  background-color: #ddd;
+}
+
+.image-block {
+  text-align: center;
+  padding: 20px;
+}
