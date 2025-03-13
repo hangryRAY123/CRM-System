@@ -10,11 +10,11 @@ import ColumnBlock from "../components/UiBuilder/ColumnBlock";
 import ImageBlock from "../components/UiBuilder/ImageBlock";
 import ComponentSettings from "../components/UiBuilder/ComponentSettings";
 import { Component } from "../helpers/types";
-
-interface DraggableItem {
-  type: Component["type"];
-  name: string;
-}
+import {DraggableItemTypes} from "../helpers/types";
+// interface DraggableItem {
+//   type: Component["type"];
+//   name: string;
+// }
 
 export const UiBuilder: React.FC = () => {
   const [components, setComponents] = useState<Component[]>([]);
@@ -37,8 +37,8 @@ export const UiBuilder: React.FC = () => {
     }
   }, [components]);
 
-  const handleDrop = (item: DraggableItem) => {
-    const newComponent: Component = { ...item, id: Date.now() };
+  const handleDrop = (item: DraggableItemTypes) => {
+    const newComponent: Component = { ...item, id: Date.now(), type: item.type as Component["type"] };//
     setComponents((prevComponents) => [...prevComponents, newComponent]);
   };
 

@@ -80,6 +80,11 @@ export interface Component {
   url?: string;
 }
 
+export interface DraggableItemTypes {
+  type: string;
+  name: string;
+}
+
 
 export type PasswordRequest = string;
 
